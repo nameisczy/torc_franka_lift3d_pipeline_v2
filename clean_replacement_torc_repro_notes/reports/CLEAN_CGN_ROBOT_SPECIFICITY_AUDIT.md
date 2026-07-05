@@ -1,0 +1,26 @@
+# Clean CGN Robot-Specificity Audit
+
+## Source Paths
+
+- ROS wrapper: `/home/ziyaochen/gc6d_lift3d_traj/ros_workspace/src/contact_graspnet_ros/src/grasp_server.py`
+- ROS service/message: `contact_graspnet_ros/srv/GetGrasps.srv`, `contact_graspnet_ros/msg/Grasps.msg`
+- Contact-GraspNet estimator: `/home/ziyaochen/gc6d_lift3d_franka_7d_generation/third_party/contact_graspnet/contact_graspnet/contact_grasp_estimator.py`
+- Contact-GraspNet pose builder: `/home/ziyaochen/gc6d_lift3d_franka_7d_generation/third_party/contact_graspnet/contact_graspnet/contact_graspnet.py`
+- TORC consumer: `/home/ziyaochen/gc6d_lift3d_traj/ros_workspace/src/lab_vbnpm/scripts/grasp_planner/curobo_grasp_planner.py`
+
+## Answers
+
+1. Contact-GraspNet before TORC postprocessing outputs `pred_grasps_cam`, `pred_scores`, `pred_points`, and `gripper_openings` from `GraspEstimator.predict_grasps`, and `predict_scene_grasps` returns dictionaries of these per segment. Evidence: `contact_grasp_estimator.py:167-228`, `contact_grasp_estimator.py:230-284`; level `proven`.
+2. `build_6d_grasp` returns Nx4x4 grasp poses. Its rotation columns are base direction, cross(approach, base), and approach. Its translation is `contact + thickness/2 * base - gripper_depth * approach`. Evidence: `contact_graspnet.py:193-232`; level `proven`.
+3. `build_6d_grasp` uses gripper-specific constants: `thickness` from predicted opening/offset and default `gripper_depth=0.1034`. Config also includes `DATA.gripper_width` and `TEST.extra_opening`. Evidence: `contact_graspnet.py:193-227`, `contact_grasp_estimator.py:61-64`, `contact_grasp_estimator.py:203-207`; level `proven`.
+4. Original TORC applies Robotiq/Motoman-specific postprocessing after CGN: `self.hand_depth=0.11` for CGN, pose translation along approach by hand depth before IK, GraspPlotter/Robotiq geometry filters, Motoman EE IK, and Motoman collision links. Evidence: `curobo_grasp_planner.py:279-287`, `curobo_grasp_planner.py:858-865`, `curobo_grasp_planner.py:434-466`, `motoman.py:24-47`; level `proven`.
+5. Original TORC applies Motoman-specific filtering after CGN through TracIK initialized from Motoman `base_link`/`motoman_right_ee`, CuRobo robot world, and Motoman disabled EE links. Evidence: `curobo_grasp_planner.py:302-317`, `motoman.py:112-130`; level `proven`.
+6. ROS `poses` are not pure raw neural low-level fields. They are already 6D gripper poses built with Contact-GraspNet gripper-depth/opening conventions and then frame-swapped by the ROS wrapper. They are generic parallel-jaw-ish only at the concept level; source proves gripper-depth and gripper-width conventions. Evidence: `contact_graspnet.py:193-232`, `grasp_server.py:190-245`; level `proven`.
+7. Franka adapter should prefer low-level CGN fields where available: contact point, approach direction, base/closing direction, opening, score, object id, source index. Reason: pose-level output has Contact-GraspNet plus TORC wrapper conventions, and old downstream reports found pose-to-Franka adaptation suspicious. Evidence: source proves low-level fields exist before ROS truncation; old validated downstream report says pose-only bridge lacked approach/base/opening. Level `proven` for low-level field existence, `unverified` for final adapter until MuJoCo proof.
+8. Low-level fields come from `contact_grasp_estimator`: `model_ops['approach_dir_pred']`, `model_ops['grasp_dir_pred']`, `model_ops['pred_points']`, `offset_bin_pred_vals`/`gripper_openings`, plus selected indices from `select_grasps`. Evidence: `contact_grasp_estimator.py:66-83`, `contact_grasp_estimator.py:192-228`, `contact_grasp_estimator.py:286-331`; level `proven`.
+9. Frames and units: Contact-GraspNet expects meters; `predict_grasps` preprocesses OpenCV camera coordinates to internal coordinates, then converts grasps and points back when `convert_cam_coords=True`. TORC wrapper pre-rotates world/input points with `frame_rotate`, calls `predict_scene_grasps`, then transforms poses back and axis-swaps before returning ROS poses. Evidence: `contact_grasp_estimator.py:172-180`, `contact_grasp_estimator.py:220-228`, `grasp_server.py:190-245`; level `proven` for code transforms, `unverified` for end-to-end world-frame visual correctness until MuJoCo-rendered proof.
+10. Do not adapt at CGN layer: do not tune offsets blindly, do not substitute fake/GT grasps, do not change CGN model thresholds to solve Franka geometry, do not reuse old candidate artifacts, and do not hide gripper conventions. The clean change should expose low-level fields or consume pose-level fields with explicit adapter proof. Evidence: user constraints and old reports; level `proven` as project rule.
+
+## Audit Result
+
+CGN is robot-independent at the neural prediction API level only partially: it predicts contact, approach/base directions, and opening for a parallel gripper representation, but `build_6d_grasp` encodes gripper depth/opening conventions and the TORC wrapper adds frame swaps before TORC adds Motoman/Robotiq hand-depth semantics. Therefore Franka should not blindly consume old TORC `p_grasp`; it should consume low-level CGN fields or a clearly documented pose-level contract and prove contact/pregrasp in MuJoCo before planning. Evidence level: `proven` for source facts, `unverified` for final Franka behavior.

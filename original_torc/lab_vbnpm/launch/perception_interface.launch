@@ -1,0 +1,13 @@
+<launch>
+  <arg name="known_models" default="false" />
+  <arg name="auto_ws_fitting" default="false" />
+  <arg name="real_tracking" default="false" />
+  <arg name="real_segmentation" default="true" />
+  
+  <node name="perception" pkg="lab_vbnpm" type="perception_interface.py" args="" >
+    <param name="known_models" value="$(arg known_models)" />
+    <param name="auto_ws_fitting" value="$(arg auto_ws_fitting)" />
+    <param name="real_tracking" value="$(arg real_tracking)" />
+    <param name="real_segmentation" value="$(arg real_segmentation)" />
+  </node>
+</launch>

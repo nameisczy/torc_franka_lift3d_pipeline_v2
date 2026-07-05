@@ -1,0 +1,939 @@
+"""
+simulated execution node using Mujoco.
+
+arguments:
+- scene name (MJCF file)
+-----------------------------------------------------
+-----------------provided interface------------------
+-----------------------------------------------------
+ROS Service:
+- execute_trajectory
+    input:
+        geometric paths containing a list of joint positions and names
+    function:
+        conduct time parameterization to compute the velocity and time
+        format the result as a JointTrajectory msg
+        pass the JointTrajectory containing position, velocity, and time to the lower-level tracker
+- ee_control
+    input:
+        control
+- (TODO) reset_scene
+-----------------------------------------------------
+ROS message:
+- RGBD images
+- seg image (fake perception)
+-----------------------------------------------------
+"""
+
+USE_MUJOCO_PY_VIEWER = True
+
+import os
+import pprint
+import traceback
+
+os.environ["XLA_FLAGS"] = (
+    "--xla_gpu_triton_gemm_any=True " "--xla_gpu_enable_latency_hiding_scheduler=true "
+)
+import sys
+import json
+import time
+
+# import glfw
+import pickle
+import numpy as np
+import xml.etree.ElementTree as ET
+
+import mujoco
+
+if USE_MUJOCO_PY_VIEWER:
+    import mujoco_viewer
+else:
+    import mujoco.viewer
+
+import argparse
+import zmq
+import cv2
+import rospy
+import rospkg
+import tf2_ros
+import actionlib
+import threading
+import transformations as tf
+from typing import Optional, List
+from cv_bridge import CvBridge
+from rosgraph_msgs.msg import Clock
+from std_msgs.msg import Int32, String
+from geometry_msgs.msg import TransformStamped, Pose
+from visualization_msgs.msg import MarkerArray, Marker
+from sensor_msgs.msg import Image, JointState, CameraInfo
+from shape_msgs.msg import SolidPrimitive, Mesh, MeshTriangle
+from control_msgs.msg import (
+    FollowJointTrajectoryAction,
+    FollowJointTrajectoryFeedback,
+    FollowJointTrajectoryResult,
+)
+
+from lab_vbnpm.msg import ObjectPoses, ObjectIdsToNames
+from lab_vbnpm.srv import FakeObjectControl, FakeObjectControlResponse
+
+from utils.visual_utils import encode_seg_img_rgb
+from utils.conversions import joint_state_to_dict, float_to_ros_duration
+
+
+PUBLISH_SLOW_DURATION = 0.03  # seconds
+PUBLISH_FAST_DURATION = 0.01  # seconds
+
+
+class ExecutionNode:
+    joint_names = []
+    init_joints = []
+
+    def __init__(self, address: str = "tcp://*:5858"):
+        rp = rospkg.RosPack()
+
+        # lock for thread-safe mujoco access to avoid race conditions
+        self.mj_lock = threading.Lock()
+
+        self.pkg_path = rp.get_path("lab_vbnpm")
+        self.load_ros_param()
+        self.model = None
+        self.model_ready = False
+
+        # * for tracking arm and control ee asynchronously
+        self.arm_trajectory = None
+        self.ee_trajectory = []
+
+        self.publish_slow_timer = None
+        self.publish_fast_timer = None
+
+        self.kill_backup_clock_event = threading.Event()
+
+        # * set up ROS interfaces
+        # ** clock
+        # * init clock pub
+        self.clock_pub = rospy.Publisher("clock", Clock, queue_size=10)
+        self.sim_clock = Clock()
+        self.sim_clock.clock = rospy.Time(0)
+
+        # ** services
+        rospy.Service(
+            "/ground_truth/fake_obj_control", FakeObjectControl, self.fake_obj_control
+        )
+
+        # ** messages
+        self.bridge = CvBridge()
+        self.obj_ids_to_names_pub = rospy.Publisher(
+            f"/ground_truth/object_ids_to_names", ObjectIdsToNames, queue_size=5
+        )
+        self.gt_obj_pub = rospy.Publisher(
+            "/ground_truth/object_poses", ObjectPoses, queue_size=5
+        )
+        self.rviz_pub = rospy.Publisher(
+            "visualization_marker", MarkerArray, queue_size=1
+        )
+
+        # ** TF
+        self.br = tf2_ros.TransformBroadcaster()
+
+        # ** action servers
+        # robot
+        self.follow_trajectory_as = actionlib.SimpleActionServer(
+            "/joint_trajectory_action",
+            FollowJointTrajectoryAction,
+            # self.follow_trajectory_cb,
+            auto_start=False,
+        )
+        self.follow_trajectory_as.register_goal_callback(self.follow_trajectory_cb)
+        self.follow_trajectory_as.register_preempt_callback(self.preempt_cb)
+        self.follow_trajectory_as.start()
+
+        self.address = address
+
+        self.tick_count = 0
+
+    def reset(
+        self,
+        xml_file: str,
+        gui: bool = True,
+        save_image_dir: Optional[str] = None,
+        experiment_dir: Optional[str] = None,
+        mj_pickle: bool = False,
+    ):
+        with self.mj_lock:
+            print("RESETTING EXECUTION NODE -- MUJOCO_GL: ", os.environ["MUJOCO_GL"])
+
+            self.model_ready = False
+            self.mj_pickle = mj_pickle
+
+            self.backup_step_clock_thread = threading.Thread(
+                target=self.backup_step_clock_loop
+            )
+            self.backup_step_clock_thread.start()
+
+            if self.publish_slow_timer:
+                self.publish_slow_timer.shutdown()
+                self.publish_slow_timer.join()
+            if self.publish_fast_timer:
+                self.publish_fast_timer.shutdown()
+                self.publish_fast_timer.join()
+            print("    Shutdown fast and slow timers complete")
+
+            self.kill_backup_clock_event.set()
+            self.backup_step_clock_thread.join()
+
+            self.tick_count = 0
+
+            if os.path.exists(xml_file):
+                prob_path = xml_file
+            else:
+                prob_path = os.path.join(self.pkg_path, "xmls", xml_file)
+            self.ws_xml_path = os.path.abspath(prob_path)
+
+            # * set up xml references
+            root = ET.parse(self.ws_xml_path).getroot()
+            compiler = root.find("compiler")
+            meshdir = compiler.get("meshdir", compiler.get("assetdir", "./"))
+            if not os.path.isabs(meshdir):
+                meshdir = os.path.dirname(self.ws_xml_path) + "/" + meshdir
+            self.assets = {None: None}
+            for asset in root.find("asset"):
+                if "file" in asset.keys():
+                    name = asset.get("name")
+                    path = asset.get("file")
+                    if not os.path.isabs(path):
+                        path = os.path.abspath(meshdir + path)
+                    self.assets[name] = path
+            self.geom2body = {}
+            self.geom_type = {}
+            for geom in root.findall(".//geom"):
+                mat = np.eye(4)
+                if "quat" in geom.keys():
+                    quat = [float(x) for x in geom.get("quat").split()]
+                    mat[:3, :3] = tf.quaternion_matrix(quat)[:3, :3]
+                if "pos" in geom.keys():
+                    pos = [float(x) for x in geom.get("pos").split()]
+                    mat[:3, 3] = pos
+                if self.assets[geom.get("mesh")] is not None:
+                    self.geom2body[geom.get("mesh")] = mat
+                    self.geom_type[geom.get("mesh")] = "mesh"
+                else:
+                    self.geom2body[geom.get("name")] = mat
+                    self.geom_type[geom.get("name")] = geom.get("type")
+
+            # * set up mujoco
+            self.model = mujoco.MjModel.from_xml_path(prob_path)
+            self.model.vis.global_.offheight = 1080
+            self.model.vis.global_.offwidth = 1920
+            self.model.opt.timestep = 0.002
+            self.data = mujoco.MjData(self.model)
+            self.gui = gui
+            self.set_viewer()
+            self.renderer = None
+            self.save_image_dir = save_image_dir
+            if self.save_image_dir is not None:
+                os.makedirs(save_image_dir + "/rgb", exist_ok=True)
+                os.makedirs(save_image_dir + "/depth", exist_ok=True)
+                os.makedirs(save_image_dir + "/masks", exist_ok=True)
+
+            self.experiment_dir = experiment_dir
+
+            # Unregister publishers if they already exist
+            if hasattr(self, "rgb_cam_pub"):
+                pubs: List[rospy.Publisher] = [
+                    pub
+                    for pub_list in [
+                        self.rgb_cam_pub,
+                        self.depth_cam_pub,
+                        self.seg_cam_pub,
+                        self.cam_info_pub,
+                        self.cam_tf_pub,
+                    ]
+                    for pub in pub_list
+                ]
+                for pub in pubs:
+                    pub.unregister()
+
+            self.rgb_cam_pub = [None for i in range(self.model.ncam)]
+            self.depth_cam_pub = [None for i in range(self.model.ncam)]
+            self.seg_cam_pub = [None for i in range(self.model.ncam)]
+            self.cam_info_pub = [None for i in range(self.model.ncam)]
+            self.cam_tf_pub = [None for i in range(self.model.ncam)]
+            for i in range(self.model.ncam):
+                self.rgb_cam_pub[i] = rospy.Publisher(
+                    f"/camera{i}/color/image_raw", Image, queue_size=5
+                )
+                self.depth_cam_pub[i] = rospy.Publisher(
+                    f"/camera{i}/aligned_depth_to_color/image_raw", Image, queue_size=5
+                )
+                self.seg_cam_pub[i] = rospy.Publisher(
+                    f"/ground_truth/camera{i}/seg_image", Image, queue_size=5
+                )
+                self.cam_info_pub[i] = rospy.Publisher(
+                    f"/camera{i}/color/camera_info", CameraInfo, queue_size=5
+                )
+                self.cam_tf_pub[i] = rospy.Publisher(
+                    f"/tf_camera/camera{i}", TransformStamped, queue_size=3
+                )
+
+            self.cam_intrinsics = [None for i in range(self.model.ncam)]
+            self.cam_extrinsics = [None for i in range(self.model.ncam)]
+            self.joint_limit = self.get_joint_limit(self.joint_names)
+            self.set_joint_angle(self.init_joints)
+
+            # Unregister publishers if they already exist
+            if hasattr(self, "gt_pub_selected"):
+                for pub in [self.gt_pub_selected, self.gt_pub_selected_name]:
+                    if pub:
+                        pub.unregister()
+            if self.gui and self.viewer is not None:
+                self.gt_pub_selected = rospy.Publisher(
+                    "/ground_truth/selected_object_id", Int32, queue_size=1
+                )
+                self.gt_pub_selected_name = rospy.Publisher(
+                    "/ground_truth/selected_object_name", String, queue_size=1
+                )
+
+            self.set_ros_param()
+            self.model_ready = True
+
+            mujoco.mj_step(self.model, self.data)
+
+            self.publish_slow_timer = rospy.Timer(
+                float_to_ros_duration(PUBLISH_SLOW_DURATION), self.publish_slow
+            )
+            self.publish_fast_timer = rospy.Timer(
+                float_to_ros_duration(PUBLISH_FAST_DURATION), self.publish_fast
+            )
+
+            print("    Restart fast and slow timers")
+            print("    RESET FINISHED")
+
+    def preempt_cb(self):
+        rospy.loginfo("Preempted trajectory!!!")
+        self.arm_trajectory = None
+        result = FollowJointTrajectoryResult()
+        result.error_code = actionlib.GoalStatus.PREEMPTED
+        self.follow_trajectory_as.set_preempted(result)
+
+    def follow_trajectory_cb(self):
+        pass
+
+    def get_objq_indices(self, obj_name):
+        jnt = self.model.joint(self.model.body(obj_name).jntadr[0])
+        qpos_inds = np.array(range(jnt.qposadr[0], jnt.qposadr[0] + len(jnt.qpos0)))
+        return qpos_inds
+
+    def get_qpos_indices(self, joints):
+        qpos_inds = np.array([self.model.joint(j).qposadr[0] for j in joints])
+        return qpos_inds
+
+    def get_qvel_indices(self, joints):
+        qvel_inds = np.array([self.model.joint(j).dofadr[0] for j in joints])
+        return qvel_inds
+
+    def get_ctrl_indices(self, joints, prefix="", replace=""):
+        ctrl_name = lambda j: prefix + j.replace("_joint", replace)
+        ctrl_inds = [self.model.actuator(ctrl_name(j)).id for j in joints]
+        return np.array(ctrl_inds)
+
+    def get_act_indices(self, joints, prefix="", replace=""):
+        act_name = lambda j: prefix + j.replace("_joint", replace)
+        act_inds = [self.model.actuator(act_name(j)).actadr[0] for j in joints]
+        return np.array(act_inds)
+
+    def get_jnt_indices(self, joints):
+        jnt_inds = np.array([self.model.joint(j).id for j in joints])
+        return jnt_inds
+
+    def get_site_id(self, obj_name):
+        site_id = self.model.site(f"{obj_name}_site").id
+        return site_id
+
+    def get_equality_id(self, obj_name):
+        equality_id = self.model.equality(f"{obj_name}_weld").id
+        return equality_id
+
+    def load_ros_param(self):
+        """
+        load from ros param:
+        - viewer-related info
+        """
+        # * set viewer
+        viewer_lookat = rospy.get_param(
+            "execution_scene/viewer/look_at", [1.07, 0, 1.0]
+        )
+        viewer_distance = rospy.get_param("execution_scene/viewer/distance", 3.55)
+        viewer_elevation = rospy.get_param("execution_scene/viewer/elevation", -30.0)
+        viewer_azimuth = rospy.get_param("execution_scene/viewer/azimuth", 0)
+        self.viewer_lookat = np.array(viewer_lookat)
+        self.viewer_distance = viewer_distance
+        self.viewer_elevation = viewer_elevation
+        self.viewer_azimuth = viewer_azimuth
+
+    def set_ros_param(self):
+        """
+        set the ROS parameter for important static values
+        """
+        rospy.set_param("execution/joint_names", self.joint_names)
+        rospy.set_param("execution/joint_limits", self.joint_limit.tolist())
+        rospy.set_param("ws_xml_path", self.ws_xml_path)
+
+    def set_viewer(self):
+        if self.gui:
+            if USE_MUJOCO_PY_VIEWER:
+                self.viewer = mujoco_viewer.MujocoViewer(
+                    self.model,
+                    self.data,
+                    mode="window" if self.gui else "offscreen",
+                )
+                self.viewer._render_every_frame = False
+                self.viewer._hide_menus = True
+
+                self.viewer.cam.lookat = self.viewer_lookat
+                self.viewer.cam.elevation = self.viewer_elevation
+                self.viewer.cam.distance = self.viewer_distance
+                self.viewer.cam.azimuth = self.viewer_azimuth
+            else:
+                self.viewer = mujoco.viewer.launch_passive(
+                    self.model,
+                    self.data,
+                    show_left_ui=False,
+                    show_right_ui=False,
+                )
+                self.viewer.cam.lookat = self.viewer_lookat
+                self.viewer.cam.elevation = self.viewer_elevation
+                self.viewer.cam.distance = self.viewer_distance
+                self.viewer.cam.azimuth = self.viewer_azimuth
+        else:
+            self.viewer = None
+
+        # if USE_MUJOCO_PY_VIEWER and self.viewer is not None:
+        #     glfw.make_context_current(self.viewer.window)
+        # if self.viewer is None:
+        #     glfw.make_context_current(None)
+
+    def get_joint_state(self, joint_names):
+        iqpos = self.get_qpos_indices(joint_names)
+        iqvel = self.get_qvel_indices(joint_names)
+        position = self.data.qpos[iqpos]
+        velocity = self.data.qvel[iqvel]
+        return position, velocity
+
+    def get_joint_limit(self, joint_names):
+        ijidx = self.get_jnt_indices(joint_names)
+        print("get_joint_limits joint_names: ", joint_names, " ijidx: ", ijidx)
+        return np.array(self.model.jnt_range[ijidx, :])
+
+    def set_joint_angle(self, joints):
+        if type(joints) == dict:
+            joint_names = list(joints.keys())
+            position = np.array(list(joints.values()))
+        else:
+            joint_names = self.joint_names
+            position = np.array(joints)
+        velocity = [0] * len(position)
+
+        iqpos = self.get_qpos_indices(joint_names)
+        pctrl = self.get_ctrl_indices(joint_names)
+        # vctrl = self.get_ctrl_indices(joint_names, replace='_v')
+        intact = self.get_act_indices(joint_names, replace="_intv")
+        intvctrl = self.get_ctrl_indices(joint_names, replace="_intv")
+        self.data.qpos[iqpos] = position
+        self.data.ctrl[pctrl] = position
+        # self.data.ctrl[vctrl] = velocity
+        self.data.act[intact] = position
+        self.data.ctrl[intvctrl] = velocity
+        print("setting joint angle...")
+
+        mujoco.mj_forward(self.model, self.data)
+
+    def publish_camera_info(self, camera_id, now):
+        """
+        publish the camera intrinsics matrix and extrinsics tf
+        ref: https://github.com/deepmind/dm_control/blob/774f46182140106e22725914aad3c6299ed91edd/dm_control/mujoco/engine.py#L41
+        """
+        if self.cam_intrinsics[camera_id] is None:
+            # compute intrinsics and extrinsics
+            pos = self.data.cam_xpos[camera_id]
+            rot = self.data.cam_xmat[camera_id].reshape(3, 3)
+            fov = self.model.cam_fovy[camera_id]
+
+            # * notice that the mujoco camera pose is pointing in the opposite direction of the look-at
+            # to match it into the right-hand coordinate system, and to match the depth value in point cloud
+            # we will change the sign of z axis and y axis (up vector)
+            rot[:, 1] = -rot[:, 1]
+            rot[:, 2] = -rot[:, 2]
+
+            # Translation matrix (4x4).
+            transform = np.eye(4)
+            transform[0:3, 3] = pos
+            # Rotation matrix (4x4).
+            transform[0:3, 0:3] = rot
+            # Focal transformation matrix (3x4).
+            # focal_scaling = (1./np.tan(np.deg2rad(fov)/2)) * self.renderer.height / 2.0
+            # focal = np.diag([-focal_scaling, focal_scaling, 1.0, 0])[0:3, :]
+
+            # Translation matrix (4x4).
+            translation = np.eye(4)
+            # translation[0:3, 3] = -pos
+            # Rotation matrix (4x4).
+            rotation = np.eye(4)
+            # rotation[0:3, 0:3] = rot
+            # Focal transformation matrix (3x4).
+            focal_scaling = (
+                (1.0 / np.tan(np.deg2rad(fov) / 2.0)) * self.renderer.height / 2.0
+            )
+            focal = np.diag([focal_scaling, focal_scaling, 1.0, 0])[0:3, :]
+            # NOTE: issue in rendering: by default the fx is negative
+            # mujoco doesn't seem to support having different focal length for x and y axes
+
+            # Image matrix (3x3).
+            image = np.eye(3)
+            image[0, 2] = (self.renderer.width - 1) / 2.0
+            image[1, 2] = (self.renderer.height - 1) / 2.0
+            cam_intrinsics = image @ focal @ rotation @ translation  # 3x4
+
+            print("extrinsics: ", transform)
+            print("intrinsics: ", cam_intrinsics)
+            self.cam_intrinsics[camera_id] = cam_intrinsics
+
+        # compute extrinsics at each time
+        pos = np.array(self.data.cam_xpos[camera_id])
+        rot = np.array(self.data.cam_xmat[camera_id]).reshape(3, 3)
+        # * notice that the mujoco camera pose is pointing in the opposite direction of the look-at
+        # to match it into the right-hand coordinate system, and to match the depth value in point cloud
+        # we will change the sign of z axis and y axis (up vector)
+        rot[:, 1] = -rot[:, 1]
+        rot[:, 2] = -rot[:, 2]
+
+        # Translation matrix (4x4).
+        transform = np.eye(4)
+        transform[0:3, 3] = pos
+        # Rotation matrix (4x4).
+        transform[0:3, 0:3] = rot
+        self.cam_extrinsics[camera_id] = transform
+
+        msg = CameraInfo()
+        msg.header.frame_id = f"camera{camera_id}_color_optical_frame"
+        msg.header.stamp = now
+        msg.height = self.renderer.height
+        msg.width = self.renderer.width
+        msg.K = self.cam_intrinsics[camera_id][:3, :3].flatten()
+        msg.P = self.cam_intrinsics[camera_id].flatten()
+        self.cam_info_pub[camera_id].publish(msg)
+
+        # publish camera in world
+        t = TransformStamped()
+        t.header.stamp = now
+        t.header.frame_id = "world"
+        t.child_frame_id = f"camera{camera_id}_color_optical_frame"
+        t.transform.translation.x = self.cam_extrinsics[camera_id][0, 3]
+        t.transform.translation.y = self.cam_extrinsics[camera_id][1, 3]
+        t.transform.translation.z = self.cam_extrinsics[camera_id][2, 3]
+        try:
+            q = tf.transformations.quaternion_from_matrix(
+                self.cam_extrinsics[camera_id]
+            )
+        except:
+            return
+        t.transform.rotation.w = q[0]
+        t.transform.rotation.x = q[1]
+        t.transform.rotation.y = q[2]
+        t.transform.rotation.z = q[3]
+        self.br.sendTransform(t)
+        self.cam_tf_pub[camera_id].publish(t)
+
+    def get_rgb_img(self, camera_id):
+        self.renderer.update_scene(self.data, camera=camera_id)
+        self.renderer.disable_depth_rendering()
+        self.renderer.disable_segmentation_rendering()
+        rgb_img = self.renderer.render()
+        rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_RGB2BGR)
+        return rgb_img
+
+    def get_depth_img(self, camera_id):
+        self.renderer.update_scene(self.data, camera=camera_id)
+        self.renderer.enable_depth_rendering()
+        depth_img = self.renderer.render()
+        depth_img = np.array(depth_img)
+        far = 10.0
+        depth_img[depth_img >= far] = far
+        return depth_img * 1000
+
+    def get_seg_img(self, camera_id):
+        self.renderer.update_scene(self.data, camera=camera_id)
+        self.renderer.enable_segmentation_rendering()
+        seg_img = self.renderer.render()
+        # Display the contents of the first channel, which contains object
+        # IDs. The second channel, seg[:, :, 1], contains object types.
+        geom_ids = seg_img[:, :, 0]
+        new_geom_ids = np.array(geom_ids)
+        # print out the root id
+        for gid in list(set(geom_ids.flatten().tolist())):
+            if gid != -1:
+                body_id = self.model.body(self.model.geom(gid).bodyid).rootid[0]
+                # print('segmented object: ', self.model.body(body_id).name, gid, body_id)
+
+                # if the object is workspace or robot, change the segid to -1
+                if self.model.body(body_id).name in ["base", "motoman_base"]:
+                    new_geom_ids[geom_ids == gid] = -1
+                elif self.model.body(body_id).name in ["world", "workspace"]:
+                    new_geom_ids[geom_ids == gid] = -2
+                else:
+                    # unify for each object
+                    new_geom_ids[geom_ids == gid] = body_id
+            else:
+                new_geom_ids[geom_ids == gid] = -2  # simulation background
+        geom_ids = new_geom_ids
+        return geom_ids
+
+    def publish_image(self, camera_id, now):
+        """
+        obtain image from mujoco and publish
+        ref: https://github.com/deepmind/mujoco/blob/main/python/tutorial.ipynb
+        """
+        # maxwidth = self.model.vis.global_.offwidth
+        # maxheight = self.model.vis.global_.offheight
+        # This could be specified in XML, '<visual> <global offwidth="..."/> </visual>
+
+        rgb_img = self.get_rgb_img(camera_id)
+        depth_img = self.get_depth_img(camera_id)
+        geom_ids = self.get_seg_img(camera_id)
+        seg_img = encode_seg_img_rgb(geom_ids)
+
+        if self.save_image_dir is not None:
+            new_depth_img = (depth_img).astype("uint16")
+            new_geom_ids = np.array(geom_ids)
+            ids = set(geom_ids.flatten().tolist())
+            ids.pop()
+            rand_id = ids.pop()
+            # new_geom_ids[geom_ids == 0] = -3  # set id 0 to something positive
+            # new_geom_ids[geom_ids == -2] = 0  # set background to 0
+            # new_geom_ids[new_geom_ids != 0] = 255  # set else to 1
+            print(rand_id, set(geom_ids.flatten().tolist()))
+            new_geom_ids[geom_ids == rand_id] = 255
+            new_geom_ids[geom_ids != rand_id] = 0
+            new_geom_ids = new_geom_ids.astype("uint8")
+            img_dir = self.save_image_dir
+            fname = f"{camera_id}-{now.to_nsec():016d}.png"
+            cv2.imwrite(img_dir + "/rgb/" + fname, rgb_img)
+            cv2.imwrite(img_dir + "/depth/" + fname, new_depth_img)
+            cv2.imwrite(img_dir + "/masks/" + fname, new_geom_ids)
+
+        msg = self.bridge.cv2_to_imgmsg(rgb_img, "bgr8")
+
+        msg.header.frame_id = f"camera{camera_id}_color_optical_frame"
+        msg.header.stamp = now
+        self.rgb_cam_pub[camera_id].publish(msg)
+
+        msg = self.bridge.cv2_to_imgmsg(depth_img, "32FC1")
+        msg.header.frame_id = f"camera{camera_id}_color_optical_frame"
+        msg.header.stamp = now
+        self.depth_cam_pub[camera_id].publish(msg)
+
+        msg = self.bridge.cv2_to_imgmsg(seg_img, "rgb8")
+        msg.header.frame_id = f"camera{camera_id}_color_optical_frame"
+        msg.header.stamp = now
+        self.seg_cam_pub[camera_id].publish(msg)
+
+    def publish_joint_state(self, now):
+        pass
+
+    def publish_ground_truth_state(self, now):
+        names = []
+        poses = []
+        ids = []
+        markerArray = MarkerArray()
+        for i in range(self.model.nbody):
+            body = self.model.body(i)
+            dbody = self.data.body(i)
+            name = body.name
+            if name[:7] == "object_" or name[0] == "0" or name[:4] == "obj_":
+                # get qpos indices for joint
+                # iqpos = self.get_objq_indices(name)
+                # pos_quat = self.data.qpos[iqpos]
+                mat1 = np.eye(4)
+                mat1[:3, :3] = dbody.xmat.reshape(3, 3)
+                mat1[:3, 3] = dbody.xpos
+                mat2 = self.geom2body[name + "_vis"]
+                mat = mat1 @ mat2
+                quat = tf.quaternion_from_matrix(mat)
+                pos = mat[:3, 3]
+                pose = Pose()
+                pose.position.x = pos[0]
+                pose.position.y = pos[1]
+                pose.position.z = pos[2]
+                pose.orientation.w = quat[0]
+                pose.orientation.x = quat[1]
+                pose.orientation.y = quat[2]
+                pose.orientation.z = quat[3]
+                names.append(name)
+                poses.append(pose)
+                ids.append(i)
+                # make marker
+                marker = Marker()
+                marker.text = name
+                marker.id = i
+                marker.header.frame_id = "world"
+                marker.pose = pose
+                # print("assets: ")
+                # pprint.pp(self.assets)
+                if self.geom_type[name + "_vis"] == "mesh":
+                    rel_path = self.assets[name + "_vis"].replace(self.pkg_path, "")
+                    marker.mesh_resource = "package://lab_vbnpm" + rel_path
+                    # marker.mesh_resource = 'file://' + self.assets[name + '_vis']
+                    marker.mesh_use_embedded_materials = True
+                    marker.type = marker.MESH_RESOURCE
+                    marker.scale.x = 1.0
+                    marker.scale.y = 1.0
+                    marker.scale.z = 1.0
+                elif self.geom_type[name + "_vis"] == "box":
+                    marker.type = marker.CUBE
+                    sx = self.model.geom(self.model.body(i).geomadr[0]).size[0] * 2
+                    sy = self.model.geom(self.model.body(i).geomadr[0]).size[1] * 2
+                    sz = self.model.geom(self.model.body(i).geomadr[0]).size[2] * 2
+                    marker.scale.x = sx
+                    marker.scale.y = sy
+                    marker.scale.z = sz
+                    marker.color.r = self.model.geom(
+                        self.model.body(i).geomadr[0]
+                    ).rgba[0]
+                    marker.color.g = self.model.geom(
+                        self.model.body(i).geomadr[0]
+                    ).rgba[1]
+                    marker.color.b = self.model.geom(
+                        self.model.body(i).geomadr[0]
+                    ).rgba[2]
+                    marker.color.a = self.model.geom(
+                        self.model.body(i).geomadr[0]
+                    ).rgba[3]
+                markerArray.markers.append(marker)
+
+        # pub poses
+        msg = ObjectPoses()
+        msg.header.stamp = now
+        msg.name = names
+        msg.pose = poses
+        msg.id = ids
+        self.gt_obj_pub.publish(msg)
+        # visualize markers
+        self.rviz_pub.publish(markerArray)
+        # publish selected object id
+        if self.gui and self.viewer is not None:
+            perturb_obj_id = -1
+            if USE_MUJOCO_PY_VIEWER:
+                if self.viewer.is_alive:
+                    perturb_obj_id = self.viewer.pert.select
+            else:
+                if self.viewer.is_running():
+                    perturb_obj_id = self.viewer.perturb.select
+
+            if perturb_obj_id > -1:
+                self.gt_pub_selected.publish(Int32(data=perturb_obj_id))
+                name = self.model.body(perturb_obj_id).name
+                self.gt_pub_selected_name.publish(String(data=name))
+        # publish id to name mapping
+        msg = ObjectIdsToNames()
+        obj_ids = list(range(self.model.nbody))
+        obj_names = [self.model.body(i).name for i in obj_ids]
+        msg.obj_ids = obj_ids
+        msg.names = obj_names
+        self.obj_ids_to_names_pub.publish(msg)
+
+    def fake_obj_control(self, req):
+        """
+        *fake perception for unit testing*
+        directly apply force:torque to the object through data.xfrc_applied
+        for a set time
+        """
+        obj_id = req.obj_id
+        duration = req.duration
+        force = [req.wrench.force.x, req.wrench.force.y, req.wrench.force.z]
+        torque = [req.wrench.torque.x, req.wrench.torque.y, req.wrench.torque.z]
+        applied_wrench = force + torque
+        applied_wrench = np.array(applied_wrench)
+        start_time = time.time()
+        while time.time() - start_time < duration:
+            self.data.xfrc_applied[obj_id, :] = applied_wrench
+        return FakeObjectControlResponse()
+
+    def publish_slow(self, clock_param):
+        if not self.model_ready:
+            return
+
+        if self.renderer is None:
+            self.renderer = mujoco.Renderer(self.model, 1080, 1920)
+
+        now = rospy.Time.now()
+        for i in range(self.model.ncam):
+            self.publish_camera_info(i, now)
+            self.publish_image(i, now)
+
+    def publish_fast(self, clock_param):
+        if not self.model_ready:
+            return
+
+        now = rospy.Time.now()
+        self.publish_ground_truth_state(now)
+        self.publish_joint_state(now)
+
+    def step(self, sync_viewer: bool = True):
+        self.do_traj()
+        with self.mj_lock:
+            mujoco.mj_step(self.model, self.data)
+        if sync_viewer and self.viewer is not None:
+            if USE_MUJOCO_PY_VIEWER:
+                if self.viewer.is_alive:
+                    # glfw.make_context_current(self.viewer.window)
+                    self.viewer.render()
+            else:
+                if self.viewer.is_running():
+                    self.viewer.sync()
+        self.step_clock()
+
+    def step_clock(self, use_model_time: bool = True):
+        if use_model_time:
+            timestep = self.model.opt.timestep
+        else:
+            # We must keep the clock stepping even if the model is not ready
+            # in order of rospy timers to keep running
+            timestep = 0.1
+        self.sim_clock.clock += float_to_ros_duration(timestep)
+        self.clock_pub.publish(self.sim_clock)
+
+    def do_traj(self):
+        """
+        track the trajectory if there are ones inside the saved list
+        """
+        # * controlling arm
+        if self.arm_trajectory:
+            joint_names, position, velocity, _time = self.arm_trajectory.pop(0)
+            iqpos = self.get_qpos_indices(joint_names)
+            pctrl = self.get_ctrl_indices(joint_names)
+            # vctrl = self.get_ctrl_indices(joint_names, replace='_v')
+            intact = self.get_act_indices(joint_names, replace="_intv")
+            intvctrl = self.get_ctrl_indices(joint_names, replace="_intv")
+            self.data.ctrl[pctrl] = position
+            # self.data.ctrl[vctrl] = velocity
+            self.data.act[intact] = position
+            self.data.ctrl[intvctrl] = velocity
+        else:
+            iqpos = self.get_qpos_indices(self.joint_names)
+            # pctrl = self.get_ctrl_indices(self.joint_names)
+            # vctrl = self.get_ctrl_indices(self.joint_names, replace='_v')
+            intact = self.get_act_indices(self.joint_names, replace="_intv")
+            intvctrl = self.get_ctrl_indices(self.joint_names, replace="_intv")
+            # self.data.ctrl[pctrl] = self.data.qpos[iqpos]
+            # self.data.ctrl[vctrl] = 0
+            self.data.ctrl[intvctrl] = 0
+
+            is_active = self.arm_trajectory is not None
+            is_active &= self.follow_trajectory_as.is_active()
+            if is_active:
+                rospy.loginfo("Trajectory is done!")
+                result = FollowJointTrajectoryResult()
+                result.error_code = 0
+                self.follow_trajectory_as.set_succeeded(result)
+                self.arm_trajectory = None
+
+        # * controlling end effector
+        if len(self.ee_trajectory) > 0:
+            joint_names, position = self.ee_trajectory.pop(0)
+            ctrl = self.get_ctrl_indices(joint_names)
+            self.data.ctrl[ctrl] = position
+
+    def socket_reply(self, _type: str, msg={}):
+        self.socket.send_json({"type": _type, **msg})
+
+    def socket_reply_error(self, msg):
+        self.socket_reply("error", {"msg": str(msg)})
+
+    def poll_socket(self):
+        if not self.socket.poll(0):
+            return
+
+        req = self.socket.recv_json()
+        cmd = req.get("cmd", "")
+        print("Received req: ", req)
+        if cmd == "reset":
+            self.reset(**req["args"])
+            for i in range(1000):
+                self.step(False)
+            self.socket_reply("success")
+        else:
+            self.socket_reply_error(f"Unknown cmd: {cmd}")
+
+    def step_loop(self):
+        if self.model_ready:
+            # Step model if it's ready
+            if self.tick_count <= 1000:
+                # Skip the first 1000 ticks in the simulation
+                self.step(False)
+                self.tick_count += 1
+            else:
+                self.step()
+
+    def backup_step_clock_loop(self):
+        while not rospy.is_shutdown() and not self.kill_backup_clock_event.is_set():
+            # Manually tick the clock if model is not ready to keep
+            # ros timers and publishers going.
+            if not self.model_ready:
+                self.step_clock(use_model_time=False)
+            else:
+                # Sleep to stop the thread from taking up valuble execution time
+                time.sleep(5)
+        self.kill_backup_clock_event.clear()
+
+    def run(self):
+        """
+        keep spinning and publishing to the ROS topics
+        """
+
+        context = zmq.Context()
+        self.socket = context.socket(zmq.REP)
+        self.socket.bind(self.address)
+
+        # Must step mujoco in main thread b/c seg faults otherwise??
+        while not rospy.is_shutdown():
+            self.poll_socket()
+            self.step_loop()
+
+
+if __name__ == "__main__":
+    # Create the parser
+    parser = argparse.ArgumentParser(description="ROS execution node for simulation.")
+
+    # Define arguments
+    parser.add_argument("--scene", type=str, help="Path to the scene XML file.")
+    parser.add_argument(
+        "--gui",
+        type=lambda x: x.lower() in ("true", "t", "y", "yes"),
+        default=False,
+        help="Enable or disable the GUI. (true/false)",
+    )
+    parser.add_argument(
+        "--save-image-dir",
+        type=str,
+        default=None,
+        help="Directory to save simulation images.",
+    )
+    parser.add_argument(
+        "--server-address",
+        type=str,
+        default="tcp://*:5858",
+        help="Address of the ZMQ server, which can receive reset requests for the simulation.",
+    )
+
+    # Parse arguments
+    args, unknown = parser.parse_known_args()
+
+    # Handle the save_image_dir logic
+    if args.save_image_dir and args.save_image_dir.startswith("_"):
+        args.save_image_dir = None
+
+    # Instantiate and run the node
+    rospy.init_node("execution_node")
+    execution_node = ExecutionNode(args.server_address)
+    if args.scene:
+        execution_node.reset(args.scene, args.gui, args.save_image_dir)
+    execution_node.run()

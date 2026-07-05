@@ -1,0 +1,73 @@
+session_name: "control_sim"
+vars:
+  SCENE:
+    type: str
+    default: "./tests/scenes/tabletop_structured/scene198.xml"
+    help: "Path to the scene"
+  VLM:
+    type: bool
+    default: true
+    help: "Whether to use the VLM or not"
+  ROSBAG:
+    type: bool
+    default: true
+    help: "Collects rosbag data (takes 60 GB of space per bag)."
+  METHOD:
+    type: enum
+    default: "human"
+    choices: ["human", "vlm_only", "dg_only", "dg_into_vlm", "vlm_dg"]
+    help: "Decision making method to use."
+  DEBUG_SHOW:
+    type: bool
+    default: true
+    help: "Displays debug diagrams in-between decisions."
+  IN_FILE:
+    type: str
+    default: "''"
+    help: "File to use for human input. If none, then the CLI will prompt for input."
+  OUT_FILE:
+    type: str
+    default: "''"
+    help: "File to store logging data. If none, then stderr is used."
+  TARGET_OBJECT:
+    type: str
+    default: "''"
+    help: "Name of object to retrieve."
+  PICK_LIMIT:
+    type: int
+    default: -1
+    help: "Maximum number of picks, before this process ends. The process will also end if the target object is picked. If = -1, then the picking loop is ran forever."
+  PROFILER:
+    type: enum
+    default: "line_profiler"
+    choices: ["c_profile", "line_profiler"]
+    help: "Profiler to use for grasping choice function."
+  MJ_PICKLE:
+    type: bool
+    default: false
+    help: "Whether to save Mujoco state as pickle in experiment_result_cb"
+pre_cmd: "./7kill.sh"
+post_attach: false
+windows:
+  - "Roscore": "roscore"
+
+  - "Control Launch": "DISABLE_ROS1_EOL_WARNINGS=1 roslaunch --wait lab_vbnpm control.launch is_sim:=true scene:=$SCENE mj_pickle:=$MJ_PICKLE"
+    post_delay: 10.0
+  
+  - "Grasp Planner Launch": "roslaunch --wait cgn_ros container.launch"
+    post_delay: 6.0
+  
+  - "Calibration Sim Parameters": "python3 ./launch/calibration/sim_params.py"
+    post_delay: 3.0
+  
+  - "Window Control": "./winctrl.sh ./ros_configs/control_sim.windows.yaml"
+  
+  - "Control Terminal": 
+    - "wmctrl -c 'Selected Info'"
+    - "gnome-terminal --title 'Selected Info' -- bash -c './show_selected_obj.sh; exec bash'"
+    - "wmctrl -c 'Control Terminal'"
+    - "gnome-terminal --title 'Control Terminal' -- bash -c 'tmux attach; exec bash'"
+
+  - "Curobo Control": 
+    - "source API_KEY"
+    - "python3 ./scripts/task_planner/curobo_control.py --method $METHOD --sim $VLM?--vlm --ground-truth $ROSBAG?--rosbag $DEBUG_SHOW?--debug-show --in-file $IN_FILE --out-file $OUT_FILE --target-object $TARGET_OBJECT --pick-limit $PICK_LIMIT --profiler $PROFILER"

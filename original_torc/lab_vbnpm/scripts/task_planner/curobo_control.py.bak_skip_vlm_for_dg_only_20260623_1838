@@ -1,0 +1,1377 @@
+import line_profiler
+import cProfile
+import sys
+import json
+import time
+import os
+import argparse
+import traceback
+from enum import Enum
+from typing import Optional, Any
+from datetime import datetime
+from dataclasses import dataclass
+import zmq
+
+if __name__ != "__main__":
+    print("Error: This script must be run and not imported!")
+    exit(1)
+
+
+USER_PREFIX = ""
+if "USER" in os.environ:
+    USER_PREFIX = os.environ["USER"] + "_"
+
+
+class Method(str, Enum):
+    HUMAN = "human"
+    VLM_ONLY = "vlm_only"
+    DG_ONLY = "dg_only"
+    DG_INTO_VLM = "dg_into_vlm"
+    VLM_DG = "vlm_dg"
+    RANDOM = "random"
+
+
+class Profiler(str, Enum):
+    CPROFILE = "c_profile"
+    LINE_PROFILER = "line_profiler"
+
+
+@dataclass
+class Args:
+    method: Method
+    sim: bool = False
+    ground_truth: bool = False
+    rosbag: bool = False
+    debug_show: bool = False
+    vlm: bool = True
+    in_file: str = None
+    out_file: str = None
+    target_object: Optional[str] = None
+    target_object_id: Optional[int] = None
+    pick_limit: int = 15
+    server: bool = False
+    server_address: Optional[str] = None
+    profile_grasping: bool = False
+    profiler: Profiler = Profiler.LINE_PROFILER
+
+
+parser = argparse.ArgumentParser(epilog="Controls grasping with Curobo.")
+parser.add_argument(
+    "--method",
+    default=Method.HUMAN,
+    choices=list([method.value for method in Method]),
+    help="Decision making method to use.",
+)
+parser.add_argument(
+    "--sim", action="store_true", help="Uses a simulation to run the experiments."
+)
+parser.add_argument(
+    "--ground-truth",
+    action="store_true",
+    help="Uses the ground truth segmentation data in simulation.",
+)
+parser.add_argument(
+    "--rosbag",
+    action="store_true",
+    help="Collects rosbag data (takes 60 GB of space per bag).",
+)
+parser.add_argument(
+    "--debug-show",
+    action="store_true",
+    help="Displays debug diagrams in-between decisions.",
+)
+parser.add_argument(
+    "--vlm",
+    action="store_true",
+    help="Uses VLM for decision making (if applicable).",
+)
+parser.add_argument(
+    "--in-file",
+    type=str,
+    help="File to use for human input. If none, then the CLI will prompt for input.",
+)
+parser.add_argument(
+    "--out-file",
+    type=str,
+    help="File to store logging data. If none, then stderr is used.",
+)
+parser.add_argument(
+    "--target-object",
+    type=str,
+    help="Name of object to retrieve.",
+)
+parser.add_argument(
+    "--target-object-id",
+    type=str,
+    help="Id of object to retrieve.",
+)
+parser.add_argument(
+    "--pick-limit",
+    type=int,
+    default=15,
+    help="Maximum number of picks, before this process ends. The process will also end if the target object is picked. If = -1, then the picking loop is ran forever. If = 0, then no picking is done and the process ends after running sensing and grasping.",
+)
+parser.add_argument(
+    "--server", action="store_true", help="Runs the Curobo control as a server."
+)
+parser.add_argument(
+    "--server-address",
+    type=str,
+    default="tcp://*:5757",
+    help="Address of socket to bind the server to. Ex. tcp://*:5757",
+)
+parser.add_argument(
+    "--profile-grasping",
+    action="store_true",
+    help="Profiles the grasping choice function and logs the results.",
+)
+parser.add_argument(
+    "--profiler",
+    type=str,
+    default=Profiler.LINE_PROFILER,
+    choices=list([profiler.value for profiler in Profiler]),
+    help="Profiler to use for grasping choice function.",
+)
+args = Args(**parser.parse_args().__dict__)
+
+robot = None
+perception = None
+planner = None
+grasp_planner = None
+prompter = None
+
+
+def run(args: Args) -> str:
+    # region Arg Parsing
+    init_t0 = time.time()
+
+    if args.in_file and not os.path.exists(args.in_file):
+        print(f"Error: in_file {args.in_file} does not exist!")
+        return "error"
+    if args.out_file and not args.out_file.endswith(".csv"):
+        print("Error: out_file must end with .csv if it's set!")
+        return "error"
+
+    if args.out_file:
+        os.environ["TORC_EXPERIMENT_DIR"] = os.path.dirname(os.path.abspath(args.out_file))
+    os.environ["TORC_METHOD"] = str(args.method)
+    if args.target_object:
+        os.environ["TORC_TARGET_OBJECT"] = str(args.target_object)
+
+    OUT_FILE_DIR = os.path.dirname(args.out_file) if args.out_file else None
+    INFO_FILE = (
+        os.path.join(OUT_FILE_DIR, "info_curobo_control.json") if OUT_FILE_DIR else None
+    )
+    STAGE_LOG_FILE = (
+        os.path.join(OUT_FILE_DIR, "curobo_control_stage_log.txt")
+        if OUT_FILE_DIR
+        else None
+    )
+
+    def stage_log(stage: str, detail: str = ""):
+        elapsed = time.time() - init_t0
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        message = f"[CUROBO_STAGE {timestamp} +{elapsed:9.3f}s] {stage}"
+        if detail:
+            message += f" | {detail}"
+        print(message, flush=True)
+        if STAGE_LOG_FILE:
+            try:
+                os.makedirs(os.path.dirname(STAGE_LOG_FILE), exist_ok=True)
+                with open(STAGE_LOG_FILE, "a") as stage_file:
+                    print(message, file=stage_file, flush=True)
+            except Exception as exc:
+                print(
+                    f"[CUROBO_STAGE_LOG_ERROR] failed to write stage log: {exc}",
+                    flush=True,
+                )
+
+    def print_args():
+        print("🤖 Curobo Runner")
+        max_arg_len = max(len(s) for s in args.__dict__)
+        for arg, value in args.__dict__.items():
+            print(f"  {arg.ljust(max_arg_len)}  {value}")
+
+    stage_log(
+        "run(args) entered",
+        f"method={args.method} sim={args.sim} ground_truth={args.ground_truth} "
+        f"vlm={args.vlm} target_object={args.target_object} out_file={args.out_file}",
+    )
+    print_args()
+
+    if INFO_FILE:
+        stage_log("writing info_curobo_control.json", INFO_FILE)
+        with open(INFO_FILE, "w") as file:
+            now = datetime.now()
+            timestamp = now.strftime("%Y/%m/%d %H:%M:%S")
+
+            info = {
+                "cmd": " ".join(sys.argv),
+                "args": args.__dict__,
+                "unix_timestamp": now.timestamp(),
+                "timestamp": timestamp,
+            }
+            json.dump(info, file, indent=2)
+        stage_log("wrote info_curobo_control.json", INFO_FILE)
+    # endregion
+
+    # region Pre Init
+    init_t1 = time.time()
+    stage_log("pre-init imports begin", "signal traceback subprocess pathlib rospkg")
+    import signal
+    import traceback
+    import subprocess
+    from pathlib import Path
+
+    from rospkg import RosPack
+    stage_log("pre-init imports done")
+
+    def load_process_pid(process_name: str) -> int:
+        pid_file_path = f"/tmp/{USER_PREFIX}{process_name}.pid"
+        try:
+            with open(pid_file_path, "r") as f:
+                return int(f.read())
+        except (IOError, ValueError):
+            return -1
+
+    def set_process_pid(process_name: str, value: int):
+        pid_file_path = f"/tmp/{USER_PREFIX}{process_name}.pid"
+        with open(pid_file_path, "w") as f:
+            f.write(str(value))
+
+    def try_kill_process(process_name: str):
+        pid = load_process_pid(process_name)
+        if pid > -1:
+            try:
+                os.killpg(os.getpgid(pid), signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+        set_process_pid(process_name, -1)
+
+    def try_kill_processes():
+        try_kill_process("debug_show")
+        try_kill_process("record_rosbag")
+
+    def mark_unfinished():
+        Path(f"/tmp/{USER_PREFIX}curobo_control_finished").unlink(missing_ok=True)
+
+    def mark_finished():
+        with open(f"/tmp/{USER_PREFIX}curobo_control_finished", "w") as file:
+            file.write("True")
+
+    def cleanup():
+        stage_log("cleanup begin")
+        print("Cleanup and exiting...")
+        try_kill_processes()
+        mark_finished()
+        # Explicitly flush the output file
+        if out_file:
+            out_file.close()
+        stage_log("cleanup done")
+
+    def handle_term(signum: int, frame):
+        print(f"handle_term: {signum} {frame}")
+        cleanup()
+        exit()
+
+    stage_log("RosPack init begin")
+    rp = RosPack()
+    stage_log("RosPack init done")
+
+    ROOT_DIR = os.path.abspath(rp.get_path("lab_vbnpm"))
+    stage_log("resolved lab_vbnpm root", ROOT_DIR)
+
+    DEBUG_SHOW_DIR = f"/tmp/{USER_PREFIX}curobo_runner_debug"
+    DEBUG_SHOW_SH = os.path.join(ROOT_DIR, "debug_show.sh")
+    RECORD_ROSBAG_SH = os.path.join(ROOT_DIR, "record_rosbag.sh")
+
+    PROMPT_PICK_OBJECT = ""
+    PROMPT_PICK_OBJECT_DG = ""
+    PROMPT_MAKE_DG = ""
+
+    prompt_templates_dir = os.path.join(
+        rp.get_path("lab_vbnpm"), "scripts/task_planner/prompt_templates"
+    )
+    stage_log("loading prompt templates begin", prompt_templates_dir)
+    with open(os.path.join(prompt_templates_dir, "pick_object.txt"), "r") as f:
+        PROMPT_PICK_OBJECT = f.read()
+
+    with open(os.path.join(prompt_templates_dir, "pick_object_dg_desc.txt"), "r") as f:
+        PROMPT_PICK_OBJECT_DG = f.read()
+
+    with open(os.path.join(prompt_templates_dir, "make_dg.txt"), "r") as f:
+        PROMPT_MAKE_DG = f.read()
+    stage_log("loading prompt templates done")
+
+    ROBOT_RESET_JOINTS = {
+        "torso_joint_b1": 0,
+        "arm_left_joint_1_s": 1.75,
+        "arm_left_joint_2_l": 0.8,
+        "arm_left_joint_3_e": 0,
+        "arm_left_joint_4_u": -0.66,
+        "arm_left_joint_5_r": 0,
+        "arm_left_joint_6_b": 0,
+        "arm_left_joint_7_t": 0,
+        # "arm_right_joint_1_s": 0.75,
+        # "arm_right_joint_2_l": 0,
+        # "arm_right_joint_3_e": -0.6,
+        # "arm_right_joint_4_u": -1.15,
+        # "arm_right_joint_5_r": 0,
+        # "arm_right_joint_6_b": -1.3,
+        # "arm_right_joint_7_t": 0.0,
+        "arm_right_joint_1_s": 0.2,
+        "arm_right_joint_2_l": -0.7,
+        "arm_right_joint_3_e": 0.0,
+        "arm_right_joint_4_u": -1.7,
+        "arm_right_joint_5_r": 0,
+        "arm_right_joint_6_b": -1.3,
+        "arm_right_joint_7_t": 0.0,
+    }
+
+    in_file = open(args.in_file, "r") if args.in_file else sys.stdin
+    out_file = open(args.out_file, "a") if args.out_file else sys.stderr
+    stage_log(
+        "opened io files",
+        f"in_file={'stdin' if in_file is sys.stdin else args.in_file} "
+        f"out_file={'stderr' if out_file is sys.stderr else args.out_file}",
+    )
+
+    signal.signal(signal.SIGQUIT, handle_term)
+    signal.signal(signal.SIGINT, handle_term)
+    signal.signal(signal.SIGTERM, handle_term)
+    signal.signal(signal.SIGHUP, handle_term)
+    stage_log("signal handlers installed")
+
+    mark_unfinished()
+    stage_log("marked curobo_control unfinished")
+    try_kill_processes()
+    stage_log("stale helper process cleanup done")
+
+    if args.debug_show:
+        subprocess.run(
+            f"{DEBUG_SHOW_SH} dir {DEBUG_SHOW_DIR} --reset",
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+
+    stage_log(
+        "heavy imports begin",
+        "cv2 numpy rospy cv_bridge ROS msgs visual_utils GraspPlanner Prompter "
+        "open_loop dep_graph",
+    )
+    import re
+    import pickle
+
+    stage_log("heavy import begin: cv2")
+    import cv2
+    stage_log("heavy import done: cv2")
+    stage_log("heavy import begin: numpy")
+    import numpy as np
+    stage_log("heavy import done: numpy")
+
+    stage_log("heavy import begin: rospy and ROS message modules")
+    import rospy
+    from cv_bridge import CvBridge
+    from std_msgs.msg import Int32
+    from geometry_msgs.msg import PointStamped
+    from sensor_msgs.msg import JointState, Image
+    from visualization_msgs.msg import MarkerArray, Marker
+
+    from lab_vbnpm.msg import ObjectIdsToNames
+    stage_log("heavy import done: rospy and ROS message modules")
+    stage_log("heavy import begin: task_planner.eutils")
+    from task_planner.eutils import ee_open, execute
+    stage_log("heavy import done: task_planner.eutils")
+    stage_log("heavy import begin: utils.visual_utils")
+    from utils.visual_utils import decode_seg_img_rgb
+    stage_log("heavy import done: utils.visual_utils")
+    stage_log("heavy import begin: grasp_planner.curobo_grasp_planner")
+    from grasp_planner.curobo_grasp_planner import GraspPlanner
+    stage_log("heavy import done: grasp_planner.curobo_grasp_planner")
+    stage_log("heavy import begin: task_planner.prompt")
+    from task_planner.prompt import Prompter, create_labeled_image
+    stage_log("heavy import done: task_planner.prompt")
+    stage_log("heavy import begin: task_planner.curobo_open_loop")
+    from task_planner.curobo_open_loop import open_loop_pick_or_place
+    stage_log("heavy import done: task_planner.curobo_open_loop")
+    stage_log("heavy import begin: task_planner.dep_graph")
+    from task_planner.dep_graph import (
+        DepGraph,
+        get_behind_candidates,
+        get_behind_below_dependencies,
+    )
+    stage_log("heavy import done: task_planner.dep_graph")
+    stage_log("heavy imports done")
+
+    _orig_wait_for_message = rospy.wait_for_message
+    _orig_wait_for_service = rospy.wait_for_service
+
+    def _logged_wait_for_message(topic, topic_type, *wait_args, **wait_kwargs):
+        timeout = wait_kwargs.get("timeout", None)
+        if timeout is None and wait_args:
+            timeout = wait_args[0]
+        type_name = getattr(topic_type, "__name__", str(topic_type))
+        stage_log(
+            "WAIT ROS topic begin",
+            f"topic={topic} type={type_name} timeout={timeout}",
+        )
+        wait_t0 = time.time()
+        try:
+            msg = _orig_wait_for_message(
+                topic, topic_type, *wait_args, **wait_kwargs
+            )
+            stage_log(
+                "WAIT ROS topic done",
+                f"topic={topic} elapsed={time.time() - wait_t0:.3f}s",
+            )
+            return msg
+        except Exception as exc:
+            stage_log(
+                "WAIT ROS topic error",
+                f"topic={topic} elapsed={time.time() - wait_t0:.3f}s "
+                f"error={type(exc).__name__}: {exc}",
+            )
+            raise
+
+    def _logged_wait_for_service(service, *wait_args, **wait_kwargs):
+        timeout = wait_kwargs.get("timeout", None)
+        if timeout is None and wait_args:
+            timeout = wait_args[0]
+        stage_log(
+            "WAIT ROS service begin",
+            f"service={service} timeout={timeout}",
+        )
+        wait_t0 = time.time()
+        try:
+            result = _orig_wait_for_service(service, *wait_args, **wait_kwargs)
+            stage_log(
+                "WAIT ROS service done",
+                f"service={service} elapsed={time.time() - wait_t0:.3f}s",
+            )
+            return result
+        except Exception as exc:
+            stage_log(
+                "WAIT ROS service error",
+                f"service={service} elapsed={time.time() - wait_t0:.3f}s "
+                f"error={type(exc).__name__}: {exc}",
+            )
+            raise
+
+    rospy.wait_for_message = _logged_wait_for_message
+    rospy.wait_for_service = _logged_wait_for_service
+    stage_log("installed ROS wait instrumentation")
+
+    stage_log("rospy.init_node begin", "node=curobo_control")
+    rospy.init_node("curobo_control")
+    stage_log("rospy.init_node done", "node=curobo_control")
+    stage_log("CvBridge init begin")
+    bridge = CvBridge()
+    stage_log("CvBridge init done")
+
+    ## init perception and planning interfaces ##
+    init_t2 = time.time()
+
+    def init_robot():
+        # Only initialize robot related classes once, since we
+        # get CUDA problems if we call init_motion_planner twice,
+        # even if they are on separate MotomanSDA10F class instances.
+        global robot, perception, planner, grasp_planner
+        stage_log("robot import begin", "task_planner.motoman.MotomanSDA10F")
+        from task_planner.motoman import MotomanSDA10F
+
+        stage_log("robot import done", "task_planner.motoman.MotomanSDA10F")
+        stage_log(
+            "MotomanSDA10F init begin",
+            f"sim={args.sim} ground_truth={args.ground_truth}",
+        )
+        robot = MotomanSDA10F(args.sim, args.ground_truth)
+        stage_log("MotomanSDA10F init done")
+        stage_log(
+            "perception init begin",
+            "robot.init_perception_interface; may set RGB-D/GT segmentation subscribers",
+        )
+        perception = robot.init_perception_interface()
+        stage_log("perception init done")
+        stage_log(
+            "CuRobo init begin",
+            "robot.init_motion_planner(planner='curobo'); may initialize CUDA/warmup",
+        )
+        planner = robot.init_motion_planner(planner="curobo")  # ,warmup=False)
+        stage_log("CuRobo init done")
+        stage_log(
+            "GraspPlanner init begin",
+            "may initialize RobotWorld/world collision and discover Contact-GraspNet services",
+        )
+        grasp_planner = GraspPlanner(
+            robot.curobo_config,
+            planner.static_world_config,
+            robot.urdf,
+            ignore_collision_ee_links=robot.ignore_collision_ee_links,
+        )
+        stage_log("GraspPlanner init done")
+
+    def init_vlm():
+        global prompter
+        if args.vlm:
+            stage_log(
+                "VLM client init begin",
+                "Prompter construction only; DG_ONLY should not call API later",
+            )
+            prompter = Prompter(
+                url="https://generativelanguage.googleapis.com/v1beta/openai/",
+                key=os.getenv("GEMINI_API_KEY"),
+            )
+            stage_log("VLM client init done")
+        else:
+            stage_log("VLM client init skipped", "args.vlm=False")
+
+    if robot is None:
+        stage_log("init_robot dispatch begin", "robot is None")
+        init_robot()
+        stage_log("init_robot dispatch done")
+    else:
+        stage_log("perception reset begin", "reusing existing robot")
+        print("******Resetting perception!******")
+        perception.tsdf_vol.reset_all()
+        stage_log("perception reset done")
+
+    if prompter is None:
+        stage_log("init_vlm dispatch begin", f"args.vlm={args.vlm}")
+        init_vlm()
+        stage_log("init_vlm dispatch done")
+    else:
+        stage_log("init_vlm skipped", "prompter already exists")
+
+    init_t3 = time.time()
+
+    stage_log("marker publisher init begin", "topic=/plot_grasps")
+    marker_pub = rospy.Publisher("/plot_grasps", MarkerArray, queue_size=5)
+    stage_log("marker publisher init done", "topic=/plot_grasps")
+    # endregion
+
+    # region Functions
+    def select_place_point(height):
+        print(
+            """
+
+            Please select a point to place the object
+    using Rviz's point publisher tool.
+    """
+        )
+        print(""" rospy.wait_for_message("/clicked_point", PointStamped) """)
+        msg = rospy.wait_for_message("/clicked_point", PointStamped)
+        print("  '- SUCCESS")
+        x, y, z = msg.point.x, msg.point.y, msg.point.z
+        z += height
+        print(f"Clicked point: ({x}, {y}, {z})")
+        marker = MarkerArray()
+        marker.markers.append(Marker())
+        marker.markers[-1].header.frame_id = "world"
+        marker.markers[-1].header.stamp = rospy.Time()
+        marker.markers[-1].ns = "clicked_points"
+        marker.markers[-1].id = 0
+        marker.markers[-1].type = Marker.SPHERE
+        marker.markers[-1].action = Marker.ADD
+        marker.markers[-1].pose.position.x = x
+        marker.markers[-1].pose.position.y = y
+        marker.markers[-1].pose.position.z = z
+        marker.markers[-1].scale.x = 0.1
+        marker.markers[-1].scale.y = 0.1
+        marker.markers[-1].scale.z = 0.1
+        marker.markers[-1].color.a = 1
+        marker.markers[-1].color.r = 1
+        marker.markers[-1].color.g = 1
+        marker.markers[-1].color.b = 0
+        marker_pub.publish(marker)
+        return [x, y, z]
+
+    def vlm_make_dg(img_labeled, obj_depths, dg_args):
+        global prompter
+        nonlocal pick_count
+        stage_log(
+            "VLM/API dependency graph begin",
+            f"pick_count={pick_count} object_count={len(obj_depths)}",
+        )
+        if prompter is not None:
+            # depth_str = ""
+            # mx0 = max(obj_depths.values(), key=lambda x: x[1])
+            # mx1 = max(obj_depths.values(), key=lambda x: x[0])
+            # mn0 = min(obj_depths.values(), key=lambda x: x[1])
+            # mn1 = min(obj_depths.values(), key=lambda x: x[0])
+            # mx = max(mx0[1], mx1[1])
+            # mn = min(mn0[0], mn1[0])
+            # for k, v in obj_depths.items():
+            #     min_d = 100 * (v[0] - mn) / (mx - mn)
+            #     max_d = 100 * (v[1] - mn) / (mx - mn)
+            #     depth_str += (
+            #         f"  * Object {k}: min depth {min_d:.2f}, max depth {max_d:.2f}\n"
+            #     )
+            # prompt_text = PROMPT_MAKE_DG.replace("<object_depths>", depth_str)
+
+            seg = perception.cur_mask
+            dep = perception.cur_depth
+            candidate_edges = get_behind_candidates(seg, dep, obj_depths.keys())
+            candidates = ""
+            for s, t in candidate_edges:
+                candidates += f"  * Object {s} is behind Object {t}\n"
+            prompt_text = PROMPT_MAKE_DG.replace("<candidates>", candidates)
+
+            stage_log("VLM/API prompt_model begin", "vlm_make_dg")
+            result = prompter.prompt_model(prompt_text, images=[img_labeled])
+            stage_log("VLM/API prompt_model done", "vlm_make_dg")
+            print("\n\nVLM Reply:", result)
+            try:
+                str_json = re.findall("(?<=```json)[\s\S]*(?=```)", result)[0]
+                edges_dict = json.loads(str_json)
+                print("VLM Parsed JSON:", edges_dict)
+            except:
+                print("Error: Failed to parse JSON from VLM.")
+                return None
+            grasp_collisions = dg_args[0]
+            obj_ids = dg_args[1]
+            pickable = dg_args[2]
+            vis_pts = dg_args[3]
+            all_pts = dg_args[4]
+            vis_mask = dg_args[5]
+            all_mask = dg_args[6]
+            dep_graph = DepGraph.from_edges(
+                grasp_collisions,
+                obj_ids,
+                pickable,
+                edges_dict,
+                all_pts,
+                all_mask,
+            )
+            dep_graph.keep_only(obj_depths.keys())
+            dep_graph.normalize_edges()
+            # visualize
+            # dep_graph.draw(
+            #     to_show=False, block=False, fname=f"{DEBUG_SHOW_DIR}/vlm_dep_graph.png"
+            # )
+            if args.debug_show:
+                with open(f"{DEBUG_SHOW_DIR}/vlm_dep_graph.depgraph", "wb") as file:
+                    pickle.dump(dep_graph, file)
+            if OUT_FILE_DIR:
+                with open(
+                    f"{OUT_FILE_DIR}/vlm_dep_graph_{pick_count}.depgraph", "wb"
+                ) as file:
+                    pickle.dump(dep_graph, file)
+            dep_graph.add_hidden_edges()
+            stage_log("VLM/API dependency graph done", "vlm_make_dg")
+            return dep_graph
+        else:
+            print("Error: No API key provided.")
+            stage_log("VLM/API dependency graph skipped", "no prompter")
+            return None
+
+    def prepare_for_choice():
+        nonlocal pick_count
+        stage_log("grasp choice preparation begin", f"pick_count={pick_count}")
+        img = perception.cur_color
+        seg = perception.cur_mask
+        dep = perception.cur_depth
+        # seg_filtered = np.zeros_like(seg, dtype=np.uint32)
+        # for i in obj_ids:
+        #     seg_filtered |= seg & (1 << i)
+        # img_labeled, labels = create_labeled_image(img, seg_filtered)
+        img_labeled, obj_depths = create_labeled_image(img, dep, seg)
+        stage_log(
+            "labeled image created",
+            f"object_depth_count={len(obj_depths)} cur_color_shape={getattr(img, 'shape', None)}",
+        )
+        img_back = None
+        if args.debug_show:
+            cv2.imwrite(f"{DEBUG_SHOW_DIR}/img_labeled.png", img_labeled)
+            # save back image if human running simulation
+            if robot.is_sim and args.method == Method.HUMAN:
+                try:
+                    img_msg = rospy.wait_for_message(
+                        "/camera2/color/image_raw", Image, timeout=10
+                    )
+                    dep_msg = rospy.wait_for_message(
+                        "/camera2/aligned_depth_to_color/image_raw", Image, timeout=10
+                    )
+                    seg_msg = rospy.wait_for_message(
+                        "/ground_truth/camera2/seg_image", Image, timeout=10
+                    )
+                    image = bridge.imgmsg_to_cv2(img_msg, "bgr8")
+                    depth = bridge.imgmsg_to_cv2(dep_msg, "32FC1")
+                    segrw = bridge.imgmsg_to_cv2(seg_msg, "rgb8")
+                    segmt = decode_seg_img_rgb(segrw)
+                    mask = (segmt == int(target_object_id)).astype(np.uint32)
+                    img_back, _obj_d = create_labeled_image(image, depth, mask)
+                    cv2.imwrite(f"{DEBUG_SHOW_DIR}/back.png", img_back)
+                except Exception as e:
+                    print(e)
+        if OUT_FILE_DIR:
+            stage_log("saving perception debug artifacts begin", OUT_FILE_DIR)
+            cv2.imwrite(f"{OUT_FILE_DIR}/img_labeled_{pick_count}.png", img_labeled)
+            cv2.imwrite(f"{OUT_FILE_DIR}/color_{pick_count}.png", img)
+            cv2.imwrite(
+                f"{OUT_FILE_DIR}/depth_{pick_count}.png", (1000 * dep).astype(np.uint16)
+            )
+            np.save(f"{OUT_FILE_DIR}/mask_{pick_count}.npy", seg)
+            if img_back is not None:
+                cv2.imwrite(f"{OUT_FILE_DIR}/back.png", img_back)
+            stage_log("saving perception debug artifacts done", OUT_FILE_DIR)
+        stage_log("grasp choice preparation done", f"pick_count={pick_count}")
+        return img_labeled, obj_depths
+
+    def vlm_grasp_choice(img_labeled):
+        global prompter
+        stage_log("VLM/API grasp choice begin", "vlm_grasp_choice")
+        if prompter is not None:
+            prompt_text = PROMPT_PICK_OBJECT.replace("<target>", "0")
+            stage_log("VLM/API prompt_model begin", "vlm_grasp_choice")
+            result = prompter.prompt_model(prompt_text, images=[img_labeled])
+            stage_log("VLM/API prompt_model done", "vlm_grasp_choice")
+            print("\n\nVLM Reply:", result)
+            try:
+                str_json = re.findall("(?<=```json)[\s\S]*(?=```)", result)[0]
+                out_json = json.loads(str_json)
+                print("VLM Parsed JSON:", out_json)
+                return int(out_json[0]["input"])
+            except:
+                print("Error: Failed to parse JSON from VLM.")
+                return -1
+        else:
+            print("Error: No API key provided.")
+            stage_log("VLM/API grasp choice skipped", "no prompter")
+            return -1
+
+    def human_grasp_choice(graspable_ids):
+        stage_log("human grasp choice begin", f"graspable_ids={sorted(graspable_ids)}")
+        print(
+            f"\n\nThe robot can grasp objects {graspable_ids}.\n",
+            "Which will help towards retrieving object 0?",
+            end="\n> ",
+        )
+        try:
+            return int(in_file.readline().strip())
+        except:
+            print("Error: Expecting an integer input.")
+            print(in_file.readable())
+            return -1
+
+    def dg_grasp_choice(obj_depths, dg_args):
+        stage_log(
+            "dependency graph construction begin",
+            f"method=dg_only object_depth_count={len(obj_depths)}",
+        )
+        seg = perception.cur_mask
+        dep = perception.cur_depth
+        # dep_graph = DepGraph.from_geometry(*dg_args)
+        cam_intr = np.array(list(perception.cam_info.values())[0].K).reshape((3, 3))
+        edges_dict = get_behind_below_dependencies(
+            seg, dep, cam_intr, obj_depths.keys()
+        )
+        stage_log(
+            "dependency graph geometry edges done",
+            f"edge_source_count={len(edges_dict)}",
+        )
+        grasp_collisions = dg_args[0]
+        obj_ids = dg_args[1]
+        pickable = dg_args[2]
+        vis_pts = dg_args[3]
+        all_pts = dg_args[4]
+        vis_mask = dg_args[5]
+        all_mask = dg_args[6]
+        dep_graph = DepGraph.from_edges(
+            grasp_collisions,
+            obj_ids,
+            pickable,
+            edges_dict,
+            all_pts,
+            all_mask,
+        )
+        dep_graph.keep_only(obj_depths.keys())
+        dep_graph.normalize_edges()
+        if args.debug_show:
+            with open(f"{DEBUG_SHOW_DIR}/dep_graph.depgraph", "wb") as file:
+                pickle.dump(dep_graph, file)
+        if OUT_FILE_DIR:
+            with open(f"{OUT_FILE_DIR}/dep_graph_{pick_count}.depgraph", "wb") as file:
+                pickle.dump(dep_graph, file)
+        dep_graph.add_hidden_edges()
+        stage_log("dependency graph construction done", "dg_grasp_choice")
+        return dep_graph
+
+    def dg_get_choice(dep_graph):
+        stage_log("dependency graph choice begin", f"dep_graph_is_none={dep_graph is None}")
+        if dep_graph is None:
+            stage_log("dependency graph choice done", "no graph")
+            return -1
+        sinks, probs = dep_graph.sinks()
+        print({s: p for s, p in zip(sinks, probs)})
+        if len(sinks) > 0:
+            chosen = sinks[np.argmax(probs)]
+            stage_log("dependency graph choice done", f"chosen={chosen}")
+            return chosen
+        stage_log("dependency graph choice done", "no sinks")
+        return -1
+
+    def vlm_wdg_grasp_choice(img_labeled, obj_depths, dg_args):
+        global prompter
+        stage_log("VLM/API with DG grasp choice begin", "vlm_wdg_grasp_choice")
+        dep_graph = DepGraph.from_grasps(*dg_args[:3])
+        dep_graph.keep_only(obj_depths.keys())
+        dep_graph.normalize_edges()
+        if args.debug_show:
+            with open(f"{DEBUG_SHOW_DIR}/dep_graph_grasp_only.depgraph", "wb") as file:
+                pickle.dump(dep_graph, file)
+        if OUT_FILE_DIR:
+            with open(
+                f"{OUT_FILE_DIR}/dep_graph_grasp_only_{pick_count}.depgraph", "wb"
+            ) as file:
+                pickle.dump(dep_graph, file)
+
+        prompt_text = PROMPT_PICK_OBJECT_DG.replace("<target>", "0")
+        # G = copy.deepcopy(dep_graph.nx_graph)
+        # for e in G.edges:
+        #     del G.edges[e]['w']
+        # graphml = DepGraph.gen_graphml(G)
+        # prompt_text = prompt_text.replace('<graph>', graphml)
+        description = dep_graph.describe()
+        stage_log("dependency graph description done", "vlm_wdg_grasp_choice")
+        prompt_text = prompt_text.replace("-1", "0")
+        prompt_text = prompt_text.replace("<scene description>", description)
+        if prompter is not None:
+            stage_log("VLM/API prompt_model begin", "vlm_wdg_grasp_choice")
+            result = prompter.prompt_model(prompt_text, images=[img_labeled])
+            stage_log("VLM/API prompt_model done", "vlm_wdg_grasp_choice")
+            print("\n\nVLM+DG Reply:", result)
+            try:
+                str_json = re.findall("(?<=```json)[\s\S]*(?=```)", result)[0]
+                out_json = json.loads(str_json)
+                print("VLM+DG Parsed JSON:", out_json)
+                return int(out_json[0]["input"])
+            except:
+                print("Error: Failed to parse JSON from VLM.")
+                return -1
+        else:
+            print("Error: No API key provided.")
+            stage_log("VLM/API with DG grasp choice skipped", "no prompter")
+            return -1
+
+    def grasp_choice(obj_ids, dg_args):
+        stage_log(
+            "grasp_choice callback entered",
+            f"obj_ids={list(obj_ids)} pick_limit={args.pick_limit} method={args.method}",
+        )
+        # No grasping is done if pick_limit == 0
+        # we only want sensing
+        if args.pick_limit == 0:
+            # create DG and labeled image
+            img_labeled, obj_depths = prepare_for_choice()
+            stage_log("grasp_choice callback exiting", "pick_limit=0")
+            return -1
+
+        # Get next available numbered file name
+        def get_next_file_name(prefix: str, suffix: str) -> str:
+            i = 1
+            while True:
+                file_name = f"{OUT_FILE_DIR}/{prefix}{i}{suffix}"
+                if not os.path.exists(file_name):
+                    return file_name
+                i += 1
+
+        def try_choose_grasp() -> int:
+            stage_log("try_choose_grasp begin", f"method={args.method}")
+            # create DG and labeled image
+            img_labeled, obj_depths = prepare_for_choice()
+            # dep graph choice
+            dg_choice = -1
+            if args.method == Method.DG_ONLY:
+                stage_log("DG_ONLY choice branch begin")
+                dep_graph = dg_grasp_choice(obj_depths, dg_args)
+                dg_choice = dg_get_choice(dep_graph)
+                stage_log("DG_ONLY choice branch done", f"dg_choice={dg_choice}")
+            # vlm choice
+            vlm_choice = -1
+            if args.method == Method.VLM_ONLY:
+                stage_log("VLM_ONLY choice branch begin")
+                vlm_choice = vlm_grasp_choice(img_labeled)
+                stage_log("VLM_ONLY choice branch done", f"vlm_choice={vlm_choice}")
+            # vlm + dg choice
+            vlm_wdg_choice = -1
+            if args.method == Method.DG_INTO_VLM:
+                stage_log("DG_INTO_VLM choice branch begin")
+                vlm_wdg_choice = vlm_wdg_grasp_choice(img_labeled, obj_depths, dg_args)
+                stage_log(
+                    "DG_INTO_VLM choice branch done",
+                    f"vlm_wdg_choice={vlm_wdg_choice}",
+                )
+            # dg by vlm choice
+            vlm_dg_choice = -1
+            if args.method == Method.VLM_DG:
+                stage_log("VLM_DG choice branch begin")
+                vlm_dep_graph = vlm_make_dg(img_labeled, obj_depths, dg_args)
+                if vlm_dep_graph is not None:
+                    vlm_dg_choice = dg_get_choice(vlm_dep_graph)
+                stage_log("VLM_DG choice branch done", f"vlm_dg_choice={vlm_dg_choice}")
+            # random choice
+            if args.method == Method.RANDOM:
+                stage_log("RANDOM choice branch begin")
+                options = set(dg_args[2].keys()) & set(obj_depths.keys())
+                if len(options) == 0:
+                    random_choice = -1
+                else:
+                    if 0 in options:
+                        random_choice = 0
+                    else:
+                        random_choice = np.random.choice(list(options))
+                stage_log("RANDOM choice branch done", f"random_choice={random_choice}")
+
+            # human choice
+            # if args.method == Method.HUMAN:
+            #     print(
+            #         f'\n\n The DG choice: "{dg_choice}"',
+            #         f'\n The VLM choice: "{vlm_choice}"',
+            #         f'\n The DG->VLM choice: "{vlm_wdg_choice}"',
+            #         f'\n The VLM->DG choice: "{vlm_dg_choice}"',
+            #     )
+
+            if args.debug_show:
+                # Stop showing previous debug images
+                try_kill_process("debug_show")
+
+                # Show the debug images
+                debug_show = subprocess.Popen(
+                    f"{DEBUG_SHOW_SH} dir {DEBUG_SHOW_DIR}",
+                    shell=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    start_new_session=True,
+                )
+                print(
+                    f"START DEBUG SHOW: debug_show.pid: {debug_show.pid} my pid: {os.getpid()} debug_show.grpid: {os.getpgid(debug_show.pid)} my grpid: {os.getpgid(os.getpid())}"
+                )
+                set_process_pid("debug_show", debug_show.pid)
+
+            if args.method == Method.HUMAN:
+                graspable_ids = set(dg_args[2].keys()) & set(obj_depths.keys())
+                human_choice = human_grasp_choice(graspable_ids)
+
+            if args.method == Method.HUMAN:
+                chosen_id = human_choice
+            elif args.method == Method.DG_ONLY:
+                chosen_id = dg_choice
+            elif args.method == Method.VLM_ONLY:
+                chosen_id = vlm_choice
+            elif args.method == Method.DG_INTO_VLM:
+                chosen_id = vlm_wdg_choice
+            elif args.method == Method.VLM_DG:
+                chosen_id = vlm_dg_choice
+            elif args.method == Method.RANDOM:
+                chosen_id = random_choice
+
+            print("Chosen: ", chosen_id)
+            stage_log("try_choose_grasp chose id", f"chosen_id={chosen_id}")
+            # input("Press Enter to confirm...")
+            print("Grasp Choice (Seg ID)", chosen_id, sep=",", file=out_file)
+
+            # Invalid object choice, choosing a number that
+            # is not in the list of valid grasps
+            if chosen_id not in obj_ids:
+                print(f"Object {chosen_id} is not graspable, please choose again.")
+                print(f"    obj_ids: {obj_ids}")
+                stage_log(
+                    "try_choose_grasp invalid choice",
+                    f"chosen_id={chosen_id} obj_ids={list(obj_ids)}",
+                )
+                return -1
+
+            # Return the object we want to grasp
+            stage_log("try_choose_grasp done", f"chosen_id={chosen_id}")
+            return chosen_id
+
+        # Try 3 times
+        for i in range(3):
+            grasp_t0 = time.time()
+            stage_log("grasp_choice attempt begin", f"attempt={i + 1}/3")
+
+            if args.profile_grasping:
+                if args.profiler == Profiler.CPROFILE:
+                    profiler = cProfile.Profile()
+                    profiler.enable()
+                    chosen_id = try_choose_grasp()
+                elif args.profiler == Profiler.LINE_PROFILER:
+                    profiler = line_profiler.LineProfiler()
+                    profiler.add_function(vlm_grasp_choice)
+                    profiler.add_function(human_grasp_choice)
+                    profiler.add_function(dg_grasp_choice)
+                    profiler.add_function(dg_get_choice)
+                    profiler.add_function(vlm_wdg_grasp_choice)
+                    profiler.add_function(vlm_make_dg)
+                    profiler.add_function(prepare_for_choice)
+                    profiler.add_function(get_behind_below_dependencies)
+                    chosen_id = profiler(try_choose_grasp)()
+            else:
+                chosen_id = try_choose_grasp()
+
+            if args.profile_grasping:
+                if OUT_FILE_DIR:
+                    if args.profiler == Profiler.CPROFILE:
+                        profiler.dump_stats(
+                            get_next_file_name("grasp_choice_profile_", ".cprof")
+                        )
+                    elif args.profiler == Profiler.LINE_PROFILER:
+                        profiler.dump_stats(
+                            get_next_file_name("grasp_choice_profile_", ".ln_prof")
+                        )
+                else:
+                    profiler.print_stats()
+
+            grasp_t1 = time.time()
+            print("Grasp Choice Duration", grasp_t1 - grasp_t0, sep=",", file=out_file)
+            stage_log(
+                "grasp_choice attempt done",
+                f"attempt={i + 1}/3 chosen_id={chosen_id} elapsed={grasp_t1 - grasp_t0:.3f}s",
+            )
+
+            if chosen_id >= 0:
+                stage_log("grasp_choice callback exiting", f"chosen_id={chosen_id}")
+                return chosen_id
+
+        print("Grasp choice failed...")
+        stage_log("grasp_choice callback exiting", "failed")
+        return -1
+
+    # endregion
+
+    # region Post Init
+    init_t4 = time.time()
+    stage_log("post-init begin", f"robot.is_sim={robot.is_sim}")
+
+    if robot.is_sim:
+        stage_log(
+            "Motoman/GT topic wait expected",
+            "waiting for /ground_truth/object_ids_to_names",
+        )
+        print(
+            """ rospy.wait_for_message("/ground_truth/object_ids_to_names", ObjectIdsToNames) """
+        )
+        _msg = rospy.wait_for_message(
+            "/ground_truth/object_ids_to_names", ObjectIdsToNames
+        )
+        print("  '- SUCCESS: ", _msg)
+        stage_log(
+            "Motoman/GT topic received",
+            f"/ground_truth/object_ids_to_names count={len(_msg.obj_ids)}",
+        )
+        OBJECT_ID_TO_NAME = dict(zip(_msg.obj_ids, _msg.names))
+        OBJECT_NAME_TO_ID = dict(zip(_msg.names, _msg.obj_ids))
+
+        print("ARGS: ", args)
+
+        if args.target_object:
+            stage_log("target object lookup begin", args.target_object)
+            args.target_object_id = OBJECT_NAME_TO_ID[args.target_object]
+            stage_log(
+                "target object lookup done",
+                f"{args.target_object} -> {args.target_object_id}",
+            )
+
+        if args.target_object_id is None:
+            # Prompt for target object
+            if args.sim and in_file == sys.stdin:
+                target_object_id = 0
+                while target_object_id == 0:
+                    print(
+                        "\n\nDouble click the object you want to pick in mujoco viewer."
+                    )
+                    print("Once an object is chosen hit enter.")
+                    in_file.readline()
+                    stage_log(
+                        "Motoman/GT topic wait expected",
+                        "waiting for /ground_truth/selected_object_id",
+                    )
+                    target_object_id = rospy.wait_for_message(
+                        "/ground_truth/selected_object_id", Int32
+                    ).data
+                target_object_id = str(target_object_id)
+            else:
+                print("\n\nWhat do you want to retrieve?", end="\n> ")
+                target_object_id = in_file.readline().strip()
+        else:
+            # Use target object specified
+            target_object_id = str(args.target_object_id)
+        target_object_name = OBJECT_ID_TO_NAME[int(target_object_id)]
+        stage_log(
+            "post-init target resolved",
+            f"target_object_id={target_object_id} target_object_name={target_object_name}",
+        )
+    else:
+        if args.target_object is None:
+            target_object_name = input("Which object do you want to pick?\n")
+        else:
+            target_object_name = args.target_object
+        target_object_id = str(target_object_name)
+    target_object_id = str(target_object_id).strip()
+    stage_log("post-init done", f"target_object_id={target_object_id}")
+    # endregion
+
+    # region Control Loop
+    result = "error"
+    try:
+        init_t5 = time.time()
+        stage_log("control loop setup begin")
+
+        print("Init Import Duration", init_t2 - init_t1, sep=",", file=out_file)
+        print(
+            "Init Perception Planning Duration",
+            init_t3 - init_t2,
+            sep=",",
+            file=out_file,
+        )
+        print("Init Functions Duration", init_t4 - init_t3, sep=",", file=out_file)
+        print("Init Post Duration", init_t5 - init_t4, sep=",", file=out_file)
+        print("Total Init Duration", init_t5 - init_t0, sep=",", file=out_file)
+
+        print(f"Total Init Duration: {init_t5 - init_t0}s")
+        stage_log("control loop setup done", f"total_init={init_t5 - init_t0:.3f}s")
+        print("Start control loop:")
+        print(f"  target_object:    {target_object_name}")
+        print(f"  target_object_id: {target_object_id}")
+        pick_count = 0
+        if args.rosbag and OUT_FILE_DIR:
+            rosbag_file = os.path.join(OUT_FILE_DIR, "rosbag")
+            print("Starting ROS bag...")
+            record_ros_bag = subprocess.Popen(
+                f"{RECORD_ROSBAG_SH} {rosbag_file}",
+                shell=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True,
+            )
+            set_process_pid("record_rosbag", record_ros_bag.pid)
+        print("Target Object", target_object_name, sep=",", file=out_file)
+        while True:
+            pick_count += 1
+            stage_log("pick iteration begin", f"pick_count={pick_count}")
+
+            # Sleep a little to let the robot settle into it's reseting position.
+            max_steps = 100
+            min_steps = 10
+            c = 0
+            total_steps = 0
+            stage_log(
+                "Motoman/execution topic settle wait begin",
+                "looping on /joint_states_all until reset pose is stable",
+            )
+            while c < min_steps and total_steps < max_steps:
+                joint_state = rospy.wait_for_message("/joint_states_all", JointState)
+                current_positions = joint_state.position
+                desired_positions = [ROBOT_RESET_JOINTS[n] for n in joint_state.name]
+                reached = np.allclose(current_positions, desired_positions, atol=0.001)
+                if reached:
+                    c += 1
+                else:
+                    c = 0
+                total_steps += 1
+                rospy.sleep(0.01)
+            stage_log(
+                "Motoman/execution topic settle wait done",
+                f"stable_count={c} total_steps={total_steps}",
+            )
+            # is above necessary?
+            if not robot.is_sim:
+                input("\nReady to sense? Press Enter to continue...")
+
+            print("Pick Count", pick_count, sep=",", file=out_file)
+
+            stage_log("perception TSDF reset_visible begin")
+            perception.tsdf_vol.reset_visible()
+            stage_log("perception TSDF reset_visible done")
+            stage_log(
+                "open_loop_pick_or_place begin",
+                "may wait on RGB-D/segmentation/object poses, Contact-GraspNet, "
+                "world/collision setup, CuRobo planning, and dependency graph callback",
+            )
+            result = open_loop_pick_or_place(
+                target_object_id,
+                robot,
+                perception,
+                planner,
+                grasp_planner,
+                place=[0.1, -0.7, 1.2, 0.0, 1.0, 0.0, 0.0],
+                num_place_rotations=16,
+                lift_height=0.02,
+                out_file=out_file,
+                grasp_choice=grasp_choice,
+            )
+            stage_log("open_loop_pick_or_place done", f"result={result}")
+
+            if args.pick_limit == 0:
+                stage_log("pick loop exiting", "pick_limit=0")
+                break
+
+            print("Grasp Result", result[0], sep=",", file=out_file)
+
+            stage_log("ee_open begin")
+            ee_open()
+            stage_log("ee_open done")
+            stage_log(
+                "Motoman/execution topic wait expected",
+                "waiting for /joint_states_all before reset planning",
+            )
+            joint_state = rospy.wait_for_message(
+                "/joint_states_all", JointState, timeout=5
+            )
+            stage_log("reset joint_motion_plan begin")
+            plan_reset = planner.joint_motion_plan(joint_state, ROBOT_RESET_JOINTS)
+            stage_log(
+                "reset joint_motion_plan done",
+                f"plan_is_none={plan_reset is None}",
+            )
+            MAX_PLAN_RESET_ATTEMPTS = 5
+            plan_reset_attempt = 1
+            while plan_reset is None:
+                print(
+                    f"Replanning reset {plan_reset_attempt}/{MAX_PLAN_RESET_ATTEMPTS}..."
+                )
+                stage_log(
+                    "reset joint_motion_plan retry begin",
+                    f"attempt={plan_reset_attempt}/{MAX_PLAN_RESET_ATTEMPTS}",
+                )
+                plan_reset = planner.joint_motion_plan(joint_state, ROBOT_RESET_JOINTS)
+                stage_log(
+                    "reset joint_motion_plan retry done",
+                    f"attempt={plan_reset_attempt}/{MAX_PLAN_RESET_ATTEMPTS} "
+                    f"plan_is_none={plan_reset is None}",
+                )
+                plan_reset_attempt += 1
+                if plan_reset_attempt > MAX_PLAN_RESET_ATTEMPTS:
+                    raise Exception("Failed to plan reset after multiple attempts.")
+
+            if result[0] == "finished":
+                print("Reseting to neutral pose.")
+                if not robot.is_sim:
+                    print("Press Enter to Execute.")
+                    input()
+
+                if robot.is_sim:
+                    VEL0 = rospy.get_param("/robot/vel_ang_lim")
+                    ACC0 = rospy.get_param("/robot/acc_ang_lim")
+                    rospy.set_param("/robot/vel_ang_lim", 600)
+                    rospy.set_param("/robot/acc_ang_lim", 8500)
+                for plan in [plan_reset]:
+                    stage_log("reset execute begin")
+                    plan.points[-1].time_from_start = plan.points[0].time_from_start
+                    execute(plan, window=0, wait=True, retime=True)
+                    stage_log("reset execute done")
+                if robot.is_sim:
+                    rospy.set_param("/robot/vel_ang_lim", VEL0)
+                    rospy.set_param("/robot/acc_ang_lim", ACC0)
+
+            print(f"pick_count: {pick_count} >= pick_limit: {args.pick_limit}")
+            if args.pick_limit >= 1:
+                if result[0] == "finished":
+                    grasp_success = bool(result[1])
+                    grasp_object_id = str(result[2]).strip()
+                    target_object_id_no_punctuation = re.sub(
+                        r"[^\w\s]", "", target_object_id
+                    )
+                    dropped_objects = result[3]
+                    print(
+                        f"Finished: grasp_success: {grasp_success} grasp_object_id: {grasp_object_id} target_object_id: {target_object_id_no_punctuation}"
+                    )
+                    print(f"  Dropped objects: {dropped_objects}")
+                    if (
+                        grasp_object_id == target_object_id_no_punctuation
+                        and grasp_success
+                    ):
+                        result = "retrieve_success"
+                        print("Retrieved Target Object", True, sep=",", file=out_file)
+                        stage_log("pick loop exiting", "retrieve_success")
+                        break
+                    elif target_object_name in dropped_objects:
+                        result = "target_dropped"
+                        print("Dropped Target Object", True, sep=",", file=out_file)
+                        stage_log("pick loop exiting", "target_dropped")
+                        break
+                if pick_count >= args.pick_limit:
+                    result = "retrieve_failed"
+                    print("Retrieved Target Object", False, sep=",", file=out_file)
+                    stage_log("pick loop exiting", "pick_limit reached")
+                    break
+    except KeyboardInterrupt:
+        stage_log("KeyboardInterrupt caught")
+        pass
+    except Exception as e:
+        result = "error"
+        exception_str = traceback.format_exc()
+        stage_log("exception caught", f"{type(e).__name__}: {e}")
+        print("ERROR:")
+        print(exception_str)
+        escaped_str = exception_str.replace('"', '""')
+        print("Unhandled Error", f'"{escaped_str}"', sep=",", file=out_file)
+    finally:
+        stage_log("run(args) finally begin", f"result={result}")
+        cleanup()
+
+    stage_log("run(args) returning", f"result={result}")
+    return result
+    # endregion
+
+
+def run_server(address: str):
+    server_t0 = time.time()
+
+    def server_stage(stage: str, detail: str = ""):
+        elapsed = time.time() - server_t0
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        message = f"[CUROBO_SERVER {timestamp} +{elapsed:9.3f}s] {stage}"
+        if detail:
+            message += f" | {detail}"
+        print(message, flush=True)
+
+    server_stage("server init begin", address)
+    context = zmq.Context()
+    socket = context.socket(zmq.REP)
+    server_stage("socket bind begin", address)
+    socket.bind(address)
+    server_stage("socket bind done", address)
+
+    def reply(_type: str, msg: Any = {}):
+        server_stage("reply begin", f"type={_type}")
+        socket.send_json({"type": _type, **msg})
+        server_stage("reply done", f"type={_type}")
+
+    def reply_error(msg: str):
+        reply("error", {"msg": str(msg)})
+
+    print("Server intialized...")
+    while True:
+        server_stage("recv_json begin")
+        req = socket.recv_json()
+        server_stage("recv_json done", f"cmd={req.get('cmd', '')}")
+        cmd = req.get("cmd", "")
+        print("Received request:\n", json.dumps(req, indent=2))
+        if cmd == "run":
+            args = Args(**req["args"])
+            server_stage(
+                "run(args) begin",
+                f"method={args.method} target_object={args.target_object} "
+                f"out_file={args.out_file}",
+            )
+            result = run(args)
+            server_stage("run(args) done", f"result={result}")
+            reply("result", {"result": result})
+        elif cmd == "stop":
+            reply("success")
+            break
+        else:
+            reply_error(f"Unknown cmd: {cmd}")
+            continue
+
+    print("🛑 Server stopping...")
+
+
+if args.server:
+    run_server(args.server_address)
+else:
+    result = run(args)
+    if result == "error":
+        exit(1)

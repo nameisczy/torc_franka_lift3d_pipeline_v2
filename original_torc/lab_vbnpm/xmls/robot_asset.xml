@@ -1,0 +1,32 @@
+<asset>
+  <mesh name="v_base" file="robots/motoman/meshes/v_base.stl"/>
+  <mesh name="c_base" file="robots/motoman/meshes/c_base.stl"/>
+  <mesh name="v_link_b1" file="robots/motoman/meshes/v_link_b1.stl"/>
+  <mesh name="c_link_b1" file="robots/motoman/meshes/c_link_b1.stl"/>
+  <mesh name="v_link_s" file="robots/motoman/meshes/v_link_s.stl"/>
+  <mesh name="c_link_s" file="robots/motoman/meshes/c_link_s.stl"/>
+  <mesh name="v_link_l" file="robots/motoman/meshes/v_link_l.stl"/>
+  <mesh name="c_link_l" file="robots/motoman/meshes/c_link_l.stl"/>
+  <mesh name="v_link_e" file="robots/motoman/meshes/v_link_e.stl"/>
+  <mesh name="c_link_e" file="robots/motoman/meshes/c_link_e.stl"/>
+  <mesh name="v_link_u" file="robots/motoman/meshes/v_link_u.stl"/>
+  <mesh name="c_link_u" file="robots/motoman/meshes/c_link_u.stl"/>
+  <mesh name="v_link_r" file="robots/motoman/meshes/v_link_r.stl"/>
+  <mesh name="c_link_r" file="robots/motoman/meshes/c_link_r.stl"/>
+  <mesh name="v_link_b" file="robots/motoman/meshes/v_link_b.stl"/>
+  <mesh name="c_link_b" file="robots/motoman/meshes/c_link_b.stl"/>
+  <mesh name="v_link_t" file="robots/motoman/meshes/v_link_t.stl"/>
+  <mesh name="c_link_t" file="robots/motoman/meshes/c_link_t.stl"/>
+  <material name="metal" rgba="0.58 0.58 0.58 1"/>
+  <material name="silicone" rgba="0.1882 0.1882 0.1882 1"/>
+  <material name="gray" rgba="0.4627 0.4627 0.4627 1"/>
+  <material name="black" rgba="0.149 0.149 0.149 1"/>
+  <mesh class="2f85" file="robots/motoman/meshes/base_mount.stl"/>
+  <mesh class="2f85" file="robots/motoman/meshes/base.stl"/>
+  <mesh class="2f85" file="robots/motoman/meshes/driver.stl"/>
+  <mesh class="2f85" file="robots/motoman/meshes/coupler.stl"/>
+  <mesh class="2f85" file="robots/motoman/meshes/follower.stl"/>
+  <mesh class="2f85" file="robots/motoman/meshes/pad.stl"/>
+  <mesh class="2f85" file="robots/motoman/meshes/silicone_pad.stl"/>
+  <mesh class="2f85" file="robots/motoman/meshes/spring_link.stl"/>
+</asset>

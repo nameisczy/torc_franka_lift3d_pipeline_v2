@@ -1,0 +1,20 @@
+{
+  "cmd": "/home/ziyaochen/gc6d_lift3d_traj/ros_workspace/src/lab_vbnpm/experiments/run_experiment.py experiment --scene tests/scenes/final/difficult_116.xml --target-object obj_000070_0 --method dg_only --headless --server --pick-limit 15 --base-dir /home/ziyaochen/phase1_runs_cgn --mj-pickle",
+  "args": {
+    "scene": "tests/scenes/final/difficult_116.xml",
+    "target_object": "obj_000070_0",
+    "data_dir": "../../../../phase1_runs_cgn/exp_2026-07-04_12-52-37__difficult_116_obj_000070_0_dg_only",
+    "name": "experiment",
+    "rosbag": false,
+    "method": "dg_only",
+    "real": false,
+    "headless": true,
+    "profile_grasping": false,
+    "profiler": "line_profiler",
+    "mj_pickle": true
+  },
+  "git_commit": "3945060d21bf16dc5baf57ba240bbd3399f2243a",
+  "unix_timestamp": 1783155157.704106,
+  "timestamp": "2026/07/04 12:52:37",
+  "seconds_elapsed": 1148.79434299469
+}

@@ -1,0 +1,21 @@
+<launch>
+  <!-- args -->
+  <arg name="scene" default="tests/ycb.xml" />
+  <arg name="is_sim" default="true" />
+  <arg name="gui_sim" default="true" />
+  <arg name="gui_plan" default="true" />
+
+  <!-- publish necessary tfs -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="world_to_base_link" args="0 0 0 0 0 0 1 world base" />
+
+  <!-- planning node -->
+  <include file="$(find motoman_sda10f_moveit_config)/launch/demo.launch" >
+    <arg name="moveit_controller_manager" value="fake" />
+    <arg name="use_rviz" value="false" />
+  </include>
+
+  <include file="$(find motoman_sda10f_moveit_config)/launch/moveit_rviz.launch" if="$(arg gui_plan)">
+    <arg name="rviz_config" value="/home/yinglong/Documents/research/task_motion_planning/non-prehensile-manipulation/motoman_ws/src/lab_vbnpm/playgrounds/motion_planning/visibility_constraint_moveit.rviz" />
+    <arg name="debug" value="false"/>
+  </include>
+</launch>

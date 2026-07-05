@@ -1,0 +1,98 @@
+{
+  "type": "success",
+  "cmd": "infer_lowlevel",
+  "command_version": "cgn_zmq_infer_lowlevel_v1",
+  "evidence_level": "proven",
+  "input_source": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/cgn_lowlevel/scene20/obj_000044_2.input.npz",
+  "input_point_cloud_frame": "fresh_capture_mujoco_world",
+  "output_frame": "fresh_capture_mujoco_world",
+  "units": {
+    "translation": "meters",
+    "directions": "unitless_normalized"
+  },
+  "checkpoint_dir": "/home/ziyaochen/gc6d_lift3d_traj/ros_workspace/src/contact_graspnet_ros/checkpoints/scene_test_2048_bs3_hor_sigma_001",
+  "model_status": {
+    "type": "success",
+    "model_loaded": true,
+    "load_elapsed_sec": 17.076117992401123,
+    "load_error": null,
+    "checkpoint_dir": "/home/ziyaochen/gc6d_lift3d_traj/ros_workspace/src/contact_graspnet_ros/checkpoints/scene_test_2048_bs3_hor_sigma_001",
+    "contact_root": "/home/ziyaochen/gc6d_lift3d_franka_7d_generation/third_party/contact_graspnet",
+    "cuda_visible_devices": "1",
+    "pid": 4020616
+  },
+  "num_candidates": 0,
+  "contact_point_world": [],
+  "approach_dir_world": [],
+  "base_dir_world": [],
+  "gripper_opening": [],
+  "score": [],
+  "object_id": [],
+  "source_index": [],
+  "selection_index": [],
+  "segment_key": [],
+  "symmetry_variant": [],
+  "offset_bin_value": [],
+  "offset_bin_index": [],
+  "built_pose_world_torc": [],
+  "elapsed_sec": 0.1551358699798584,
+  "source_field_audit": {
+    "contact_point_world": {
+      "source_variable": "model_ops['pred_points'] -> contact_point, after CGN convert_cam_coords and FRAME_ROTATE.T",
+      "shape": "N x 3",
+      "frame": "fresh_capture_mujoco_world",
+      "units": "meters",
+      "evidence": "proven_source_tensor_fetch"
+    },
+    "approach_dir_world": {
+      "source_variable": "model_ops['approach_dir_pred'] -> approach_dir, after CGN convert_cam_coords and FRAME_ROTATE.T",
+      "shape": "N x 3",
+      "frame": "fresh_capture_mujoco_world",
+      "units": "unit vector",
+      "evidence": "proven_source_tensor_fetch"
+    },
+    "base_dir_world": {
+      "source_variable": "model_ops['grasp_dir_pred'] -> base_dir, after CGN convert_cam_coords, FRAME_ROTATE.T, plus ROTATE_Z symmetry duplicate sign flip",
+      "shape": "N x 3",
+      "frame": "fresh_capture_mujoco_world",
+      "units": "unit vector",
+      "evidence": "proven_source_tensor_fetch"
+    },
+    "gripper_opening": {
+      "source_variable": "min(model_ops['offset_bin_pred_vals'] + TEST.extra_opening, DATA.gripper_width)",
+      "shape": "N",
+      "frame": "not_applicable",
+      "units": "meters",
+      "evidence": "proven_source_tensor_fetch_and_config_formula"
+    },
+    "score": {
+      "source_variable": "model_ops['binary_seg_pred']",
+      "shape": "N",
+      "frame": "not_applicable",
+      "units": "unitless confidence",
+      "evidence": "proven_source_tensor_fetch"
+    },
+    "object_id": {
+      "source_variable": "pc_segments key - 1 after mask-bit grouping and CGN filter_segment",
+      "shape": "N",
+      "frame": "segmentation namespace",
+      "units": "integer segment/object id",
+      "evidence": "proven_source_mapping"
+    },
+    "source_index": {
+      "source_variable": "selected CGN source tensor index before filter_segment",
+      "shape": "N",
+      "frame": "CGN selected tensor index",
+      "units": "integer",
+      "evidence": "proven_source_mapping"
+    },
+    "selection_index": {
+      "source_variable": "position in selected/filter_segment candidate list",
+      "shape": "N",
+      "frame": "CGN selected candidate order",
+      "units": "integer",
+      "evidence": "proven_source_mapping"
+    }
+  },
+  "client_elapsed_sec": 0.17111587524414062
+}

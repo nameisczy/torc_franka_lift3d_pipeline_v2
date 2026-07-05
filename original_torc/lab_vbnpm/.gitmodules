@@ -1,0 +1,6 @@
+[submodule "scripts/fusion"]
+	path = scripts/fusion
+	url = https://github.com/gh_user/tsdf-fusion-python.git
+[submodule "scripts/FoundationStereo"]
+	path = scripts/foundation_stereo
+	url = https://github.com/NVlabs/FoundationStereo.git

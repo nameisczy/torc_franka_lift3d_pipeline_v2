@@ -1,0 +1,23 @@
+{
+  "cmd": "./scripts/task_planner/curobo_control.py --vlm --server --server-address tcp://*:5757",
+  "args": {
+    "method": "dg_only",
+    "sim": true,
+    "ground_truth": true,
+    "rosbag": false,
+    "debug_show": false,
+    "vlm": true,
+    "in_file": null,
+    "out_file": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783232256/exp_2026-07-05_10-17-47__difficult_116_obj_000070_0_dg_only/output.csv",
+    "target_object": "obj_000070_0",
+    "target_object_id": null,
+    "pick_limit": 1,
+    "server": false,
+    "server_address": null,
+    "profile_grasping": false,
+    "profiler": "line_profiler",
+    "capture_original_pick1_allpts": false
+  },
+  "unix_timestamp": 1783232289.566132,
+  "timestamp": "2026/07/05 10:18:09"
+}

@@ -1,0 +1,84 @@
+Init Import Duration,483.843346118927
+Init Perception Planning Duration,25.81672501564026
+Init Functions Duration,0.000274658203125
+Init Post Duration,0.10235452651977539
+Total Init Duration,509.7645356655121
+Target Object,obj_000070_0
+Pick Count,1
+Grasp Choice (Seg ID),2
+Grasp Choice Duration,3.792015790939331
+Grasp Score,0.6443518400192261
+Total Computation Duration,55.50701069831848
+Total Grasp Planning Duration,34.9386420249939
+Total Motion Planning Duration,7.284195184707642
+Object Name,obj_000010_0
+Grasp Success,True
+Grasped,"obj_000010_0"
+Total Execution Duration,42.85435128211975
+Retract Success,True
+Dropped,"obj_000020_0"
+Grasp Result,finished
+Pick Count,2
+Grasp Choice (Seg ID),3
+Grasp Choice Duration,3.746514320373535
+Error,None
+Error,None
+Error,None
+Error,None
+Error,None
+Error,None
+Error,None
+Grasp Score,0.19812849164009094
+Total Computation Duration,160.68618249893188
+Total Grasp Planning Duration,21.281141996383667
+Total Motion Planning Duration,130.0866665840149
+Object Name,obj_000012_0
+Grasp Success,True
+Grasped,"obj_000012_0"
+Total Execution Duration,34.07065963745117
+Retract Success,True
+Dropped,"obj_000010_0,obj_000020_0"
+Grasp Result,finished
+Pick Count,3
+Grasp Choice (Seg ID),8
+Grasp Choice Duration,3.0876035690307617
+Grasp Score,0.3819429278373718
+Total Computation Duration,45.18259596824646
+Total Grasp Planning Duration,22.481475591659546
+Total Motion Planning Duration,6.172847509384155
+Object Name,obj_000058_0
+Grasp Success,False
+Grasped,""
+Total Execution Duration,33.11744570732117
+Retract Success,False
+Dropped,"obj_000010_0,obj_000012_0,obj_000020_0"
+Grasp Result,finished
+Pick Count,4
+Grasp Choice (Seg ID),8
+Grasp Choice Duration,3.2860496044158936
+Grasp Score,0.36585184931755066
+Total Computation Duration,40.75160765647888
+Total Grasp Planning Duration,25.579169273376465
+Total Motion Planning Duration,6.05448055267334
+Object Name,obj_000058_0
+Grasp Success,True
+Grasped,"obj_000058_0"
+Total Execution Duration,39.9931755065918
+Retract Success,True
+Dropped,"obj_000010_0,obj_000012_0,obj_000020_0"
+Grasp Result,finished
+Pick Count,5
+Grasp Choice (Seg ID),0
+Grasp Choice Duration,3.1379594802856445
+Grasp Score,0.18468564748764038
+Total Computation Duration,40.539905309677124
+Total Grasp Planning Duration,27.03688955307007
+Total Motion Planning Duration,5.909719705581665
+Object Name,obj_000070_0
+Grasp Success,True
+Grasped,"obj_000070_0"
+Total Execution Duration,47.604349851608276
+Retract Success,True
+Dropped,"obj_000010_0,obj_000012_0,obj_000058_0,obj_000020_0"
+Grasp Result,finished
+Retrieved Target Object,True

@@ -1,0 +1,46 @@
+{
+  "phase": "0.5",
+  "source": "ARISE-Initiative/robosuite",
+  "commit": "85abee228d1c43ab1939bce33028099945d453b4",
+  "robosuite_version": "1.5.2",
+  "environment": "Lift",
+  "robot": "Panda",
+  "local_validation_method": "Instantiated robosuite.make(env_name='Lift', robots='Panda', gripper_types='default', has_renderer=False, has_offscreen_renderer=False, use_camera_obs=False), then inspected the MuJoCo model and stepped gripper open/close actions.",
+  "checks": {
+    "mjcf_loads_successfully": true,
+    "joint_count_7_plus_2_excluding_cube": true,
+    "joint_count_excluding_cube": 9,
+    "arm_joint_count": 7,
+    "finger_joint_count": 2,
+    "finger_joints": [
+      "gripper0_right_finger_joint1",
+      "gripper0_right_finger_joint2"
+    ],
+    "gripper_actuation_exists": true,
+    "gripper_actuators": [
+      "gripper0_right_gripper_finger_joint1",
+      "gripper0_right_gripper_finger_joint2"
+    ],
+    "tcp_or_grip_site_exists": true,
+    "tcp_or_grip_sites": [
+      "gripper0_right_ft_frame",
+      "gripper0_right_grip_site",
+      "gripper0_right_grip_site_cylinder"
+    ],
+    "collision_enabled": true,
+    "collision_geom_count": 19,
+    "fingerpad_collision_present": true,
+    "gripper_open_close_responds": true,
+    "finger_q_after_open_action": {
+      "gripper0_right_finger_joint1": 0.03803505687041985,
+      "gripper0_right_finger_joint2": -0.03801771539347143
+    },
+    "finger_q_after_close_action": {
+      "gripper0_right_finger_joint1": 0.001191882660584374,
+      "gripper0_right_finger_joint2": -0.001174339718854277
+    },
+    "lift_task_success_condition_present": true,
+    "lift_success_definition": "cube body z > table_offset_z + 0.04"
+  },
+  "important_note": "This validates the robosuite Panda Lift task asset composition and gripper mechanics locally. It does not claim a new scripted policy successfully lifted the cube in this run; task validation comes from selecting robosuite's published Lift benchmark source rather than a bare model."
+}

@@ -1,0 +1,148 @@
+{
+	"shelf_dimensions": {
+		"width_x": 25.0,
+		"height_z": 25.0,
+		"depth_y": 25.0
+	},
+	"objects": [
+		{
+			"id": 6,
+			"dimensions": {
+				"width_x": 7,
+				"height_z": 23,
+				"depth_y": 7
+			},
+			"bottom_left_pos": {
+				"x": 0,
+				"y": 18,
+				"z": 0
+			}
+		},
+		{
+			"id": 4,
+			"dimensions": {
+				"width_x": 5,
+				"height_z": 18,
+				"depth_y": 11
+			},
+			"bottom_left_pos": {
+				"x": 7,
+				"y": 14,
+				"z": 0
+			}
+		},
+		{
+			"id": 3,
+			"dimensions": {
+				"width_x": 7,
+				"height_z": 17,
+				"depth_y": 13
+			},
+			"bottom_left_pos": {
+				"x": 12,
+				"y": 12,
+				"z": 0
+			}
+		},
+		{
+			"id": 7,
+			"dimensions": {
+				"width_x": 8,
+				"height_z": 17,
+				"depth_y": 10
+			},
+			"bottom_left_pos": {
+				"x": 0,
+				"y": 4,
+				"z": 0
+			}
+		},
+		{
+			"id": 5,
+			"dimensions": {
+				"width_x": 5,
+				"height_z": 17,
+				"depth_y": 9
+			},
+			"bottom_left_pos": {
+				"x": 19,
+				"y": 16,
+				"z": 0
+			}
+		},
+		{
+			"id": 8,
+			"dimensions": {
+				"width_x": 5,
+				"height_z": 14,
+				"depth_y": 7
+			},
+			"bottom_left_pos": {
+				"x": 19,
+				"y": 9,
+				"z": 0
+			}
+		},
+		{
+			"id": 2,
+			"dimensions": {
+				"width_x": 7,
+				"height_z": 9,
+				"depth_y": 7
+			},
+			"bottom_left_pos": {
+				"x": 8,
+				"y": 5,
+				"z": 0
+			}
+		},
+		{
+			"id": 0,
+			"dimensions": {
+				"width_x": 5,
+				"height_z": 8,
+				"depth_y": 5
+			},
+			"bottom_left_pos": {
+				"x": 15,
+				"y": 4,
+				"z": 0
+			}
+		},
+		{
+			"id": 1,
+			"dimensions": {
+				"width_x": 5,
+				"height_z": 6,
+				"depth_y": 6
+			},
+			"bottom_left_pos": {
+				"x": 20,
+				"y": 3,
+				"z": 0
+			}
+		}
+	],
+	"placement_order": [
+		6,
+		4,
+		3,
+		5,
+		8,
+		7,
+		2,
+		0,
+		1
+	],
+	"names": [
+		"Foam Brick",
+		"Actuator Box",
+		"White toy box",
+		"Clock Box",
+		"Dominos Sugar",
+		"Garlic Powder",
+		"Crackers",
+		"Matcha",
+		"Antiacid bottle"
+	]
+}

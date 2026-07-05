@@ -1,0 +1,34 @@
+{
+  "phase": "0.5",
+  "status": "task_validated_candidate_selected",
+  "asset_root": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka",
+  "selected_source": {
+    "name": "robosuite",
+    "repository": "https://github.com/ARISE-Initiative/robosuite",
+    "commit": "85abee228d1c43ab1939bce33028099945d453b4",
+    "version_reported_by_source": "1.5.2",
+    "reason": "robosuite provides MuJoCo benchmark manipulation environments; the selected Panda asset is composed inside the official Lift task with PandaGripper, table, cube, reward, grasp checks, collision and friction settings."
+  },
+  "rejected_previous_candidate": {
+    "name": "MuJoCo Menagerie Franka Emika Panda",
+    "reason": "clean and simulation-ready, but not itself a task-validated grasp/lift asset with tuned task parameters."
+  },
+  "primary_files": {
+    "compiled_task_mjcf": "mjcf/robosuite/panda_lift_compiled.xml",
+    "robot_mjcf_source": "mjcf/robosuite/panda_robot.xml",
+    "gripper_mjcf_source": "mjcf/robosuite/panda_gripper.xml",
+    "controller_config": "config/default_panda_controller.json",
+    "task_source": "config/robosuite_task_sources/lift.py"
+  },
+  "task_validation_semantics": {
+    "environment": "Lift",
+    "robot": "Panda",
+    "default_gripper": "PandaGripper",
+    "success_condition": "cube body z > table_offset_z + 0.04",
+    "table_friction": [1.0, 0.005, 0.0001],
+    "cube_size_range_m": {
+      "min": [0.02, 0.02, 0.02],
+      "max": [0.022, 0.022, 0.022]
+    }
+  }
+}

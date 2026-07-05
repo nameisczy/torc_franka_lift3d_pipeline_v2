@@ -1,0 +1,5 @@
+# no input for this service
+bool visualize
+uint32[] ignore_occlusion
+---
+sensor_msgs/PointCloud2 point_cloud

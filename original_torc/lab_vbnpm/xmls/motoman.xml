@@ -1,0 +1,33 @@
+<mujoco model="World">
+  <compiler angle="radian" balanceinertia="true" inertiafromgeom="true" 
+    meshdir="../"
+    texturedir="../"
+    autolimits="true"/>
+  <option integrator="Euler" cone="elliptic" solver="CG" noslip_iterations="2">
+    <flag warmstart="disable" multiccd="enable"/>
+  </option>
+  <default>
+    <geom density="10"/>
+  </default>
+  <asset>
+    <include file="robot_asset.xml"/>
+  </asset>
+  <worldbody>
+    <include file="robot_body.xml"/>
+  </worldbody>
+  <actuator>
+    <include file="robot_actuator.xml"/>
+  </actuator>
+  <contact>
+    <include file="robot_contact.xml"/>
+  </contact>
+  <tendon>
+    <include file="robot_tendon.xml"/>
+  </tendon>
+  <equality>
+    <include file="robot_equality.xml"/>
+  </equality>
+  <default>
+    <include file="robot_default.xml"/>
+  </default>
+</mujoco>

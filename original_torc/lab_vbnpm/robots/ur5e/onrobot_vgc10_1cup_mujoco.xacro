@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<robot name="onrobot_vgc10_model" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find onrobot_vg_description)/urdf/onrobot_vgc10_1cup_model_macro.xacro" />
+  <mujoco>
+    <compiler meshdir="assets" strippath="true" exactmeshinertia="true" inertiafromgeom="true" balanceinertia="true" discardvisual="false" />
+  </mujoco>
+  <xacro:onrobot_vgc10 prefix="" />
+</robot>

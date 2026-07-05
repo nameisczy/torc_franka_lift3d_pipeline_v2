@@ -1,0 +1,50 @@
+<launch>
+  <!-- args -->
+  <arg name="bag_file" default="tests/recording0003.bag" />
+  <arg name="bag_path" default="$(find lab_vbnpm)/$(arg bag_file)" />
+  <arg name="extra" default="false" />
+  <!-- <arg name="planning" default="false" /> -->
+  <!-- <arg name="replay_start_delay" default="5.0" /> -->
+
+  <!-- planning stuff -->
+  <!-- <group if="$(arg planning)">
+    <include file="$(find motoman_sda10f_moveit_config)/launch/demo.launch" >
+      <arg name="moveit_controller_manager" value="simple" />
+      <arg name="use_rviz" value="false" />
+      <arg name="pipeline" value="ompl" />
+      <arg name="kinematic_config" value="kinematics.yaml" />
+    </include>
+    <node name="bio_ik_service" pkg="bio_ik_service" type="bio_ik_service" respawn="true" output="screen" />
+    <include file="$(find motoman_sda10f_moveit_config)/launch/moveit_rviz.launch">
+      <arg name="rviz_config" value="$(find lab_vbnpm)/launch/moveit_replay.rviz" />
+      <arg name="debug" value="false"/>
+    </include>
+  </group> -->
+  <group>
+    <param name="robot_description" command="xacro '$(find motoman_sda10f_support)/urdf/sda10f.xacro'" />
+    <param name="robot_description_semantic" textfile="$(find motoman_sda10f_moveit_config)/config/motoman_sda10f.srdf" />
+    <group ns="robot_description_kinematics">
+      <rosparam command="load" file="$(find motoman_sda10f_moveit_config)/config/kinematics.yaml"/>
+    </group>
+    <include file="$(find motoman_sda10f_moveit_config)/launch/moveit_rviz.launch">
+      <arg name="rviz_config" value="$(find lab_vbnpm)/launch/replay.rviz" />
+      <arg name="debug" value="false"/>
+    </include>
+  </group>
+
+  <!-- extra publishers if missing from bag -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" if="$(arg extra)" />
+  <include file="$(find lab_vbnpm)/launch/calibration/cams_publish.launch" if="$(arg extra)" />
+
+  <group if="$(arg extra)">
+    <node pkg="tf2_ros" type="static_transform_publisher" name="world_to_base_link" args="0 0 0 0 0 0 1 world base_link" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="d455_a_to_o" args="0 0 0 -0.5 0.5 -0.5 0.5 d455_aligned_depth_to_color_frame d455_color_optical_frame" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="d455_l_to_a" args="-0.00024151809338945895 -0.05908718705177307 -0.00011872439063154161 -0.0010080606443807483 -0.0017930838512256742 0.0013027881504967809 0.9999970197677612 d455_link d455_aligned_depth_to_color_frame" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="d435_a_to_o" args="0 0 0 -0.5 0.5 -0.5 0.5 d435_aligned_depth_to_color_frame d435_color_optical_frame" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="d435_l_to_a" args="-0.0002588207717053592 0.01484898291528225 9.457149280933663e-05 -0.0017881100066006184 0.000996184884570539 0.0035335097927600145 0.9999916553497314 d435_link d435_aligned_depth_to_color_frame" />
+  </group>
+
+  <!-- <node pkg="rosbag" type="play" name="player" output="screen" args="$(arg bag_path)" launch-prefix="bash -c 'sleep $(arg replay_start_delay); $0 $@' "/> -->
+  <!-- <node pkg="rqt_bag" type="rqt_bag" name="rqt_bag" output="screen" args="$(arg bag_path)" respawn="true"/> -->
+  <node pkg="rosbag" type="play" name="player" output="screen" args="$(arg bag_path)" launch-prefix="bash -c 'read; $0 $@' " respawn="true"/>
+</launch>

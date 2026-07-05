@@ -1,0 +1,19 @@
+{
+  "cmd": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/experiments/run_experiment.py experiment --scene tests/scenes/final/difficult_116.xml --target-object obj_000070_0 --method dg_only --headless --server --pick-limit 1 --base-dir /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783239793 --mj-pickle",
+  "args": {
+    "scene": "tests/scenes/final/difficult_116.xml",
+    "target_object": "obj_000070_0",
+    "data_dir": "../../phase4_artifacts/torc_franka_pipeline_1783239793/exp_2026-07-05_12-23-24__difficult_116_obj_000070_0_dg_only",
+    "name": "experiment",
+    "rosbag": false,
+    "method": "dg_only",
+    "real": false,
+    "headless": true,
+    "profile_grasping": false,
+    "profiler": "line_profiler",
+    "mj_pickle": true
+  },
+  "git_commit": null,
+  "unix_timestamp": 1783239804.466258,
+  "timestamp": "2026/07/05 12:23:24"
+}

@@ -1,0 +1,28 @@
+<launch>
+    <!-- launch the realsense camera sensing system -->
+    
+    <!-- launch the moveit file -->
+    <include file="$(find easy_handeye)/launch/calibrate.launch">
+        <arg name="eye_on_hand" value="true"/>
+        <arg name="namespace_prefix" value="my_eob_calib"/>
+
+        <arg name="move_group" value="arm_right"/>
+        <!-- fill in the following parameters according to your robot's published tf frames -->
+        <arg name="robot_base_frame" value="torso_link_b1"/>
+        <arg name="robot_effector_frame" value="arm_right_link_7_t"/>
+
+        <!-- fill in the following parameters according to your tracking system's published tf frames -->
+        <!-- <arg name="tracking_base_frame" value="d435_color_optical_frame"/> -->
+        <!-- <arg name="tracking_base_frame" value="d435_link"/> -->
+        <arg name="tracking_base_frame" value="zedm_base_link"/>
+        <arg name="tracking_marker_frame" value="checkerboard"/>
+
+        <arg name="publish_dummy" value="false" />
+
+        <!-- disable automatic robot movement -->
+        <!-- <arg name="freehand_robot_movement" value="false" />  -->
+    </include>
+
+
+
+</launch>

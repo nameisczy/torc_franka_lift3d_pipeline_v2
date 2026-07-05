@@ -1,0 +1,31 @@
+<launch>
+  <arg name="camera1" default="d455"/>
+  <arg name="camera2" default="d435"/>
+  <arg name="container" default="True" />
+  <arg name="robot_config" default="$(find lab_vbnpm)/robots/motoman/motoman_filter.yaml" />
+
+  <include file="$(find segment3d)/launch/container.launch" if="$(arg container)"/>
+  <node name="detic_service" pkg="segment3d" type="segment3d_run.sh" unless="$(arg container)"/>
+  <!-- node name="detic_service" pkg="segment3d" type="segment3d_sam_run.sh" unless="$(arg container)"/> -->
+
+  <!-- <node name="occlusion_service" pkg="lab_vbnpm" type="scene_occlusion_service.py" /> -->
+
+  <!-- Prerequisite: sensor_filters -->
+  <!-- http://wiki.ros.org/sensor_filters -->
+  <node name="pcd_filter" pkg="sensor_filters" type="pointcloud2_filter_chain" output="screen">
+      <rosparam command="load" file="$(arg robot_config)" />
+      <remap from="~input" to="velodyne_points" />
+      <remap from="~output" to="velodyne_points_filtered" />
+  </node>
+
+  <node name="$(arg camera1)_set_dyn_config_preset" pkg="dynamic_reconfigure" type="dynparam"
+    args="set_from_parameters $(arg camera1)/stereo_module">
+    <param name="visual_preset" value="3" />
+    <param name="inter_cam_sync_mode" value="1" />
+  </node>
+  <node name="$(arg camera2)_set_dyn_config_preset" pkg="dynamic_reconfigure" type="dynparam"
+    args="set_from_parameters $(arg camera2)/stereo_module">
+    <param name="visual_preset" value="3" />
+    <param name="inter_cam_sync_mode" value="2" />
+  </node>
+</launch>

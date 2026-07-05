@@ -1,0 +1,17 @@
+<mujoco model="onrobot_vgc10_model">
+  <compiler angle="radian" meshdir="assets/"/>
+
+  <asset>
+    <mesh name="v_base_link_1cup" file="v_base_link_1cup.stl"/>
+    <mesh name="c_base_link_1cup" file="c_base_link_1cup.stl"/>
+    <mesh name="v_suction_cup_1cup" file="v_suction_cup_1cup.stl"/>
+    <mesh name="c_suction_cup_1cup" file="c_suction_cup_1cup.stl"/>
+  </asset>
+
+  <worldbody>
+    <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.8 0.8 0.8 1" mesh="v_base_link_1cup"/>
+    <geom type="mesh" rgba="0.8 0.8 0.8 1" mesh="c_base_link_1cup"/>
+    <geom pos="0 0 0.094901" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.9 0.9 0.9 1" mesh="v_suction_cup_1cup"/>
+    <geom pos="0 0 0.094901" type="mesh" rgba="0.9 0.9 0.9 1" mesh="c_suction_cup_1cup"/>
+  </worldbody>
+</mujoco>

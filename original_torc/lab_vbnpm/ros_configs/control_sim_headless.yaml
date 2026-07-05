@@ -1,0 +1,16 @@
+session_name: "control_sim_headless"
+base_config: ./control_sim.yaml
+windows:
+  - "Roscore": "roscore"
+
+  - "Control Launch": "DISABLE_ROS1_EOL_WARNINGS=1 roslaunch --wait lab_vbnpm control.launch is_sim:=true scene:=$SCENE gui_sim:=false gui_plan:=false"
+  
+  - "Grasp Planner Launch": "roslaunch --wait cgn_ros container.launch"
+    post_delay: 6.0
+  
+  - "Calibration Sim Parameters": "python3 ./launch/calibration/sim_params.py"
+    post_delay: 3.0
+  
+  - "Curobo Control": 
+    - "source API_KEY"
+    - "python3 ./scripts/task_planner/curobo_control.py --method $METHOD --sim $VLM?--vlm --ground-truth $ROSBAG?--rosbag $DEBUG_SHOW?--debug-show --in-file $IN_FILE --out-file $OUT_FILE --target-object $TARGET_OBJECT --pick-limit $PICK_LIMIT --profiler $PROFILER"

@@ -1,0 +1,899 @@
+import argparse
+import csv
+from dataclasses import dataclass, field
+import os
+import subprocess
+from pathlib import Path
+from datetime import datetime
+from enum import Enum
+import sys
+import time
+import json
+import shutil
+from typing import List, Optional, Tuple, Union, Any
+from colorama import Fore, Style
+import zmq
+import yaml
+
+ROOT_DIR = os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + "/..")
+RUNS_DIR = f"{ROOT_DIR}/experiments/runs"
+RUN_BASE_DIR = RUNS_DIR
+TRIAL_CONFIGS_DIR = f"{ROOT_DIR}/experiments/trial_configs"
+SCENES_DIR = f"{ROOT_DIR}/tests/scenes/final"
+
+USER_PREFIX = ""
+if "USER" in os.environ:
+    USER_PREFIX = os.environ["USER"] + "_"
+
+os.chdir(ROOT_DIR)
+os.makedirs(RUNS_DIR, exist_ok=True)
+
+
+class Method(str, Enum):
+    ALL_AUTO = "all_auto"
+    HUMAN = "human"
+    VLM_ONLY = "vlm_only"
+    DG_ONLY = "dg_only"
+    DG_INTO_VLM = "dg_into_vlm"
+    VLM_DG = "vlm_dg"
+    RANDOM = "random"
+
+    @staticmethod
+    def values():
+        return [method.value for method in Method]
+
+    @staticmethod
+    def values_all_auto():
+        return [
+            method.value
+            for method in Method
+            if method not in [Method.ALL_AUTO, Method.HUMAN]
+        ]
+
+
+class Profiler(str, Enum):
+    CPROFILE = "c_profile"
+    LINE_PROFILER = "line_profiler"
+
+    @staticmethod
+    def values():
+        return [profiler.value for profiler in Profiler]
+
+
+@dataclass
+class TrialArgs:
+    mode: str
+    files: List[str]
+    headless: bool = False
+    method: List[Method] = field(default_factory=[Method.ALL_AUTO])
+    rosbag: bool = False
+    dry: bool = False
+    pick_limit: int = 15
+    server: bool = False
+    base_dir: str = None
+    real: bool = False
+    docker: bool = False
+    rerun_error: bool = False
+    profile_grasping: bool = False
+    profiler: str = Profiler.LINE_PROFILER.value
+    mj_pickle: bool = False
+
+
+@dataclass
+class ResumeTrialArgs:
+    mode: str
+    trial_dir: str
+    dry: bool = False
+    server: bool = False
+    base_dir: str = None
+    real: bool = False
+    docker: bool = False
+    rerun_error: bool = False
+
+
+@dataclass
+class ExperimentArgs:
+    mode: str
+    scene: str
+    target_object: str
+    method: List[Method] = field(default_factory=[Method.ALL_AUTO])
+    rosbag: bool = False
+    headless: bool = False
+    dry: bool = False
+    pick_limit: int = 15
+    server: bool = False
+    base_dir: str = None
+    real: bool = False
+    docker: bool = False
+    profile_grasping: bool = False
+    profiler: str = Profiler.LINE_PROFILER.value
+    mj_pickle: bool = False
+
+
+def printerr(*msg):
+    print(Fore.RED, f"Error: ", *msg, Fore.RESET)
+
+
+def exiterr(*msg):
+    print(Fore.RED, f"Error: ", *msg, Fore.RESET)
+    exit(1)
+
+
+def get_timestamp() -> str:
+    now = datetime.now()
+    return now.strftime("%Y-%m-%d_%H-%M-%S")
+
+
+def get_git_commit_hash() -> str:
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
+        )
+        return result.stdout.strip()
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing git command: {e}")
+        return None
+    except FileNotFoundError:
+        print(
+            "Error: 'git' command not found. Please ensure git is installed and in your PATH."
+        )
+        return None
+
+
+def to_valid_file_path(string: str) -> str:
+    """Converts a string to a valid file path.
+
+    Args:
+        string (str): String to convert.
+
+    Returns:
+        str: Valid file path.
+    """
+    return "".join(c if c.isalnum() or c in ["/", "_"] else "_" for c in string)
+
+
+def resume_trial(
+    trial_dir: str, dry: bool = False, server: bool = False, rerun_error: bool = True
+):
+    if not os.path.exists(trial_dir):
+        exiterr(f"Resume trial_dir {trial_dir} does not to exist!")
+    trial_info_path = f"{trial_dir}/info_trial.json"
+    if not os.path.exists(trial_info_path):
+        exiterr(f"Resume trial_dir {trial_dir} does not have a info_trial.json!")
+    trial_dir = trial_dir
+    print(f"Resuming existing trial @ {trial_dir}")
+    with open(trial_info_path, "r") as file:
+        info = json.load(file)
+        args = info["args"]
+        args["trial_dir"] = trial_dir
+        args["dry"] = dry
+        args["server"] = server
+        if rerun_error:
+            args["rerun_error"] = rerun_error
+    run_trial(**args)
+
+
+def run_trial(
+    config_yaml: str,
+    method: Method = Method.ALL_AUTO,
+    rosbag: bool = False,
+    headless: bool = False,
+    trial_dir: str = "",
+    dry: bool = False,
+    pick_limit: int = 15,
+    server: bool = False,
+    rerun_error: bool = False,
+    real: bool = False,
+    profile_grasping: bool = False,
+    profiler: str = Profiler.LINE_PROFILER.value,
+    mj_pickle: bool = False,
+) -> bool:
+    if os.path.exists(f"{TRIAL_CONFIGS_DIR}/{config_yaml}.yaml"):
+        config_yaml = f"{TRIAL_CONFIGS_DIR}/{config_yaml}.yaml"
+    config_yaml = os.path.relpath(config_yaml, ROOT_DIR)
+
+    scene_prefix = ""
+    scene_suffix = ""
+    # Read config_yaml
+
+    with open(config_yaml, "r") as file:
+        config = yaml.safe_load(file)
+        xml_pattern: str = config.get("xml_pattern", "{{scene}}")
+        template_slots: List[str] = config.get("template", ["target_object", "scene"])
+        raw_rows: List[Any] = config.get("data", [])
+        # Stores rows of trials in format of
+        # (scene, target_object, scene_xml, experiment_count)
+        #
+        # NOTE: experiment_count is necessary to uniquely identify
+        #       duplicate experiments of the same scene and target object
+        #       within the same trial
+        trial_rows: List[Tuple[str, str, str, int]] = []
+        # Counts number of experiements for each (scene, target_object) instance
+        experiment_counts = {}
+        for row_values in raw_rows:
+            scene_xml = xml_pattern
+            target_object = ""
+            scene = ""
+            for slot, value in zip(template_slots, row_values):
+                slot = str(slot)
+                value = str(value)
+                scene_xml = scene_xml.replace("{{" + slot + "}}", value)
+                if slot == "target_object":
+                    target_object = value
+                elif slot == "scene":
+                    scene = value
+            key = (scene, target_object)
+            experiment_counts[key] = experiment_counts.get(key, 0) + 1
+            trial_rows.append((scene, target_object, scene_xml, experiment_counts[key]))
+
+    trial_name = Path(config_yaml).stem
+    print(f"{trial_name} trials ({len(trial_rows)}):")
+    print(f"  scene_prefix: {scene_prefix}")
+    print(f"  scene_suffix: {scene_suffix}\n")
+
+    if not trial_dir:
+        trial_dir = f"{RUN_BASE_DIR}/trial_{get_timestamp()}__{trial_name}__{method}"
+    trial_info_file = f"{trial_dir}/info_trial.json"
+    if dry:
+        print("  Dry: Make trial_dir: ".ljust(30), trial_dir)
+    else:
+        os.makedirs(trial_dir, exist_ok=True)
+
+    errors = 0
+
+    def run(method: Method):
+        nonlocal errors
+        for i, (scene, target_object, scene_xml, experiment_count) in enumerate(
+            trial_rows
+        ):
+            # Skip experiments that are completed
+            scene_str = scene
+            if experiment_count > 1:
+                scene_str += f"__exp_{experiment_count}"
+            data_dir = f"{trial_dir}/{scene_str}__{to_valid_file_path(target_object)}__{method}"
+
+            def get_experiment_result() -> Tuple[str, str]:
+                experiment_result = "unfinished"
+                error_stack_trace = ""
+                output_file = f"{data_dir}/output.csv"
+                try:
+                    with open(output_file, "r") as file:
+                        last_row = list(csv.reader(file))[-1]
+                        if last_row[0] in [
+                            "Retrieved Target Object",
+                            "Dropped Target Object",
+                        ]:
+                            experiment_result = "finished"
+                        elif last_row[0] == "Unhandled Error":
+                            experiment_result = "error"
+                            error_stack_trace = last_row[1].replace('""', '"')
+                except:
+                    pass
+                return experiment_result, error_stack_trace
+
+            if os.path.exists(data_dir):
+                experiment_result, error_stack_trace = get_experiment_result()
+                if experiment_result == "finished":
+                    print(f"  Skipping [{i + 1}]: {scene}, {target_object}")
+                    print(f"    {data_dir}")
+                    continue
+                elif experiment_result == "error":
+                    print(Fore.RED)
+                    print(f"  Error [{i + 1}]: {scene}, {target_object}")
+                    print(f"    {data_dir}\n")
+                    print(error_stack_trace, Style.RESET_ALL)
+                    if rerun_error:
+                        if dry:
+                            print("  Dry: Remove errored experiment: ", data_dir)
+                        else:
+                            shutil.rmtree(data_dir)
+                    else:
+                        errors += 1
+                        continue
+                else:
+                    if dry:
+                        print("  Dry: Remove unfinished experiment: ", data_dir)
+                    else:
+                        shutil.rmtree(data_dir)
+
+            run_experiment(
+                scene=scene_xml,
+                target_object=target_object,
+                data_dir=data_dir,
+                method=method,
+                rosbag=rosbag,
+                prefix="  ",
+                name=f"Experiment {i + 1}:",
+                headless=headless,
+                dry=dry,
+                pick_limit=pick_limit,
+                server=server,
+                real=real,
+                profile_grasping=profile_grasping,
+                profiler=profiler,
+                mj_pickle=mj_pickle,
+            )
+
+            experiment_result, error_stack_trace = get_experiment_result()
+            if experiment_result != "finished":
+                print(Fore.RED)
+                print(f"  Run error [{i + 1}]: {scene}, {target_object}")
+                print(f"    {data_dir}\n")
+                print(error_stack_trace, Style.RESET_ALL)
+                errors += 1
+
+    if dry:
+        print("  Dry: Make info_trial.json: ".ljust(30), trial_info_file)
+    else:
+        with open(trial_info_file, "w") as file:
+            now = datetime.now()
+            timestamp = now.strftime("%Y/%m/%d %H:%M:%S")
+
+            info = {
+                "cmd": " ".join(sys.argv),
+                "args": {
+                    "config_yaml": config_yaml,
+                    "method": method,
+                    "rosbag": rosbag,
+                    "headless": headless,
+                    "pick_limit": pick_limit,
+                    "server": server,
+                    "real": real,
+                    "rerun_error": rerun_error,
+                    "profile_grasping": profile_grasping,
+                    "profiler": profiler,
+                    "mj_pickle": mj_pickle,
+                },
+                "git_commit": get_git_commit_hash(),
+                "unix_timestamp": now.timestamp(),
+                "timestamp": timestamp,
+            }
+            json.dump(info, file, indent=2)
+
+    attempts = 1
+    while True:
+        errors = 0
+        print(f"Trial attempt: {attempts}")
+        if method == Method.ALL_AUTO:
+            # Run all methods
+            for method in Method.values_all_auto():
+                run(method)
+        else:
+            run(method)
+
+        if errors > 0:
+            print("\n", Fore.RED, f"Found {errors} error(s).", Style.RESET_ALL)
+            if rerun_error:
+                # Progressively sleep longer and longer if we have an error, because
+                # we won't want to ddos API servers and get IP banned
+                sleep_time = pow(2, attempts - 1) * 60
+                print(f"Rerunning after sleeping {sleep_time} seconds...")
+                attempts += 1
+                time.sleep(sleep_time)
+                continue
+            else:
+                # Exit failure
+                print(
+                    f"\n{Fore.RED}❌ Stopping with {errors} error(s).{Style.RESET_ALL}"
+                )
+                return False
+        else:
+            # Success
+            print(f"\n{Fore.GREEN}✅ Trial success. Stopping...{Style.RESET_ALL}")
+            return True
+
+
+def run_experiment(
+    scene: str,
+    target_object: str,
+    data_dir: str = None,
+    prefix: str = "",
+    name: str = "experiment",
+    rosbag: bool = False,
+    method: Method = Method.ALL_AUTO,
+    headless: bool = False,
+    dry: bool = False,
+    pick_limit: int = 15,
+    server: bool = False,
+    real: bool = False,
+    profile_grasping: bool = False,
+    profiler: str = Profiler.LINE_PROFILER.value,
+    mj_pickle: bool = False,
+):
+    if method == Method.ALL_AUTO:
+        # Run all methods
+        for method in Method.values_all_auto():
+            run_experiment(
+                scene=scene,
+                target_object=target_object,
+                data_dir=data_dir,
+                prefix=prefix,
+                name=name,
+                method=method,
+                dry=dry,
+                pick_limit=pick_limit,
+                server=server,
+                real=real,
+                profile_grasping=profile_grasping,
+                profiler=profiler,
+                mj_pickle=mj_pickle,
+            )
+    else:
+        # Run single experiment
+        if not real:
+            if os.path.exists(f"{SCENES_DIR}/{scene}.xml"):
+                scene = f"{SCENES_DIR}/{scene}.xml"
+            scene = os.path.relpath(scene, ROOT_DIR)
+
+        if data_dir is None:
+            data_dir = f"{RUN_BASE_DIR}/exp_{get_timestamp()}__{Path(scene).stem}_{to_valid_file_path(target_object)}_{method}"
+        data_dir = os.path.relpath(data_dir, ROOT_DIR)
+
+        if dry:
+            print("  Dry: Make data_dir: ".ljust(30), data_dir)
+        else:
+            os.makedirs(data_dir, exist_ok=True)
+
+        experiment_info_file = f"{data_dir}/info_experiment.json"
+        if dry:
+            print("  Dry: Make info_experiment.json: ".ljust(30), experiment_info_file)
+        else:
+            with open(experiment_info_file, "w") as file:
+                now = datetime.now()
+                timestamp = now.strftime("%Y/%m/%d %H:%M:%S")
+
+                info = {
+                    "cmd": " ".join(sys.argv),
+                    "args": {
+                        "scene": scene,
+                        "target_object": target_object,
+                        "data_dir": data_dir,
+                        "name": name,
+                        "rosbag": rosbag,
+                        "method": method,
+                        "real": real,
+                        "headless": headless,
+                        "profile_grasping": profile_grasping,
+                        "profiler": profiler,
+                        "mj_pickle": mj_pickle,
+                    },
+                    "git_commit": get_git_commit_hash(),
+                    "unix_timestamp": now.timestamp(),
+                    "timestamp": timestamp,
+                }
+                json.dump(info, file, indent=2)
+
+        def dprint(*msg, extra_prefix: str = ""):
+            final_msg = " ".join(msg)
+            lines = final_msg.splitlines()
+            final_msg = "\n".join([prefix + extra_prefix + line for line in lines])
+            print(final_msg)
+
+        dprint(name)
+        dprint(f"  scene:            {scene}")
+        dprint(f"  target_object:    {target_object}")
+        dprint(f"  rosbag:           {rosbag}")
+        dprint(f"  method:           {method}")
+        dprint(f"  headless:         {headless}")
+        dprint(f"  exp_info_file:    {experiment_info_file}")
+        dprint(f"  real:             {real}")
+        dprint(f"  server:           {server}")
+        dprint(f"  profile_grasping: {profile_grasping}")
+        dprint(f"  profiler:         {profiler}")
+        dprint(f"  mj_pickle:        {mj_pickle}")
+        time_start = time.time()
+
+        out_file = f"{data_dir}/output.csv"
+        if server:
+            if not real:
+                motoman_node_req = {
+                    "cmd": "reset",
+                    "args": {
+                        "xml_file": os.path.abspath(scene),
+                        "gui": not headless,
+                        "experiment_dir": os.path.abspath(data_dir),
+                        "mj_pickle": mj_pickle,
+                    },
+                }
+            curobo_control_req = {
+                "cmd": "run",
+                "args": {
+                    "method": method,
+                    "sim": not real,
+                    "ground_truth": not real,
+                    "rosbag": rosbag,
+                    "vlm": method != Method.HUMAN,
+                    "debug_show": method == Method.HUMAN or real,
+                    "out_file": os.path.abspath(out_file),
+                    "target_object": target_object,
+                    "pick_limit": pick_limit,
+                    "profile_grasping": profile_grasping,
+                    "profiler": profiler,
+                },
+            }
+            dprint()
+            if not real:
+                dprint(
+                    f"Motoman request:\n{json.dumps(motoman_node_req, indent=2)}",
+                    extra_prefix="  ",
+                )
+            dprint(
+                f"Curobo control request:\n{json.dumps(curobo_control_req, indent=2)}",
+                extra_prefix="  ",
+            )
+            if not dry:
+                dprint()
+                if not real:
+                    motoman_node_socket.send_json(motoman_node_req)
+                    dprint(f"  Sent experiment to motoman node.")
+                    res = motoman_node_socket.recv_json()
+                    if res.get("type") != "success":
+                        printerr(
+                            f"Reset motoman_node failed:\n{json.dumps(res, indent=2)}"
+                        )
+                        return
+
+                curobo_control_socket.send_json(curobo_control_req)
+                dprint(f"  Sent experiment to curobo control.")
+                res = curobo_control_socket.recv_json()
+                if res.get("type") != "result":
+                    printerr(f"Curobo control failed:\n{json.dumps(res, indent=2)}")
+                    return
+                result = res.get("result")
+                dprint(f"  Received result: {result}")
+        else:
+            debug_show = "--debug-show" if method == Method.HUMAN or real else ""
+            vlm = "--vlm" if method != Method.HUMAN else ""
+            rosbag = "--rosbag" if rosbag else ""
+            ros_config = "control_sim.yaml"
+            scene_args = f"--scene '{os.path.abspath(scene)}'"
+            if headless:
+                ros_config = "control_sim_headless.yaml"
+            if real:
+                ros_config = "control_real.yaml"
+                scene_args = ""
+            profile_grasping_arg = "--profile-grasping" if profile_grasping else ""
+            profiler_arg = f"--profiler '{profiler}'"
+            mj_pickle_arg = "--mj-pickle" if mj_pickle else ""
+            cmd = f"{ROOT_DIR}/run_ros.sh {ROOT_DIR}/ros_configs/{ros_config} {vlm} {debug_show} {scene_args} --method '{method}' --target-object '{target_object}' --out-file '{os.path.abspath(out_file)}' --pick-limit {pick_limit} {rosbag} {profile_grasping_arg} {profiler_arg} {mj_pickle_arg}"
+            dprint()
+            dprint(f"  {cmd}")
+
+            if not dry:
+                Path(f"/tmp/{USER_PREFIX}curobo_control_finished").unlink(
+                    missing_ok=True
+                )
+                subprocess.run(
+                    cmd,
+                    capture_output=True,
+                    shell=True,
+                )
+
+                while not os.path.exists(f"/tmp/{USER_PREFIX}curobo_control_finished"):
+                    time.sleep(1)
+
+        time_end = time.time()
+        duration_secs = time_end - time_start
+        dprint(f"  Elapsed time: {duration_secs}s")
+
+        if dry:
+            print(
+                "  Dry: Editing info_experiment.json: ".ljust(30), experiment_info_file
+            )
+        else:
+            with open(experiment_info_file, "w") as file:
+                info["seconds_elapsed"] = duration_secs
+                json.dump(info, file, indent=2)
+
+
+motoman_node_socket: Optional[zmq.Socket]
+curobo_control_socket: Optional[zmq.Socket]
+
+
+def init_sockets(real: bool = False, docker: bool = False):
+    global motoman_node_socket, curobo_control_socket
+    config = "control_sim_server.yaml"
+    if docker:
+        config = "control_sim_docker.yaml"
+    cmd = f"{ROOT_DIR}/run_ros.sh {ROOT_DIR}/ros_configs/{config}"
+    subprocess.run(
+        cmd,
+        capture_output=True,
+        shell=True,
+    )
+
+    # Only connect to motoman node if it's a sim run
+    if not real:
+        context = zmq.Context()
+        motoman_node_socket = context.socket(zmq.REQ)
+        motoman_node_socket.connect("tcp://localhost:5858")
+
+    curobo_control_socket = context.socket(zmq.REQ)
+    curobo_control_socket.connect("tcp://localhost:5757")
+
+
+def stop_sockets():
+    if motoman_node_socket:
+        motoman_node_socket.close()
+    curobo_control_socket.close()
+
+
+parser = argparse.ArgumentParser(prog="run_experiment.sh", epilog="Runs an experiment.")
+subparsers = parser.add_subparsers(required=True, dest="mode")
+
+trial_parser = subparsers.add_parser("trial")
+trial_parser.add_argument(
+    "files",
+    nargs="+",
+    help="CSV file(s) to run, separated by spaces.",
+)
+trial_parser.add_argument(
+    "--headless",
+    action="store_true",
+    help="Disables graphics like MuJoCo viewer and RViz while running.",
+)
+trial_parser.add_argument(
+    "--method",
+    nargs="+",
+    default=[Method.ALL_AUTO],
+    choices=Method.values(),
+    help="Method(s) to use.",
+)
+trial_parser.add_argument(
+    "--rosbag",
+    action="store_true",
+    help="Collects rosbag data (takes 60 GB of space per bag).",
+)
+trial_parser.add_argument(
+    "--dry",
+    action="store_true",
+    help="Performs a dry run, outputing what experiements it would run without actually running them.",
+)
+trial_parser.add_argument(
+    "--pick-limit",
+    type=int,
+    default=15,
+    help="Maximum number of picks before the process ends. Default is 15. Use -1 for unlimited picks. Use 0 to collect images only.",
+)
+trial_parser.add_argument(
+    "--server",
+    action="store_true",
+    help="Spins up a server to run headless experiments. Faster if you're running multiple experiments.",
+)
+trial_parser.add_argument(
+    "--base-dir",
+    type=str,
+    help="Base directory to store runs in. Will be created if it does not exist. Relative to runs dir, or an absolute path.",
+)
+trial_parser.add_argument(
+    "--real",
+    action="store_true",
+    help="Performs a real run not in simulation.",
+)
+trial_parser.add_argument(
+    "--docker",
+    action="store_true",
+    help="Runs the docker ros_config, which is headless and excludes the grasp planner. The grasp planner is assumed to run in its own docker container.",
+)
+trial_parser.add_argument(
+    "--rerun-error",
+    action="store_true",
+    help="Reruns experiments that ended in error until all experiments complete successfully.",
+)
+trial_parser.add_argument(
+    "--profile-grasping",
+    action="store_true",
+    help="Profiles the time taken for each step of the grasping process and saves it to profile_grasping.json in the experiment directory.",
+)
+trial_parser.add_argument(
+    "--profiler",
+    type=str,
+    default=Profiler.LINE_PROFILER.value,
+    choices=Profiler.values(),
+    help="Profiler to use for grasping choice function.",
+)
+trial_parser.add_argument(
+    "--mj-pickle",
+    action="store_true",
+    help="Tells motoman_node to record mj_pickles during the experiment.",
+)
+
+
+resume_trial_parser = subparsers.add_parser("resume_trial")
+resume_trial_parser.add_argument(
+    "trial_dir",
+    type=str,
+    help="Directory of an existing trial to resume.",
+)
+resume_trial_parser.add_argument(
+    "--dry",
+    action="store_true",
+    help="Performs a dry run, outputing what experiements it would run without actually running them.",
+)
+resume_trial_parser.add_argument(
+    "--server",
+    action="store_true",
+    help="Spins up a server to run headless experiments. Faster if you're running multiple experiments.",
+)
+resume_trial_parser.add_argument(
+    "--base-dir",
+    type=str,
+    help="Base directory to store runs in. Will be created if it does not exist. Relative to runs dir, or an absolute path.",
+)
+resume_trial_parser.add_argument(
+    "--docker",
+    action="store_true",
+    help="Runs the docker ros_config, which is headless and excludes the grasp planner. The grasp planner is assumed to run in its own docker container.",
+)
+resume_trial_parser.add_argument(
+    "--rerun-error",
+    action="store_true",
+    help="Reruns experiments that ended in error until all experiments complete successfully.",
+)
+
+experiment_parser = subparsers.add_parser("experiment")
+experiment_parser.add_argument(
+    "--scene", type=str, required=True, help="Path to the scene file to run"
+)
+experiment_parser.add_argument(
+    "--target-object", type=str, required=True, help="Name of target object to pick"
+)
+experiment_parser.add_argument(
+    "--method",
+    nargs="+",
+    default=[Method.ALL_AUTO],
+    choices=Method.values(),
+    help="Method(s) to use.",
+)
+experiment_parser.add_argument(
+    "--rosbag",
+    action="store_true",
+    help="Collects rosbag data (takes around 60 GB of space per bag).",
+)
+experiment_parser.add_argument(
+    "--headless",
+    action="store_true",
+    help="Disables graphics like MuJoCo viewer and RViz while running.",
+)
+experiment_parser.add_argument(
+    "--dry",
+    action="store_true",
+    help="Performs a dry run, outputing what experiements it would run without actually running them.",
+)
+experiment_parser.add_argument(
+    "--pick-limit",
+    type=int,
+    default=15,
+    help="Maximum number of picks before the process ends. Default is 15. Use -1 for unlimited picks. Use 0 to collect images only.",
+)
+experiment_parser.add_argument(
+    "--server",
+    action="store_true",
+    help="Spins up a server to run headless experiments. Faster if you're running multiple experiments.",
+)
+experiment_parser.add_argument(
+    "--base-dir",
+    type=str,
+    help="Base directory to store runs in. Will be created if it does not exist. Relative to runs dir, or an absolute path.",
+)
+experiment_parser.add_argument(
+    "--real",
+    action="store_true",
+    help="Performs a real run not in simulation.",
+)
+experiment_parser.add_argument(
+    "--docker",
+    action="store_true",
+    help="Runs the docker ros_config, which is headless and excludes the grasp planner. The grasp planner is assumed to run in its own docker container.",
+)
+experiment_parser.add_argument(
+    "--profile-grasping",
+    action="store_true",
+    help="Profiles the time taken for each step of the grasping process and saves it to profile_grasping.json in the experiment directory.",
+)
+experiment_parser.add_argument(
+    "--profiler",
+    type=str,
+    default=Profiler.LINE_PROFILER.value,
+    choices=Profiler.values(),
+    help="Profiler to use for grasping choice function.",
+)
+experiment_parser.add_argument(
+    "--mj-pickle",
+    action="store_true",
+    help="Tells motoman_node to record mj_pickles during the experiment.",
+)
+
+
+args = parser.parse_args()
+if args.mode == "trial":
+    args = TrialArgs(**vars(args))
+elif args.mode == "resume_trial":
+    args = ResumeTrialArgs(**vars(args))
+elif args.mode == "experiment":
+    args = ExperimentArgs(**vars(args))
+else:
+    printerr("Unknown mode: ", args.mode)
+    exit(1)
+
+print("🧪 run_experiment:")
+max_arg_len = max(len(arg) for arg in args.__dict__)
+for arg, value in args.__dict__.items():
+    print(f"  {arg.ljust(max_arg_len)} {value}")
+print()
+
+exit_code = 0
+try:
+    if args.base_dir:
+        if os.path.isabs(args.base_dir):
+            RUN_BASE_DIR = args.base_dir
+        else:
+            RUN_BASE_DIR = os.path.abspath(os.path.join(RUNS_DIR, args.base_dir))
+        os.makedirs(RUN_BASE_DIR, exist_ok=True)
+    if args.server:
+        init_sockets(args.real, args.docker)
+    if args.mode == "resume_trial":
+        resume_trial(
+            trial_dir=args.trial_dir,
+            dry=args.dry,
+            server=args.server,
+            rerun_error=args.rerun_error,
+        )
+    elif args.mode in ["trial", "experiment"]:
+        for method in args.method:
+            if args.mode == "trial":
+                success = True
+                for file in args.files:
+                    success = success and run_trial(
+                        config_yaml=file,
+                        method=method,
+                        rosbag=args.rosbag,
+                        headless=args.headless,
+                        dry=args.dry,
+                        pick_limit=args.pick_limit,
+                        server=args.server,
+                        real=args.real,
+                        rerun_error=args.rerun_error,
+                        profile_grasping=args.profile_grasping,
+                        profiler=args.profiler,
+                        mj_pickle=args.mj_pickle,
+                    )
+                if success:
+                    print(
+                        "\n",
+                        Fore.GREEN,
+                        f"✅ Stopping with all trials successful.",
+                        Style.RESET_ALL,
+                    )
+                    exit_code = 0
+                else:
+                    print(
+                        "\n",
+                        Fore.RED,
+                        f"❌ Stopping with some errors in trial runs.",
+                        Style.RESET_ALL,
+                    )
+                    exit_code = 1
+            elif args.mode == "experiment":
+                run_experiment(
+                    scene=args.scene,
+                    target_object=args.target_object,
+                    rosbag=args.rosbag,
+                    method=method,
+                    headless=args.headless,
+                    dry=args.dry,
+                    pick_limit=args.pick_limit,
+                    server=args.server,
+                    real=args.real,
+                    profile_grasping=args.profile_grasping,
+                    profiler=args.profiler,
+                    mj_pickle=args.mj_pickle,
+                )
+    else:
+        exiterr(f"Unknown mode: {args.mode}")
+except KeyboardInterrupt:
+    pass
+finally:
+    if args.server:
+        stop_sockets()
+exit(exit_code)

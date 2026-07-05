@@ -1,0 +1,296 @@
+<mujoco model="World">
+  <compiler angle="radian"/>
+
+  <option integrator="implicitfast" cone="elliptic" solver="CG" noslip_iterations="2">
+    <flag warmstart="disable" multiccd="enable"/>
+  </option>
+
+  <default>
+    <geom density="10"/>
+    <default class="ur5e">
+      <material shininess="0.25"/>
+      <joint range="-6.28319 6.28319" armature="0.1"/>
+      <site size="0.01 0.005 0.005" group="4" rgba="0 1 0 0.5"/>
+      <general ctrlrange="-6.2831 6.2831" forcerange="-150 150" biastype="affine" gainprm="2000" biasprm="0 -2000 -400"/>
+      <default class="size3">
+        <default class="size3_limited">
+          <joint range="-3.1415 3.1415"/>
+          <general ctrlrange="-3.1415 3.1415"/>
+        </default>
+      </default>
+      <default class="size1">
+        <general forcerange="-28 28" gainprm="500" biasprm="0 -500 -100"/>
+      </default>
+      <default class="visual">
+        <geom type="mesh" contype="0" conaffinity="0" group="1"/>
+      </default>
+      <default class="collision">
+        <geom type="capsule" contype="3" conaffinity="3" group="3"/>
+        <default class="eef_collision">
+          <geom type="cylinder"/>
+        </default>
+      </default>
+    </default>
+  </default>
+
+  <asset>
+    <texture type="skybox" name="unnamed_texture_0" builtin="flat" rgb1="1 1 1" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="grid" builtin="checker" rgb1="0.1 0.2 0.3" rgb2="0.2 0.3 0.4" width="512" height="512"/>
+    <material name="black" class="ur5e" rgba="0.033 0.033 0.033 1"/>
+    <material name="jointgray" class="ur5e" rgba="0.278 0.278 0.278 1"/>
+    <material name="linkgray" class="ur5e" rgba="0.82 0.82 0.82 1"/>
+    <material name="urblue" class="ur5e" rgba="0.49 0.678 0.8 1"/>
+    <material name="grid" texture="grid" texuniform="true" texrepeat="0.5 0.5" emission="1" specular="0" shininess="0"/>
+    <mesh name="base_0" file="../../../robots/ur5e/assets/base_0.obj"/>
+    <mesh name="base_1" file="../../../robots/ur5e/assets/base_1.obj"/>
+    <mesh name="shoulder_0" file="../../../robots/ur5e/assets/shoulder_0.obj"/>
+    <mesh name="shoulder_1" file="../../../robots/ur5e/assets/shoulder_1.obj"/>
+    <mesh name="shoulder_2" file="../../../robots/ur5e/assets/shoulder_2.obj"/>
+    <mesh name="upperarm_0" file="../../../robots/ur5e/assets/upperarm_0.obj"/>
+    <mesh name="upperarm_1" file="../../../robots/ur5e/assets/upperarm_1.obj"/>
+    <mesh name="upperarm_2" file="../../../robots/ur5e/assets/upperarm_2.obj"/>
+    <mesh name="upperarm_3" file="../../../robots/ur5e/assets/upperarm_3.obj"/>
+    <mesh name="forearm_0" file="../../../robots/ur5e/assets/forearm_0.obj"/>
+    <mesh name="forearm_1" file="../../../robots/ur5e/assets/forearm_1.obj"/>
+    <mesh name="forearm_2" file="../../../robots/ur5e/assets/forearm_2.obj"/>
+    <mesh name="forearm_3" file="../../../robots/ur5e/assets/forearm_3.obj"/>
+    <mesh name="wrist1_0" file="../../../robots/ur5e/assets/wrist1_0.obj"/>
+    <mesh name="wrist1_1" file="../../../robots/ur5e/assets/wrist1_1.obj"/>
+    <mesh name="wrist1_2" file="../../../robots/ur5e/assets/wrist1_2.obj"/>
+    <mesh name="wrist2_0" file="../../../robots/ur5e/assets/wrist2_0.obj"/>
+    <mesh name="wrist2_1" file="../../../robots/ur5e/assets/wrist2_1.obj"/>
+    <mesh name="wrist2_2" file="../../../robots/ur5e/assets/wrist2_2.obj"/>
+    <mesh name="wrist3" file="../../../robots/ur5e/assets/wrist3.obj"/>
+    <mesh name="v_base_link_1cup" file="../../../robots/ur5e/assets/v_base_link_1cup.stl"/>
+    <mesh name="c_base_link_1cup" file="../../../robots/ur5e/assets/c_base_link_1cup.stl"/>
+    <mesh name="v_suction_cup_1cup" file="../../../robots/ur5e/assets/v_suction_cup_1cup.stl"/>
+    <mesh name="c_suction_cup_1cup" file="../../../robots/ur5e/assets/c_suction_cup_1cup.stl"/>
+  </asset>
+
+  <worldbody>
+    <geom name="floor" size="20 20 0.05" type="plane" material="grid"/>
+    <light name="spotlight" target="wrist_2_link" pos="0 -1 2" dir="0 0 -1" mode="targetbodycom"/>
+    <light name="unnamed_light_0" pos="-0.5 0.5 5" dir="0 0 -1" castshadow="false" diffuse="1 1 1"/>
+    <body name="base" childclass="ur5e">
+      <geom class="visual" material="black" mesh="base_0"/>
+      <geom class="visual" material="jointgray" mesh="base_1"/>
+      <body name="shoulder_link" pos="0 0 0.163">
+        <joint name="shoulder_pan_joint" class="size3" pos="0 0 0" axis="0 0 1"/>
+        <geom class="visual" material="urblue" mesh="shoulder_0"/>
+        <geom class="visual" material="black" mesh="shoulder_1"/>
+        <geom class="visual" material="jointgray" mesh="shoulder_2"/>
+        <geom class="collision" size="0.06 0.06" pos="0 0 -0.04"/>
+        <body name="upper_arm_link" pos="0 0.138 0" quat="0.707107 0 0.707107 0">
+          <joint name="shoulder_lift_joint" class="size3" pos="0 0 0" axis="0 1 0"/>
+          <geom class="visual" material="linkgray" mesh="upperarm_0"/>
+          <geom class="visual" material="black" mesh="upperarm_1"/>
+          <geom class="visual" material="jointgray" mesh="upperarm_2"/>
+          <geom class="visual" material="urblue" mesh="upperarm_3"/>
+          <geom class="collision" size="0.06 0.06" pos="0 -0.04 0" quat="0.707107 0.707107 0 0"/>
+          <geom class="collision" size="0.05 0.2" pos="0 0 0.2"/>
+          <body name="forearm_link" pos="0 -0.131 0.425">
+            <joint name="elbow_joint" class="size3_limited" pos="0 0 0" axis="0 1 0"/>
+            <geom class="visual" material="urblue" mesh="forearm_0"/>
+            <geom class="visual" material="linkgray" mesh="forearm_1"/>
+            <geom class="visual" material="black" mesh="forearm_2"/>
+            <geom class="visual" material="jointgray" mesh="forearm_3"/>
+            <geom class="collision" size="0.055 0.06" pos="0 0.08 0" quat="0.707107 0.707107 0 0"/>
+            <geom class="collision" size="0.038 0.19" pos="0 0 0.2"/>
+            <body name="wrist_1_link" pos="0 0 0.392" quat="0.707107 0 0.707107 0">
+              <joint name="wrist_1_joint" class="size1" pos="0 0 0" axis="0 1 0"/>
+              <geom class="visual" material="black" mesh="wrist1_0"/>
+              <geom class="visual" material="urblue" mesh="wrist1_1"/>
+              <geom class="visual" material="jointgray" mesh="wrist1_2"/>
+              <geom class="collision" size="0.04 0.07" pos="0 0.05 0" quat="0.707107 0.707107 0 0"/>
+              <body name="wrist_2_link" pos="0 0.127 0">
+                <joint name="wrist_2_joint" class="size1" pos="0 0 0" axis="0 0 1"/>
+                <geom class="visual" material="black" mesh="wrist2_0"/>
+                <geom class="visual" material="urblue" mesh="wrist2_1"/>
+                <geom class="visual" material="jointgray" mesh="wrist2_2"/>
+                <geom class="collision" size="0.04 0.06" pos="0 0 0.04"/>
+                <geom class="collision" size="0.04 0.04" pos="0 0.02 0.1" quat="0.707107 0.707107 0 0"/>
+                <body name="wrist_3_link" pos="0 0 0.1">
+                  <joint name="wrist_3_joint" class="size1" pos="0 0 0" axis="0 1 0"/>
+                  <geom class="visual" material="linkgray" mesh="wrist3"/>
+                  <geom class="eef_collision" size="0.04 0.02" pos="0 0.08 0" quat="0.707107 0.707107 0 0"/>
+                  <body name="onrobot_vgc10_suction_cup" pos="0 0.093 0" quat="-0.707107 0.707107 0 0">
+                    <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.8 0.8 0.8 1" mesh="v_base_link_1cup"/>
+                    <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.8 0.8 0.8 1" mesh="c_base_link_1cup"/>
+                    <geom pos="0 0 0.094901" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.9 0.9 0.9 1" mesh="v_suction_cup_1cup"/>
+                    <geom size="0.02 0.02 0.01" pos="0 0 0.1703" type="box" contype="3" conaffinity="3" group="3" mass="0"/>
+                    <site name="suction_site" pos="0 0 0.1784" quat="0.5 0.5 -0.5 0.5"/>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+    <body name="scene"/>
+    <body name="shelf" pos="0.85 0 0.02">
+      <geom name="shelf_base" size="0.13 0.205 0.155" pos="0 0 0.155" type="box" rgba="0.9 0.9 0.9 1"/>
+      <geom name="shelf_back_wall" size="0.005 0.185 0.155" pos="0.125 0 0.465" type="box" rgba="0.9 0.9 0.9 0.3"/>
+      <geom name="shelf_left_wall" size="0.13 0.01 0.155" pos="0 0.195 0.465" type="box" rgba="0.9 0.9 0.9 0.3"/>
+      <geom name="shelf_right_wall" size="0.13 0.01 0.155" pos="0 -0.195 0.465" type="box" rgba="0.9 0.9 0.9 0.3"/>
+      <geom name="shelf_ceiling" size="0.13 0.205 0.01" pos="0 0 0.61" type="box" rgba="0.9 0.9 0.9 0.3"/>
+      <camera name="top_view" pos="0 0 0.9" fovy="50"/>
+    </body>
+    <body name="obj_0_tgt" pos="0.9335 -0.0395 0.3855">
+      <geom name="obj_0_tgt_vis" size="0.017464 0.017464 0.0555" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.455253 0.818295 0.561052 0.2"/>
+    </body>
+    <body name="obj_0" pos="-0.2 -0.3 0.0153563" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_0" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_0_vis" size="0.017464 0.017464 0.0555" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.455253 0.818295 0.561052 1"/>
+      <site name="obj_0_site" pos="-0.017464 0 0.02775" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_1_tgt" pos="0.8965 -0.0395 0.3855">
+      <geom name="obj_1_tgt_vis" size="0.017464 0.017464 0.0555" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.197305 0.175146 0.292741 0.2"/>
+    </body>
+    <body name="obj_1" pos="-0.140072 -0.3 0.0153563" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_1" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_1_vis" size="0.017464 0.017464 0.0555" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.197305 0.175146 0.292741 1"/>
+      <site name="obj_1_site" pos="-0.017464 0 0.02775" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_2_tgt" pos="0.7485 -0.0025 0.3485">
+      <geom name="obj_2_tgt_vis" size="0.017464 0.017464 0.0185" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.189902 0.87951 0.262486 0.2"/>
+    </body>
+    <body name="obj_2" pos="-0.080144 -0.3 0.0153562" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_2" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_2_vis" size="0.017464 0.017464 0.0185" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.189902 0.87951 0.262486 1"/>
+      <site name="obj_2_site" pos="-0.017464 0 0.00925" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_3_tgt" pos="0.7485 0.0345 0.3485">
+      <geom name="obj_3_tgt_vis" size="0.017464 0.017464 0.0185" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.0461964 0.106693 0.593309 0.2"/>
+    </body>
+    <body name="obj_3" pos="-0.020216 -0.3 0.0153562" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_3" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_3_vis" size="0.017464 0.017464 0.0185" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.0461964 0.106693 0.593309 1"/>
+      <site name="obj_3_site" pos="-0.017464 0 0.00925" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_4_tgt" pos="0.9335 -0.0025 0.3855">
+      <geom name="obj_4_tgt_vis" size="0.017464 0.017464 0.0555" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.174386 0.132829 0.432486 0.2"/>
+    </body>
+    <body name="obj_4" pos="0.039712 -0.3 0.0153563" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_4" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_4_vis" size="0.017464 0.017464 0.0555" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.174386 0.132829 0.432486 1"/>
+      <site name="obj_4_site" pos="-0.017464 0 0.02775" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_5_tgt" pos="0.8595 -0.0395 0.3855">
+      <geom name="obj_5_tgt_vis" size="0.017464 0.017464 0.0555" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.011384 0.510044 0.19422 0.2"/>
+    </body>
+    <body name="obj_5" pos="0.09964 -0.3 0.0153563" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_5" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_5_vis" size="0.017464 0.017464 0.0555" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.011384 0.510044 0.19422 1"/>
+      <site name="obj_5_site" pos="-0.017464 0 0.02775" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_6_tgt" pos="0.7485 -0.058 0.3485">
+      <geom name="obj_6_tgt_vis" size="0.035964 0.017464 0.0185" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.711317 0.232992 0.23554 0.2"/>
+    </body>
+    <body name="obj_6" pos="0.178068 -0.3 0.0153562" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_6" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_6_vis" size="0.035964 0.017464 0.0185" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.711317 0.232992 0.23554 1"/>
+      <site name="obj_6_site" pos="-0.017464 0 0.00925" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_7_tgt" pos="0.804 -0.0025 0.367">
+      <geom name="obj_7_tgt_vis" size="0.017464 0.035964 0.037" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.962555 0.74697 0.771007 0.2"/>
+    </body>
+    <body name="obj_7" pos="0.256496 -0.3 0.0338562" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_7" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_7_vis" size="0.017464 0.035964 0.037" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.962555 0.74697 0.771007 1"/>
+      <site name="obj_7_site" pos="-0.035964 0 0.0185" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_8_tgt" pos="0.804 0.053 0.367">
+      <geom name="obj_8_tgt_vis" size="0.035964 0.035964 0.037" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.355389 0.95479 0.660952 0.2"/>
+    </body>
+    <body name="obj_8" pos="0.334924 -0.3 0.0338562" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_8" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_8_vis" size="0.035964 0.035964 0.037" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.355389 0.95479 0.660952 1"/>
+      <site name="obj_8_site" pos="-0.035964 0 0.0185" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_9_tgt" pos="0.804 -0.0765 0.367">
+      <geom name="obj_9_tgt_vis" size="0.017464 0.035964 0.037" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.130879 0.116881 0.967915 0.2"/>
+    </body>
+    <body name="obj_9" pos="0.413352 -0.3 0.0338562" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_9" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_9_vis" size="0.017464 0.035964 0.037" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.130879 0.116881 0.967915 1"/>
+      <site name="obj_9_site" pos="-0.035964 0 0.0185" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_10_tgt" pos="0.8965 0.0345 0.3855">
+      <geom name="obj_10_tgt_vis" size="0.017464 0.054464 0.0555" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.644948 0.738637 0.975421 0.2"/>
+    </body>
+    <body name="obj_10" pos="-0.2 0.3 0.0523562" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_10" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_10_vis" size="0.017464 0.054464 0.0555" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.644948 0.738637 0.975421 1"/>
+      <site name="obj_10_site" pos="-0.054464 0 0.02775" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_11_tgt" pos="0.878 -0.0025 0.3855">
+      <geom name="obj_11_tgt_vis" size="0.017464 0.035964 0.0555" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.548962 0.534443 0.995846 0.2"/>
+    </body>
+    <body name="obj_11" pos="-0.140072 0.3 0.0338562" quat="0.500001 -0.499999 0.499999 0.500001">
+      <joint name="unnamed_joint_11" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_11_vis" size="0.017464 0.035964 0.0555" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.548962 0.534443 0.995846 1"/>
+      <site name="obj_11_site" pos="-0.035964 0 0.02775" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_12_tgt" pos="0.915 -0.0765 0.3855">
+      <geom name="obj_12_tgt_vis" size="0.017464 0.035964 0.0555" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.129853 0.177789 0.989137 0.2"/>
+    </body>
+    <body name="obj_12" pos="-0.080144 0.3 0.0338562" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_12" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_12_vis" size="0.017464 0.035964 0.0555" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.129853 0.177789 0.989137 1"/>
+      <site name="obj_12_site" pos="-0.035964 0 0.02775" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_13_tgt" pos="0.8965 0.0715 0.3855">
+      <geom name="obj_13_tgt_vis" size="0.017464 0.054464 0.0555" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.366969 0.979834 0.507425 0.2"/>
+    </body>
+    <body name="obj_13" pos="-0.020216 0.3 0.0523562" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_13" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_13_vis" size="0.017464 0.054464 0.0555" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.366969 0.979834 0.507425 1"/>
+      <site name="obj_13_site" pos="-0.054464 0 0.02775" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_14_tgt" pos="0.804 -0.0395 0.367">
+      <geom name="obj_14_tgt_vis" size="0.017464 0.035964 0.037" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.604375 0.803318 0.59711 0.2"/>
+    </body>
+    <body name="obj_14" pos="0.039712 0.3 0.0338562" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_14" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_14_vis" size="0.017464 0.035964 0.037" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.604375 0.803318 0.59711 1"/>
+      <site name="obj_14_site" pos="-0.035964 0 0.0185" size="0.01" rgba="0 1 0 0"/>
+    </body>
+    <body name="obj_15_tgt" pos="0.7485 0.0715 0.367">
+      <geom name="obj_15_tgt_vis" size="0.017464 0.017464 0.037" quat="0.707107 0 0 0.707107" type="box" contype="0" conaffinity="0" group="4" rgba="0.873982 0.842018 0.214325 0.2"/>
+    </body>
+    <body name="obj_15" pos="0.09964 0.3 0.0153562" quat="0.5 -0.5 0.5 0.5">
+      <joint name="unnamed_joint_15" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_15_vis" size="0.017464 0.017464 0.037" quat="0.707107 0 0 0.707107" type="box" gap="0.002" rgba="0.873982 0.842018 0.214325 1"/>
+      <site name="obj_15_site" pos="-0.017464 0 0.0185" size="0.01" rgba="0 1 0 0"/>
+    </body>
+  </worldbody>
+
+  <equality>
+    <weld name="obj_0_weld" site1="obj_0_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_1_weld" site1="obj_1_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_2_weld" site1="obj_2_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_3_weld" site1="obj_3_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_4_weld" site1="obj_4_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_5_weld" site1="obj_5_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_6_weld" site1="obj_6_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_7_weld" site1="obj_7_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_8_weld" site1="obj_8_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_9_weld" site1="obj_9_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_10_weld" site1="obj_10_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_11_weld" site1="obj_11_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_12_weld" site1="obj_12_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_13_weld" site1="obj_13_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_14_weld" site1="obj_14_site" site2="suction_site" torquescale="1" active="false"/>
+    <weld name="obj_15_weld" site1="obj_15_site" site2="suction_site" torquescale="1" active="false"/>
+  </equality>
+
+  <actuator>
+    <general name="shoulder_pan" class="size3" joint="shoulder_pan_joint"/>
+    <general name="shoulder_lift" class="size3" joint="shoulder_lift_joint"/>
+    <general name="elbow" class="size3_limited" joint="elbow_joint"/>
+    <general name="wrist_1" class="size1" joint="wrist_1_joint"/>
+    <general name="wrist_2" class="size1" joint="wrist_2_joint"/>
+    <general name="wrist_3" class="size1" joint="wrist_3_joint"/>
+  </actuator>
+</mujoco>

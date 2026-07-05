@@ -1,0 +1,47 @@
+session_name: "control_real"
+vars:
+  VLM:
+    type: bool
+    default: true
+    help: "Whether to use the VLM or not"
+  ROSBAG:
+    type: bool
+    default: true
+    help: "Collects rosbag data (takes 60 GB of space per bag)."
+  METHOD:
+    type: enum
+    default: "human"
+    choices: ["human", "vlm_only", "dg_only", "dg_into_vlm", "vlm_dg"]
+    help: "Decision making method to use."
+  DEBUG_SHOW:
+    type: bool
+    default: true
+    help: "Displays debug diagrams in-between decisions."
+  IN_FILE:
+    type: str
+    default: "''"
+    help: "File to use for human input. If none, then the CLI will prompt for input."
+  OUT_FILE:
+    type: str
+    default: "''"
+    help: "File to store logging data. If none, then stderr is used."
+  TARGET_OBJECT:
+    type: str
+    default: "''"
+    help: "Name of object to retrieve."
+  PICK_LIMIT:
+    type: int
+    default: 15
+    help: "Maximum number of picks, before this process ends. The process will also end if the target object is picked. If = -1, then the picking loop is ran forever."
+  PROFILER:
+    type: enum
+    default: "line_profiler"
+    choices: ["c_profile", "line_profiler"]
+    help: "Profiler to use for grasping choice function."
+post_attach: true
+windows:
+  # Please run ./start_lsy.sh on the LSY machine, and ./start_real.sh on the Motoman machine before running this ROS config.
+  - "Curobo Control": 
+    - "source connect_ros_network.sh eno1 moto.cs.lab.edu"
+    - "source API_KEY"
+    - "python3 ./scripts/task_planner/curobo_control.py --method $METHOD $VLM?--vlm $ROSBAG?--rosbag $DEBUG_SHOW?--debug-show --in-file $IN_FILE --out-file $OUT_FILE --target-object $TARGET_OBJECT --pick-limit $PICK_LIMIT --profiler $PROFILER"

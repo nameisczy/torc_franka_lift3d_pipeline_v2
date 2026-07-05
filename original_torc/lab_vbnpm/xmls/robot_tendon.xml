@@ -1,0 +1,6 @@
+<tendon>
+  <fixed name="split">
+    <joint joint="right_driver_joint" coef="0.5"/>
+    <joint joint="left_driver_joint" coef="0.5"/>
+  </fixed>
+</tendon>

@@ -1,0 +1,186 @@
+[scene116-cgn] start 2026-07-04T12:50:29+04:00
+Error while loading conda entry point: anaconda-auth (The installed pydantic-core version (2.46.4) is incompatible with the current pydantic version, which requires 2.41.5. If you encounter this error, make sure that you haven't upgraded pydantic-core manually.)
+Error while loading conda entry point: conda-anaconda-tos (The installed pydantic-core version (2.46.4) is incompatible with the current pydantic version, which requires 2.41.5. If you encounter this error, make sure that you haven't upgraded pydantic-core manually.)
+[2026-07-04T12:50:32] server process starting {"argv": ["/home/ziyaochen/torc_franka_lift3d_repro/scripts/cgn_zmq_server.py", "--bind", "tcp://127.0.0.1:6007"], "bind": "tcp://127.0.0.1:6007"}
+[2026-07-04T12:50:33] model load starting {"ckpt_dir": "/home/ziyaochen/gc6d_lift3d_traj/ros_workspace/src/contact_graspnet_ros/checkpoints/scene_test_2048_bs3_hor_sigma_001", "contact_root": "/home/ziyaochen/gc6d_lift3d_franka_7d_generation/third_party/contact_graspnet", "cuda_home": null, "cuda_visible_devices": "1"}
+[2026-07-04T12:50:33] added python path {"path": "/home/ziyaochen/gc6d_lift3d_franka_7d_generation/third_party/contact_graspnet"}
+[2026-07-04T12:50:33] added python path {"path": "/home/ziyaochen/gc6d_lift3d_franka_7d_generation/third_party/contact_graspnet/contact_graspnet"}
+[2026-07-04T12:50:33] added python path {"path": "/home/ziyaochen/gc6d_lift3d_franka_7d_generation/third_party/contact_graspnet/pointnet2"}
+2026-07-04 12:50:35.240606: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+2026-07-04 12:50:52.345889: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcuda.so.1
+2026-07-04 12:50:52.401674: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1733] Found device 0 with properties: 
+pciBusID: 0000:72:00.0 name: NVIDIA RTX 6000 Ada Generation computeCapability: 8.9
+coreClock: 2.505GHz coreCount: 142 deviceMemorySize: 47.37GiB deviceMemoryBandwidth: 894.16GiB/s
+2026-07-04 12:50:52.401850: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+2026-07-04 12:50:52.539126: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcublas.so.11
+2026-07-04 12:50:52.539242: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcublasLt.so.11
+2026-07-04 12:50:52.591845: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcufft.so.10
+2026-07-04 12:50:52.598384: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcurand.so.10
+2026-07-04 12:50:52.609619: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcusolver.so.11
+2026-07-04 12:50:52.620608: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcusparse.so.11
+2026-07-04 12:50:52.626813: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudnn.so.8
+2026-07-04 12:50:52.629131: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1871] Adding visible gpu devices: 0
+[2026-07-04T12:50:52] enabled tf memory growth {"gpu": "PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')"}
+/home/ziyaochen/miniconda3/envs/cgn_env/lib/python3.9/site-packages/tensorflow/python/keras/legacy_tf_layers/normalization.py:307: UserWarning: `tf.layers.batch_normalization` is deprecated and will be removed in a future version. Please use `tf.keras.layers.BatchNormalization` instead. In particular, `tf.control_dependencies(tf.GraphKeys.UPDATE_OPS)` should not be used (consult the `tf.keras.layers.BatchNormalization` documentation).
+  warnings.warn(
+/home/ziyaochen/miniconda3/envs/cgn_env/lib/python3.9/site-packages/tensorflow/python/keras/engine/base_layer_v1.py:1692: UserWarning: `layer.apply` is deprecated and will be removed in a future version. Please use `layer.__call__` method instead.
+  warnings.warn('`layer.apply` is deprecated and '
+WARNING:tensorflow:From /home/ziyaochen/miniconda3/envs/cgn_env/lib/python3.9/site-packages/tensorflow/python/keras/layers/normalization.py:534: _colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+WARNING:tensorflow:From /home/ziyaochen/miniconda3/envs/cgn_env/lib/python3.9/site-packages/tensorflow/python/util/deprecation.py:602: calling conv1d (from tensorflow.python.ops.nn_ops) with data_format=NHWC is deprecated and will be removed in a future version.
+Instructions for updating:
+`NHWC` for data_format is deprecated, use `NWC` instead
+WARNING:tensorflow:From /home/ziyaochen/miniconda3/envs/cgn_env/lib/python3.9/site-packages/tensorflow/python/util/dispatch.py:206: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+2026-07-04 12:51:03.215515: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-07-04 12:51:03.218456: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1733] Found device 0 with properties: 
+pciBusID: 0000:72:00.0 name: NVIDIA RTX 6000 Ada Generation computeCapability: 8.9
+coreClock: 2.505GHz coreCount: 142 deviceMemorySize: 47.37GiB deviceMemoryBandwidth: 894.16GiB/s
+2026-07-04 12:51:03.220215: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1871] Adding visible gpu devices: 0
+2026-07-04 12:51:03.220521: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+2026-07-04 12:51:03.322656: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1258] Device interconnect StreamExecutor with strength 1 edge matrix:
+2026-07-04 12:51:03.322749: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1264]      0 
+2026-07-04 12:51:03.322774: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1277] 0:   N 
+2026-07-04 12:51:03.326024: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1418] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 44082 MB memory) -> physical GPU (device: 0, name: NVIDIA RTX 6000 Ada Generation, pci bus id: 0000:72:00.0, compute capability: 8.9)
+2026-07-04 12:51:03.612243: I tensorflow/core/platform/profile_utils/cpu_utils.cc:114] CPU Frequency: 2496000000 Hz
+/home/ziyaochen/gc6d_lift3d_franka_7d_generation/third_party/contact_graspnet/pointnet2/tf_ops/sampling
+--- Get model
+('loading ', '/home/ziyaochen/gc6d_lift3d_traj/ros_workspace/src/contact_graspnet_ros/checkpoints/scene_test_2048_bs3_hor_sigma_001/model.ckpt-54054')
+[2026-07-04T12:51:03] model load complete {"elapsed_sec": 30.87}
+[2026-07-04T12:51:03] zmq bound {"bind": "tcp://127.0.0.1:6007"}
+[2026-07-04T12:51:16] request received {"cmd": "ping"}
+[2026-07-04T12:51:16] request received {"cmd": "model_status"}
+[2026-07-04T13:02:01] request received {"cmd": "infer"}
+[2026-07-04T13:02:01] infer starting {"mask_shape": [854571], "nonzero_mask_points": 90493, "points_shape": [854571, 3], "source": "inline", "unique_mask_values": 13}
+2026-07-04 13:02:03.249867: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudnn.so.8
+2026-07-04 13:02:03.315069: I tensorflow/stream_executor/cuda/cuda_dnn.cc:359] Loaded cuDNN version 8907
+2026-07-04 13:02:03.452436: E tensorflow/core/platform/default/subprocess.cc:304] Start cannot spawn child process: No such file or directory
+2026-07-04 13:02:03.452521: W tensorflow/stream_executor/gpu/asm_compiler.cc:56] Couldn't invoke ptxas --version
+2026-07-04 13:02:03.454078: E tensorflow/core/platform/default/subprocess.cc:304] Start cannot spawn child process: No such file or directory
+2026-07-04 13:02:03.454244: W tensorflow/stream_executor/gpu/redzone_allocator.cc:314] Internal: Failed to launch ptxas
+Relying on driver to perform ptx compilation. 
+Modify $PATH to customize ptxas location.
+This message will be only logged once.
+2026-07-04 13:02:03.504073: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcublas.so.11
+2026-07-04 13:02:03.504604: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcublasLt.so.11
+Extracted Region Cube Size:  0.6
+Extracted Region Cube Size:  0.41858160495758057
+Extracted Region Cube Size:  0.5510252714157104
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.6
+Extracted Region Cube Size:  0.6
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.3806486129760742
+Extracted Region Cube Size:  0.3197968006134033
+Extracted Region Cube Size:  0.5004881620407104
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.3
+Generated 15 grasps for object 2
+Generated 245 grasps for object 3
+Generated 161 grasps for object 5
+Generated 10 grasps for object 6
+Generated 45 grasps for object 9
+Generated 264 grasps for object 10
+Generated 15 grasps for object 11
+Generated 375 grasps for object 13
+[2026-07-04T13:02:21] infer complete {"elapsed_sec": 20.775, "num_grasps": 2260}
+[2026-07-04T13:03:46] request received {"cmd": "infer"}
+[2026-07-04T13:03:46] infer starting {"mask_shape": [846659], "nonzero_mask_points": 71276, "points_shape": [846659, 3], "source": "inline", "unique_mask_values": 15}
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.5915965139865875
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.6
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.3342468738555908
+Extracted Region Cube Size:  0.31978440284729004
+Extracted Region Cube Size:  0.5002636909484863
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.3633871078491211
+Generated 30 grasps for object 2
+Generated 5 grasps for object 4
+Generated 455 grasps for object 5
+Generated 230 grasps for object 7
+Generated 90 grasps for object 9
+Generated 15 grasps for object 10
+Generated 315 grasps for object 11
+Generated 10 grasps for object 12
+Generated 305 grasps for object 14
+[2026-07-04T13:03:55] infer complete {"elapsed_sec": 8.253, "num_grasps": 2910}
+[2026-07-04T13:07:22] request received {"cmd": "infer"}
+[2026-07-04T13:07:22] infer starting {"mask_shape": [845906], "nonzero_mask_points": 65117, "points_shape": [845906, 3], "source": "inline", "unique_mask_values": 14}
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.6
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.42962825298309326
+Extracted Region Cube Size:  0.5874490737915039
+Extracted Region Cube Size:  0.6
+Extracted Region Cube Size:  0.6
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.3752167224884033
+Extracted Region Cube Size:  0.4636744260787964
+Extracted Region Cube Size:  0.6
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.3
+Generated 210 grasps for object 4
+Generated 35 grasps for object 5
+Generated 50 grasps for object 6
+Generated 220 grasps for object 8
+Generated 83 grasps for object 9
+Generated 155 grasps for object 10
+Generated 395 grasps for object 13
+[2026-07-04T13:07:32] infer complete {"elapsed_sec": 10.453, "num_grasps": 2296}
+[2026-07-04T13:08:43] request received {"cmd": "infer"}
+[2026-07-04T13:08:43] infer starting {"mask_shape": [845109], "nonzero_mask_points": 61208, "points_shape": [845109, 3], "source": "inline", "unique_mask_values": 14}
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.6
+Extracted Region Cube Size:  0.6
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.45954836905002594
+Extracted Region Cube Size:  0.6
+Extracted Region Cube Size:  0.3631877899169922
+Extracted Region Cube Size:  0.34320878982543945
+Extracted Region Cube Size:  0.4440973699092865
+Extracted Region Cube Size:  0.49736785888671875
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.3
+Generated 6 grasps for object 1
+Generated 15 grasps for object 2
+Generated 300 grasps for object 4
+Generated 120 grasps for object 5
+Generated 80 grasps for object 6
+Generated 150 grasps for object 8
+Generated 125 grasps for object 9
+Generated 170 grasps for object 10
+Generated 405 grasps for object 13
+[2026-07-04T13:08:55] infer complete {"elapsed_sec": 12.357, "num_grasps": 2742}
+[2026-07-04T13:10:13] request received {"cmd": "infer"}
+[2026-07-04T13:10:13] infer starting {"mask_shape": [843792], "nonzero_mask_points": 52264, "points_shape": [843792, 3], "source": "inline", "unique_mask_values": 13}
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.6
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.45040714740753174
+Extracted Region Cube Size:  0.3851280212402344
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.6
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.38100171089172363
+Extracted Region Cube Size:  0.48892152309417725
+Extracted Region Cube Size:  0.3
+Extracted Region Cube Size:  0.3
+Generated 5 grasps for object 1
+Generated 10 grasps for object 2
+Generated 35 grasps for object 4
+Generated 85 grasps for object 5
+Generated 190 grasps for object 6
+Generated 120 grasps for object 8
+Generated 405 grasps for object 9
+Generated 400 grasps for object 12
+[2026-07-04T13:10:27] infer complete {"elapsed_sec": 13.821, "num_grasps": 2500}

@@ -1,0 +1,6 @@
+sensor_msgs/Image depth_img
+geometry_msgs/Transform cam_transform # where the image is captured
+sensor_msgs/CameraInfo cam_info
+bool debug_mode
+---
+bool success

@@ -1,0 +1,5 @@
+template: ["target_object", "scene"]
+data:
+  - ["blue box.", 1]
+  - ["blue box.", 1]
+  - ["blue box.", 1]

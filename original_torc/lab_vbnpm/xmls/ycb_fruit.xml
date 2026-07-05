@@ -1,0 +1,81 @@
+<mujoco model="World">
+  <compiler angle="radian" balanceinertia="true" inertiafromgeom="true"
+    meshdir="../"
+    texturedir="../"
+    autolimits="true"/>
+  <option integrator="Euler" cone="elliptic" solver="CG" noslip_iterations="2">
+    <flag warmstart="disable" multiccd="enable"/>
+  </option>
+  <default>
+    <geom density="10"/>
+  </default>
+  <asset>
+    <include file="robot_asset.xml"/>
+    <!-- background -->
+    <texture type="skybox" builtin="flat" rgb1="1 1 1" rgb2="0 0 0" width="512" height="512"/>
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="2 2" texuniform="true" specular="0" shininess="0" reflectance="0" emission="1" />
+    <!-- ceramic table texture and material-->
+    <texture file="models/rs_table/ceramic.png" type="cube" name="tex-ceramic"/>
+    <material name="table_ceramic" reflectance="0.0" shininess="0.0" specular="0.2" texrepeat="1 1" texture="tex-ceramic" />
+    <!-- ycb assets -->
+    <texture type="2d" name="011_banana" file="models/objects/ycb_se3tn/011_banana/texture_map.png"/>
+    <material name="011_banana" texture="011_banana"/>
+    <mesh name="011_banana_vis" file="models/objects/ycb_se3tn/011_banana/textured_simple.obj"/>
+    <!-- <mesh name="011_banana_col" file="models/objects/ycb_se3tn/011_banana/textured_simple.obj"/> -->
+    <texture type="2d" name="013_apple" file="models/objects/ycb_se3tn/013_apple/texture_map.png"/>
+    <material name="013_apple" texture="013_apple"/>
+    <mesh name="013_apple_vis" file="models/objects/ycb_se3tn/013_apple/textured_simple.obj"/>
+    <!-- <mesh name="013_apple_col" file="models/objects/ycb_se3tn/013_apple/textured_simple.obj"/> -->
+    <texture type="2d" name="017_orange" file="models/objects/ycb_se3tn/017_orange/texture_map.png"/>
+    <material name="017_orange" texture="017_orange"/>
+    <mesh name="017_orange_vis" file="models/objects/ycb_se3tn/017_orange/textured_simple.obj"/>
+    <!-- <mesh name="017_orange_col" file="models/objects/ycb_se3tn/017_orange/textured_simple.obj"/> -->
+  </asset>
+  <worldbody>
+    <geom name="floor" size="2 2 0.05" type="plane" material="grid" condim="3"/>
+    <light directional="true" pos="-0.5 0.5 3" dir="0 0 -1" castshadow="false" diffuse="1 1 1"/>
+     <body name="workspace" pos="0.8 0 0">
+      <geom name="shelf_bottom" size="0.25 0.68 0.525" pos="0 0 0.525" type="box" material="table_ceramic"/>
+      <geom name="shelf_top" size="0.25 0.68 0.025" pos="0 0 1.595" type="box" material="table_ceramic"/>
+      <geom name="shelf_padding_left" size="0.25 0.025 0.26" pos="0 -0.655 1.31" type="box" material="table_ceramic"/>
+      <geom name="shelf_padding_right" size="0.25 0.025 0.26" pos="0 0.655 1.31" type="box" material="table_ceramic"/>
+      <geom name="shelf_padding_back" size="0.05 0.63 0.26" pos="0.2 0 1.31" type="box" material="table_ceramic"/>
+    </body>
+    <include file="robot_body.xml"/>
+    <body name="011_banana" pos="0.69 -0.16 1.1" quat="-0.35 0 0 0.95">
+      <joint type="free"/>
+      <geom type="mesh" contype="0" conaffinity="0" group="1" material="011_banana" mesh="011_banana_vis"/>
+      <geom type="cylinder" contype="3" conaffinity="3" group="3" pos="-0.015 -0.045 0.001" euler="1.6 0 0" size=".016 .05"/>
+      <geom type="sphere" contype="3" conaffinity="3" group="3" pos="-0.013 0.011 0.002" size=".018"/>
+      <geom type="cylinder" contype="3" conaffinity="3" group="3" pos="0.009 0.038 0.002" euler="1.57 -0.7 0" size=".017 .03"/>
+      <geom type="sphere" contype="3" conaffinity="3" group="3" pos="0.035 0.065 -0.002" size=".014"/>
+      <geom type="cylinder" contype="3" conaffinity="3" group="3" pos="0.06 0.07 -0.01" zaxis="0.8 0.1 -0.1" size=".0055 .013"/>
+    </body>
+    <body name="013_apple" pos="0.65 0.08 1.1" quat="0.66 0 0 -0.75">
+      <joint type="free"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="013_apple" mesh="013_apple_vis"/>
+      <!-- <geom type="box" contype="3" conaffinity="3" group="3" size=".021 .045 .088" mass="0.000514"/> -->
+    </body>
+    <body name="017_orange" pos="0.65 -0.42 1.1" quat="-0.3 0 0 -0.95">
+      <joint type="free"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="017_orange" mesh="017_orange_vis"/>
+      <!-- <geom type="box" contype="3" conaffinity="3" group="3" size=".045 .055 .018" mass="0.000187"/> -->
+    </body>
+  </worldbody>
+  <actuator>
+    <include file="robot_actuator.xml"/>
+  </actuator>
+  <contact>
+    <include file="robot_contact.xml"/>
+  </contact>
+  <tendon>
+    <include file="robot_tendon.xml"/>
+  </tendon>
+  <equality>
+    <include file="robot_equality.xml"/>
+  </equality>
+  <default>
+    <include file="robot_default.xml"/>
+  </default>
+</mujoco>

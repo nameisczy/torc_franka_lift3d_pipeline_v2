@@ -1,0 +1,6 @@
+session_name: "mujoco_test"
+windows:
+  - "Roscore": "roscore"
+    post_delay: 3.0
+
+  - "Test": "python3 ./scripts/mujoco_test.py"

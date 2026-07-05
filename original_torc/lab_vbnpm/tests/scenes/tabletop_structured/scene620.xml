@@ -1,0 +1,1281 @@
+<mujoco model="World">
+  <compiler angle="radian" meshdir="../../../" texturedir="../../../"/>
+
+  <option cone="elliptic" solver="CG" noslip_iterations="2">
+    <flag warmstart="disable" multiccd="enable"/>
+  </option>
+
+  <size memory="64M"/>
+
+  <default>
+    <geom density="10"/>
+    <default class="p_general">
+      <general forcerange="-300 300" biastype="affine" gainprm="2000" biasprm="0 -2000"/>
+    </default>
+    <default class="v_general">
+      <general ctrlrange="-2.2 2.2" forcerange="-300 300" biastype="affine" gainprm="100000" biasprm="0 0 -100000"/>
+    </default>
+    <default class="intvel_general">
+      <general ctrlrange="-2.2 2.2" forcerange="-300 300" actlimited="true" dyntype="integrator" biastype="affine" gainprm="100000" biasprm="0 -100000"/>
+    </default>
+    <default class="p_RB">
+      <general forcerange="-300 300" biastype="affine" gainprm="2000" biasprm="0 -2000"/>
+    </default>
+    <default class="v_RB">
+      <general ctrlrange="-3.4 3.4" forcerange="-300 300" biastype="affine" gainprm="100000" biasprm="0 0 -100000"/>
+    </default>
+    <default class="intvel_RB">
+      <general ctrlrange="-3.4 3.4" forcerange="-300 300" actlimited="true" dyntype="integrator" biastype="affine" gainprm="100000" biasprm="0 -100000"/>
+    </default>
+    <default class="p_T">
+      <general forcerange="-180 180" biastype="affine" gainprm="2000" biasprm="0 -2000"/>
+    </default>
+    <default class="v_T">
+      <general ctrlrange="-6.9 6.9" forcerange="-180 180" biastype="affine" gainprm="100000" biasprm="0 0 -100000"/>
+    </default>
+    <default class="intvel_T">
+      <general ctrlrange="-6.9 6.9" forcerange="-180 180" actlimited="true" dyntype="integrator" biastype="affine" gainprm="100000" biasprm="0 -100000"/>
+    </default>
+    <default class="hidden">
+      <joint armature="0.1" damping="50"/>
+      <geom contype="3" conaffinity="3" group="3"/>
+    </default>
+    <default class="2f85">
+      <mesh scale="0.001 0.001 0.001"/>
+      <general biastype="affine"/>
+      <default class="driver">
+        <joint solreflimit="0.005" solimplimit="0.95 0.99" range="0 0.8" armature="0.005" damping="0.1"/>
+      </default>
+      <default class="follower">
+        <joint solreflimit="0.005" solimplimit="0.95 0.99" range="-0.872664 0.872664" armature="0.001"/>
+      </default>
+      <default class="spring_link">
+        <joint springref="2.62" stiffness="0.05" range="-0.296706 0.8" armature="0.001" damping="0.00125"/>
+      </default>
+      <default class="coupler">
+        <joint solreflimit="0.005" solimplimit="0.95 0.99" range="-1.57 0" armature="0.001"/>
+      </default>
+      <default class="visual">
+        <geom type="mesh" contype="0" conaffinity="0" group="1"/>
+      </default>
+      <default class="collision">
+        <geom type="mesh" contype="3" conaffinity="3" group="3"/>
+        <default class="pad_box1">
+          <geom size="0.011 0.004 0.009375" type="box" priority="1" friction="1 0.9 0.9" solref="0.004" solimp="0.95 0.99" rgba="0.55 0.55 0.55 1"/>
+        </default>
+        <default class="pad_box2">
+          <geom size="0.011 0.004 0.009375" type="box" priority="1" friction="1 0.9 0.9" solref="0.004" solimp="0.95 0.99" rgba="0.45 0.45 0.45 1"/>
+        </default>
+      </default>
+    </default>
+  </default>
+
+  <asset>
+    <texture type="skybox" builtin="flat" rgb1="1 1 1" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="grid" builtin="checker" rgb1="0.1 0.2 0.3" rgb2="0.2 0.3 0.4" width="512" height="512"/>
+    <texture type="cube" name="tex-ceramic" file="models/rs_table/ceramic.png"/>
+    <texture type="2d" name="obj_000004_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004.png"/>
+    <texture type="2d" name="obj_000008_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000008/obj_000008.png"/>
+    <texture type="2d" name="obj_000009_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000010.png"/>
+    <texture type="2d" name="obj_000010_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000010/obj_000011.png"/>
+    <texture type="2d" name="obj_000012_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000012/obj_000013.png"/>
+    <texture type="2d" name="obj_000016_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000016/obj_000016.png"/>
+    <texture type="2d" name="obj_000017_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000018.png"/>
+    <texture type="2d" name="obj_000051_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051.png"/>
+    <texture type="2d" name="obj_000048_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048.png"/>
+    <texture type="2d" name="obj_000041_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041.png"/>
+    <texture type="2d" name="obj_000026_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026.png"/>
+    <texture type="2d" name="obj_000118_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000118/obj_000086.png"/>
+    <texture type="2d" name="obj_000125_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000125/obj_000093.png"/>
+    <texture type="2d" name="obj_000127_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000095.png"/>
+    <texture type="2d" name="obj_000130_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000098.png"/>
+    <texture type="2d" name="obj_000133_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000101.png"/>
+    <texture type="2d" name="obj_000090_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000090/obj_000119.png"/>
+    <material name="metal" rgba="0.58 0.58 0.58 1"/>
+    <material name="silicone" rgba="0.1882 0.1882 0.1882 1"/>
+    <material name="gray" rgba="0.4627 0.4627 0.4627 1"/>
+    <material name="black" rgba="0.149 0.149 0.149 1"/>
+    <material name="grid" texture="grid" texuniform="true" texrepeat="2 2" emission="1" specular="0" shininess="0"/>
+    <material name="table_ceramic" texture="tex-ceramic" specular="0.2" shininess="0"/>
+    <material name="obj_000004_0_mat" texture="obj_000004_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000008_0_mat" texture="obj_000008_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000009_0_mat" texture="obj_000009_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000010_0_mat" texture="obj_000010_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000012_0_mat" texture="obj_000012_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000016_0_mat" texture="obj_000016_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000017_0_mat" texture="obj_000017_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000051_0_mat" texture="obj_000051_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000048_0_mat" texture="obj_000048_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000041_0_mat" texture="obj_000041_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000026_0_mat" texture="obj_000026_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000118_0_mat" texture="obj_000118_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000125_0_mat" texture="obj_000125_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000127_0_mat" texture="obj_000127_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000130_0_mat" texture="obj_000130_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000133_0_mat" texture="obj_000133_0_tex" specular="1" shininess="0"/>
+    <material name="obj_000090_0_mat" texture="obj_000090_0_tex" specular="1" shininess="0"/>
+    <mesh name="v_base" file="robots/motoman/meshes/v_base.stl"/>
+    <mesh name="c_base" file="robots/motoman/meshes/c_base.stl"/>
+    <mesh name="v_link_b1" file="robots/motoman/meshes/v_link_b1.stl"/>
+    <mesh name="c_link_b1" file="robots/motoman/meshes/c_link_b1.stl"/>
+    <mesh name="v_link_s" file="robots/motoman/meshes/v_link_s.stl"/>
+    <mesh name="c_link_s" file="robots/motoman/meshes/c_link_s.stl"/>
+    <mesh name="v_link_l" file="robots/motoman/meshes/v_link_l.stl"/>
+    <mesh name="c_link_l" file="robots/motoman/meshes/c_link_l.stl"/>
+    <mesh name="v_link_e" file="robots/motoman/meshes/v_link_e.stl"/>
+    <mesh name="c_link_e" file="robots/motoman/meshes/c_link_e.stl"/>
+    <mesh name="v_link_u" file="robots/motoman/meshes/v_link_u.stl"/>
+    <mesh name="c_link_u" file="robots/motoman/meshes/c_link_u.stl"/>
+    <mesh name="v_link_r" file="robots/motoman/meshes/v_link_r.stl"/>
+    <mesh name="c_link_r" file="robots/motoman/meshes/c_link_r.stl"/>
+    <mesh name="v_link_b" file="robots/motoman/meshes/v_link_b.stl"/>
+    <mesh name="c_link_b" file="robots/motoman/meshes/c_link_b.stl"/>
+    <mesh name="v_link_t" file="robots/motoman/meshes/v_link_t.stl"/>
+    <mesh name="c_link_t" file="robots/motoman/meshes/c_link_t.stl"/>
+    <mesh name="base_mount" class="2f85" file="robots/motoman/meshes/base_mount.stl"/>
+    <mesh name="base" class="2f85" file="robots/motoman/meshes/base.stl"/>
+    <mesh name="driver" class="2f85" file="robots/motoman/meshes/driver.stl"/>
+    <mesh name="coupler" class="2f85" file="robots/motoman/meshes/coupler.stl"/>
+    <mesh name="follower" class="2f85" file="robots/motoman/meshes/follower.stl"/>
+    <mesh name="pad" class="2f85" file="robots/motoman/meshes/pad.stl"/>
+    <mesh name="silicone_pad" class="2f85" file="robots/motoman/meshes/silicone_pad.stl"/>
+    <mesh name="spring_link" class="2f85" file="robots/motoman/meshes/spring_link.stl"/>
+    <mesh name="obj_000004_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_0.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_1.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_2.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_3.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_4" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_4.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_5" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_5.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_6" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_6.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_7" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_7.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_8" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_8.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_9" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_9.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_10" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_10.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_11" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_11.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_12" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_12.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_13" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_13.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_14" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_14.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_15" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_15.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_16" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_16.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_17" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_17.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_18" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_18.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_19" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_19.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_20" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_20.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_21" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_21.obj"/>
+    <mesh name="obj_000004_0_obj_000004_collision_22" file="models/objects/GraspClutter6D/models_obj_m/obj_000004/obj_000004_collision_22.obj"/>
+    <mesh name="obj_000008_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000008/obj_000008.obj"/>
+    <mesh name="obj_000008_0_obj_000008_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000008/obj_000008_collision_0.obj"/>
+    <mesh name="obj_000008_0_obj_000008_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000008/obj_000008_collision_1.obj"/>
+    <mesh name="obj_000009_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_0.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_1.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_2.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_3.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_4" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_4.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_5" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_5.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_6" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_6.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_7" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_7.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_8" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_8.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_9" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_9.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_10" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_10.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_11" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_11.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_12" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_12.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_13" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_13.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_14" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_14.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_15" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_15.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_16" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_16.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_17" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_17.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_18" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_18.obj"/>
+    <mesh name="obj_000009_0_obj_000009_collision_19" file="models/objects/GraspClutter6D/models_obj_m/obj_000009/obj_000009_collision_19.obj"/>
+    <mesh name="obj_000010_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000010/obj_000010.obj"/>
+    <mesh name="obj_000010_0_obj_000010_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000010/obj_000010_collision_0.obj"/>
+    <mesh name="obj_000010_0_obj_000010_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000010/obj_000010_collision_1.obj"/>
+    <mesh name="obj_000012_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000012/obj_000012.obj"/>
+    <mesh name="obj_000012_0_obj_000012_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000012/obj_000012_collision_0.obj"/>
+    <mesh name="obj_000012_0_obj_000012_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000012/obj_000012_collision_1.obj"/>
+    <mesh name="obj_000012_0_obj_000012_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000012/obj_000012_collision_2.obj"/>
+    <mesh name="obj_000016_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000016/obj_000016.obj"/>
+    <mesh name="obj_000016_0_obj_000016_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000016/obj_000016_collision_0.obj"/>
+    <mesh name="obj_000016_0_obj_000016_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000016/obj_000016_collision_1.obj"/>
+    <mesh name="obj_000017_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_0.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_1.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_2.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_3.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_4" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_4.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_5" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_5.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_6" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_6.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_7" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_7.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_8" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_8.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_9" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_9.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_10" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_10.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_11" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_11.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_12" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_12.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_13" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_13.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_14" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_14.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_15" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_15.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_16" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_16.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_17" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_17.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_18" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_18.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_19" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_19.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_20" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_20.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_21" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_21.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_22" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_22.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_23" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_23.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_24" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_24.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_25" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_25.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_26" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_26.obj"/>
+    <mesh name="obj_000017_0_obj_000017_collision_27" file="models/objects/GraspClutter6D/models_obj_m/obj_000017/obj_000017_collision_27.obj"/>
+    <mesh name="obj_000051_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_0.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_1.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_2.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_3.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_4" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_4.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_5" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_5.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_6" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_6.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_7" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_7.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_8" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_8.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_9" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_9.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_10" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_10.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_11" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_11.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_12" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_12.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_13" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_13.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_14" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_14.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_15" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_15.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_16" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_16.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_17" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_17.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_18" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_18.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_19" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_19.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_20" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_20.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_21" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_21.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_22" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_22.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_23" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_23.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_24" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_24.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_25" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_25.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_26" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_26.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_27" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_27.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_28" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_28.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_29" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_29.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_30" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_30.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_31" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_31.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_32" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_32.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_33" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_33.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_34" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_34.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_35" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_35.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_36" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_36.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_37" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_37.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_38" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_38.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_39" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_39.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_40" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_40.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_41" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_41.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_42" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_42.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_43" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_43.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_44" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_44.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_45" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_45.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_46" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_46.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_47" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_47.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_48" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_48.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_49" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_49.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_50" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_50.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_51" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_51.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_52" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_52.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_53" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_53.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_54" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_54.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_55" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_55.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_56" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_56.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_57" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_57.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_58" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_58.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_59" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_59.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_60" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_60.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_61" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_61.obj"/>
+    <mesh name="obj_000051_0_obj_000051_collision_62" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_62.obj"/>
+    <mesh name="obj_000048_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_0.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_1.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_2.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_3.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_4" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_4.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_5" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_5.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_6" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_6.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_7" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_7.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_8" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_8.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_9" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_9.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_10" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_10.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_11" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_11.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_12" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_12.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_13" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_13.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_14" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_14.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_15" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_15.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_16" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_16.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_17" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_17.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_18" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_18.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_19" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_19.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_20" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_20.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_21" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_21.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_22" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_22.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_23" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_23.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_24" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_24.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_25" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_25.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_26" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_26.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_27" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_27.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_28" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_28.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_29" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_29.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_30" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_30.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_31" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_31.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_32" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_32.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_33" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_33.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_34" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_34.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_35" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_35.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_36" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_36.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_37" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_37.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_38" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_38.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_39" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_39.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_40" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_40.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_41" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_41.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_42" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_42.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_43" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_43.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_44" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_44.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_45" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_45.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_46" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_46.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_47" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_47.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_48" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_48.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_49" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_49.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_50" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_50.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_51" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_51.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_52" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_52.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_53" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_53.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_54" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_54.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_55" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_55.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_56" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_56.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_57" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_57.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_58" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_58.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_59" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_59.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_60" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_60.obj"/>
+    <mesh name="obj_000048_0_obj_000048_collision_61" file="models/objects/GraspClutter6D/models_obj_m/obj_000048/obj_000048_collision_61.obj"/>
+    <mesh name="obj_000041_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_0.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_1.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_2.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_3.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_4" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_4.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_5" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_5.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_6" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_6.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_7" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_7.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_8" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_8.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_9" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_9.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_10" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_10.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_11" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_11.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_12" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_12.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_13" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_13.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_14" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_14.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_15" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_15.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_16" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_16.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_17" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_17.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_18" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_18.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_19" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_19.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_20" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_20.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_21" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_21.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_22" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_22.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_23" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_23.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_24" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_24.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_25" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_25.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_26" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_26.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_27" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_27.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_28" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_28.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_29" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_29.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_30" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_30.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_31" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_31.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_32" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_32.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_33" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_33.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_34" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_34.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_35" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_35.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_36" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_36.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_37" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_37.obj"/>
+    <mesh name="obj_000041_0_obj_000041_collision_38" file="models/objects/GraspClutter6D/models_obj_m/obj_000041/obj_000041_collision_38.obj"/>
+    <mesh name="obj_000026_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_0.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_1.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_2.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_3.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_4" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_4.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_5" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_5.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_6" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_6.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_7" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_7.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_8" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_8.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_9" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_9.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_10" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_10.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_11" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_11.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_12" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_12.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_13" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_13.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_14" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_14.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_15" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_15.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_16" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_16.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_17" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_17.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_18" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_18.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_19" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_19.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_20" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_20.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_21" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_21.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_22" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_22.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_23" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_23.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_24" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_24.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_25" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_25.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_26" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_26.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_27" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_27.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_28" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_28.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_29" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_29.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_30" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_30.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_31" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_31.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_32" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_32.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_33" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_33.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_34" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_34.obj"/>
+    <mesh name="obj_000026_0_obj_000026_collision_35" file="models/objects/GraspClutter6D/models_obj_m/obj_000026/obj_000026_collision_35.obj"/>
+    <mesh name="obj_000118_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000118/obj_000118.obj"/>
+    <mesh name="obj_000118_0_obj_000118_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000118/obj_000118_collision_0.obj"/>
+    <mesh name="obj_000118_0_obj_000118_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000118/obj_000118_collision_1.obj"/>
+    <mesh name="obj_000125_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000125/obj_000125.obj"/>
+    <mesh name="obj_000125_0_obj_000125_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000125/obj_000125_collision_0.obj"/>
+    <mesh name="obj_000127_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_0.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_1.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_2.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_3.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_4" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_4.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_5" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_5.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_6" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_6.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_7" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_7.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_8" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_8.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_9" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_9.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_10" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_10.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_11" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_11.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_12" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_12.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_13" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_13.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_14" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_14.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_15" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_15.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_16" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_16.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_17" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_17.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_18" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_18.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_19" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_19.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_20" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_20.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_21" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_21.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_22" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_22.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_23" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_23.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_24" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_24.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_25" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_25.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_26" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_26.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_27" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_27.obj"/>
+    <mesh name="obj_000127_0_obj_000127_collision_28" file="models/objects/GraspClutter6D/models_obj_m/obj_000127/obj_000127_collision_28.obj"/>
+    <mesh name="obj_000130_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_0.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_1.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_2.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_3.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_4" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_4.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_5" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_5.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_6" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_6.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_7" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_7.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_8" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_8.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_9" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_9.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_10" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_10.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_11" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_11.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_12" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_12.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_13" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_13.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_14" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_14.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_15" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_15.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_16" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_16.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_17" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_17.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_18" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_18.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_19" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_19.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_20" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_20.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_21" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_21.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_22" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_22.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_23" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_23.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_24" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_24.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_25" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_25.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_26" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_26.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_27" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_27.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_28" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_28.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_29" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_29.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_30" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_30.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_31" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_31.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_32" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_32.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_33" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_33.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_34" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_34.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_35" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_35.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_36" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_36.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_37" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_37.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_38" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_38.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_39" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_39.obj"/>
+    <mesh name="obj_000130_0_obj_000130_collision_40" file="models/objects/GraspClutter6D/models_obj_m/obj_000130/obj_000130_collision_40.obj"/>
+    <mesh name="obj_000133_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_0.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_1.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_2.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_3.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_4" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_4.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_5" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_5.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_6" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_6.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_7" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_7.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_8" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_8.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_9" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_9.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_10" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_10.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_11" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_11.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_12" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_12.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_13" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_13.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_14" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_14.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_15" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_15.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_16" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_16.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_17" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_17.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_18" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_18.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_19" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_19.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_20" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_20.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_21" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_21.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_22" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_22.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_23" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_23.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_24" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_24.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_25" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_25.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_26" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_26.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_27" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_27.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_28" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_28.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_29" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_29.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_30" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_30.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_31" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_31.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_32" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_32.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_33" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_33.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_34" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_34.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_35" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_35.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_36" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_36.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_37" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_37.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_38" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_38.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_39" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_39.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_40" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_40.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_41" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_41.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_42" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_42.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_43" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_43.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_44" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_44.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_45" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_45.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_46" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_46.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_47" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_47.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_48" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_48.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_49" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_49.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_50" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_50.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_51" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_51.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_52" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_52.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_53" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_53.obj"/>
+    <mesh name="obj_000133_0_obj_000133_collision_54" file="models/objects/GraspClutter6D/models_obj_m/obj_000133/obj_000133_collision_54.obj"/>
+    <mesh name="obj_000090_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000090/obj_000090.obj"/>
+    <mesh name="obj_000090_0_obj_000090_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000090/obj_000090_collision_0.obj"/>
+    <mesh name="obj_000090_0_obj_000090_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000090/obj_000090_collision_1.obj"/>
+    <mesh name="obj_000090_0_obj_000090_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000090/obj_000090_collision_2.obj"/>
+    <mesh name="obj_000090_0_obj_000090_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000090/obj_000090_collision_3.obj"/>
+  </asset>
+
+  <worldbody>
+    <geom name="floor" size="2 2 0.05" type="plane" material="grid"/>
+    <light pos="-0.5 0.5 3" dir="0 0 -1" directional="true" castshadow="false" diffuse="1 1 1"/>
+    <body name="base" childclass="hidden">
+      <geom pos="0 0 1.2" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.129412 0.14902 0.74902 1" mesh="v_base"/>
+      <geom pos="0 0 1.2" type="mesh" contype="2" conaffinity="2" rgba="0.129412 0.14902 0.74902 1" mesh="c_base"/>
+      <body name="torso_link_b1" pos="0 0 1.2">
+        <joint name="torso_joint_b1" pos="0 0 0" axis="0 0 1" range="-2.96706 2.96706"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.99 0.99 0.99 1" mesh="v_link_b1"/>
+        <geom type="mesh" contype="1" conaffinity="1" rgba="0.99 0.99 0.99 1" mesh="c_link_b1"/>
+        <body name="body_cam_torso" pos="0.1 0 0.18" quat="0.519584 0.479616 -0.479616 -0.519584">
+          <geom name="geom_cam_torso" size="0.03 0.03 0.02" type="box" contype="0" conaffinity="0" group="1" rgba="0 0 0 1"/>
+          <camera name="cam_torso" pos="0 0 0" fovy="64"/>
+        </body>
+        <body name="arm_left_link_1_s" pos="0.1 0.265 0" quat="0.707107 0.707107 0 0">
+          <joint name="arm_left_joint_1_s" pos="0 0 0" axis="0 0 -1" range="-3.14159 3.14159"/>
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.129412 0.14902 0.74902 1" mesh="v_link_s"/>
+          <geom type="mesh" rgba="0.129412 0.14902 0.74902 1" mesh="c_link_s"/>
+          <body name="arm_left_link_2_l" quat="0.707107 -0.707107 0 0">
+            <joint name="arm_left_joint_2_l" pos="0 0 0" axis="0 0 -1" range="-1.91986 1.91986"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.99 0.99 0.99 1" mesh="v_link_l"/>
+            <geom type="mesh" rgba="0.99 0.99 0.99 1" mesh="c_link_l"/>
+            <body name="arm_left_link_3_e" pos="0 0.36 0" quat="0.707107 0.707107 0 0">
+              <joint name="arm_left_joint_3_e" pos="0 0 0" axis="0 0 -1" range="-2.96706 2.96706"/>
+              <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.129412 0.14902 0.74902 1" mesh="v_link_e"/>
+              <geom type="mesh" rgba="0.129412 0.14902 0.74902 1" mesh="c_link_e"/>
+              <body name="arm_left_link_4_u" quat="0.707107 -0.707107 0 0">
+                <joint name="arm_left_joint_4_u" pos="0 0 0" axis="0 0 1" range="-2.35619 2.35619"/>
+                <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.99 0.99 0.99 1" mesh="v_link_u"/>
+                <geom type="mesh" rgba="0.99 0.99 0.99 1" mesh="c_link_u"/>
+                <body name="arm_left_link_5_r" pos="0 0.36 0" quat="0.707107 0.707107 0 0">
+                  <joint name="arm_left_joint_5_r" pos="0 0 0" axis="0 0 1" range="-3.14159 3.14159"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.129412 0.14902 0.74902 1" mesh="v_link_r"/>
+                  <geom type="mesh" rgba="0.129412 0.14902 0.74902 1" mesh="c_link_r"/>
+                  <body name="arm_left_link_6_b" quat="0.707107 -0.707107 0 0">
+                    <joint name="arm_left_joint_6_b" pos="0 0 0" axis="0 0 1" range="-1.91986 1.91986"/>
+                    <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.99 0.99 0.99 1" mesh="v_link_b"/>
+                    <geom type="mesh" rgba="0.99 0.99 0.99 1" mesh="c_link_b"/>
+                    <body name="arm_left_link_7_t" pos="0 0.155 0" quat="0.707107 -0.707107 0 0">
+                      <joint name="arm_left_joint_7_t" pos="0 0 0" axis="0 0 -1" range="-3.14159 3.14159"/>
+                      <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.129412 0.14902 0.74902 1" mesh="v_link_t"/>
+                      <geom type="mesh" rgba="0.129412 0.14902 0.74902 1" mesh="c_link_t"/>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+        <body name="arm_right_link_1_s" pos="0.1 -0.265 0" quat="0 0 -0.707107 -0.707107">
+          <joint name="arm_right_joint_1_s" pos="0 0 0" axis="0 0 1" range="-3.14159 3.14159"/>
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.129412 0.14902 0.74902 1" mesh="v_link_s"/>
+          <geom type="mesh" rgba="0.129412 0.14902 0.74902 1" mesh="c_link_s"/>
+          <body name="arm_right_link_2_l" quat="0.707107 -0.707107 0 0">
+            <joint name="arm_right_joint_2_l" pos="0 0 0" axis="0 0 1" range="-1.91986 1.91986"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.99 0.99 0.99 1" mesh="v_link_l"/>
+            <geom type="mesh" rgba="0.99 0.99 0.99 1" mesh="c_link_l"/>
+            <body name="arm_right_link_3_e" pos="0 0.36 0" quat="0.707107 0.707107 0 0">
+              <joint name="arm_right_joint_3_e" pos="0 0 0" axis="0 0 1" range="-2.96706 2.96706"/>
+              <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.129412 0.14902 0.74902 1" mesh="v_link_e"/>
+              <geom type="mesh" rgba="0.129412 0.14902 0.74902 1" mesh="c_link_e"/>
+              <body name="arm_right_link_4_u" quat="0.707107 -0.707107 0 0">
+                <joint name="arm_right_joint_4_u" pos="0 0 0" axis="0 0 -1" range="-2.35619 2.35619"/>
+                <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.99 0.99 0.99 1" mesh="v_link_u"/>
+                <geom type="mesh" rgba="0.99 0.99 0.99 1" mesh="c_link_u"/>
+                <body name="arm_right_link_5_r" pos="0 0.36 0" quat="0.707107 0.707107 0 0">
+                  <joint name="arm_right_joint_5_r" pos="0 0 0" axis="0 0 -1" range="-3.14159 3.14159"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.129412 0.14902 0.74902 1" mesh="v_link_r"/>
+                  <geom type="mesh" rgba="0.129412 0.14902 0.74902 1" mesh="c_link_r"/>
+                  <body name="arm_right_link_6_b" quat="0.707107 -0.707107 0 0">
+                    <joint name="arm_right_joint_6_b" pos="0 0 0" axis="0 0 -1" range="-1.91986 1.91986"/>
+                    <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.99 0.99 0.99 1" mesh="v_link_b"/>
+                    <geom type="mesh" rgba="0.99 0.99 0.99 1" mesh="c_link_b"/>
+                    <body name="arm_right_link_7_t" pos="0 0.155 0" quat="0.707107 -0.707107 0 0">
+                      <joint name="arm_right_joint_7_t" pos="0 0 0" axis="0 0 1" range="-3.14159 3.14159"/>
+                      <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.129412 0.14902 0.74902 1" mesh="v_link_t"/>
+                      <geom type="mesh" rgba="0.129412 0.14902 0.74902 1" mesh="c_link_t"/>
+                      <body name="body_cam_arm" pos="0 -0.055 0.04" quat="0 1 0 0">
+                        <geom name="geom_cam_arm" size="0.05 0.0225 0.02" type="box" group="1" rgba="0 0 0 1"/>
+                        <camera name="cam_arm" pos="0 0.005 0" fovy="42"/>
+                      </body>
+                      <body name="robotiq_2f85" pos="0 0 0.017">
+                        <body name="base_mount" childclass="2f85" pos="0 0 -0.005">
+                          <geom class="visual" material="black" mesh="base_mount"/>
+                          <geom class="collision" mesh="base_mount"/>
+                          <body name="robotiq_2f85_base" pos="0 0 0.0038" quat="0.707107 0 0 -0.707107">
+                            <inertial pos="0 -2.70394e-05 0.0354675" quat="0.999999 -0.00152849 0 0" mass="0.777441" diaginertia="0.000260285 0.000225381 0.000152708"/>
+                            <geom class="visual" material="black" mesh="base"/>
+                            <geom class="collision" mesh="base"/>
+                            <body name="right_driver" pos="0 0.0306011 0.054904">
+                              <inertial pos="2.96931e-12 0.0177547 0.00107314" quat="0.681301 0.732003 0 0" mass="0.00899563" diaginertia="1.72352e-06 1.60906e-06 3.22006e-07"/>
+                              <joint name="right_driver_joint" class="driver" pos="0 0 0" axis="1 0 0"/>
+                              <geom class="visual" material="gray" mesh="driver"/>
+                              <geom class="collision" mesh="driver"/>
+                              <body name="right_coupler" pos="0 0.0315 -0.0041">
+                                <inertial pos="0 0.00301209 0.0232175" quat="0.705636 -0.0455904 0.0455904 0.705636" mass="0.0140974" diaginertia="4.16206e-06 3.52216e-06 8.88131e-07"/>
+                                <joint name="right_coupler_joint" class="coupler" pos="0 0 0" axis="1 0 0"/>
+                                <geom class="visual" material="black" mesh="coupler"/>
+                                <geom class="collision" mesh="coupler"/>
+                              </body>
+                            </body>
+                            <body name="right_spring_link" pos="0 0.0132 0.0609">
+                              <inertial pos="-8.65005e-09 0.0181624 0.0212658" quat="0.663403 -0.244737 0.244737 0.663403" mass="0.0221642" diaginertia="8.96853e-06 6.71733e-06 2.63931e-06"/>
+                              <joint name="right_spring_link_joint" class="spring_link" pos="0 0 0" axis="1 0 0" springref="2.62"/>
+                              <geom class="visual" material="black" mesh="spring_link"/>
+                              <geom class="collision" mesh="spring_link"/>
+                              <body name="right_follower" pos="0 0.055 0.0375">
+                                <inertial pos="0 -0.011046 0.0124786" quat="0.986437 0.164143 0 0" mass="0.0125222" diaginertia="2.67415e-06 2.4559e-06 6.02031e-07"/>
+                                <joint name="right_follower_joint" class="follower" pos="0 -0.018 0.0065" axis="1 0 0"/>
+                                <geom class="visual" material="black" mesh="follower"/>
+                                <geom class="collision" mesh="follower"/>
+                                <body name="right_pad" pos="0 -0.0189 0.01352">
+                                  <inertial pos="0 -0.0025 0.0185" quat="0.707107 0 0 0.707107" mass="0.0035" diaginertia="4.73958e-07 3.64583e-07 1.23958e-07"/>
+                                  <geom class="pad_box1" pos="0 -0.0026 0.028125" mass="0"/>
+                                  <geom class="pad_box2" pos="0 -0.0026 0.009375" mass="0"/>
+                                  <geom class="visual" mesh="pad"/>
+                                  <body name="right_silicone_pad">
+                                    <geom class="visual" material="black" mesh="silicone_pad"/>
+                                  </body>
+                                </body>
+                              </body>
+                            </body>
+                            <body name="left_driver" pos="0 -0.0306011 0.054904" quat="0 0 0 1">
+                              <inertial pos="0 0.0177547 0.00107314" quat="0.681301 0.732003 0 0" mass="0.00899563" diaginertia="1.72352e-06 1.60906e-06 3.22006e-07"/>
+                              <joint name="left_driver_joint" class="driver" pos="0 0 0" axis="1 0 0"/>
+                              <geom class="visual" material="gray" mesh="driver"/>
+                              <geom class="collision" mesh="driver"/>
+                              <body name="left_coupler" pos="0 0.0315 -0.0041">
+                                <inertial pos="0 0.00301209 0.0232175" quat="0.705636 -0.0455904 0.0455904 0.705636" mass="0.0140974" diaginertia="4.16206e-06 3.52216e-06 8.88131e-07"/>
+                                <joint name="left_coupler_joint" class="coupler" pos="0 0 0" axis="1 0 0"/>
+                                <geom class="visual" material="black" mesh="coupler"/>
+                                <geom class="collision" mesh="coupler"/>
+                              </body>
+                            </body>
+                            <body name="left_spring_link" pos="0 -0.0132 0.0609" quat="0 0 0 1">
+                              <inertial pos="-8.65005e-09 0.0181624 0.0212658" quat="0.663403 -0.244737 0.244737 0.663403" mass="0.0221642" diaginertia="8.96853e-06 6.71733e-06 2.63931e-06"/>
+                              <joint name="left_spring_link_joint" class="spring_link" pos="0 0 0" axis="1 0 0" springref="2.62"/>
+                              <geom class="visual" material="black" mesh="spring_link"/>
+                              <geom class="collision" mesh="spring_link"/>
+                              <body name="left_follower" pos="0 0.055 0.0375">
+                                <inertial pos="0 -0.011046 0.0124786" quat="0.986437 0.164143 0 0" mass="0.0125222" diaginertia="2.67415e-06 2.4559e-06 6.02031e-07"/>
+                                <joint name="left_follower_joint" class="follower" pos="0 -0.018 0.0065" axis="1 0 0"/>
+                                <geom class="visual" material="black" mesh="follower"/>
+                                <geom class="collision" mesh="follower"/>
+                                <body name="left_pad" pos="0 -0.0189 0.01352">
+                                  <inertial pos="0 -0.0025 0.0185" quat="0.707107 0 0 0.707107" mass="0.0035" diaginertia="4.73958e-07 3.64583e-07 1.23958e-07"/>
+                                  <geom class="pad_box1" pos="0 -0.0026 0.028125" mass="0"/>
+                                  <geom class="pad_box2" pos="0 -0.0026 0.009375" mass="0"/>
+                                  <geom class="visual" mesh="pad"/>
+                                  <body name="left_silicone_pad">
+                                    <geom class="visual" material="black" mesh="silicone_pad"/>
+                                  </body>
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+    <body name="workspace" pos="0.8 0 0">
+      <geom name="shelf_bottom" size="0.25 0.68 0.525" pos="0 0 0.525" type="box" material="table_ceramic"/>
+    </body>
+    <body name="obj_000004_0" pos="0.891112 -0.165458 1.07693" quat="0.590439 -0.525386 -0.608018 -0.0752614">
+      <joint name="obj_000004_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000004_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000004_0_mat" mesh="obj_000004_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.900636 0.51984 0.147067 1" mesh="obj_000004_0_obj_000004_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.538186 0.907957 0.586039 1" mesh="obj_000004_0_obj_000004_collision_1"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.548098 0.0895973 0.958306 1" mesh="obj_000004_0_obj_000004_collision_2"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.734837 0.995434 0.100436 1" mesh="obj_000004_0_obj_000004_collision_3"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.153542 0.399249 0.901849 1" mesh="obj_000004_0_obj_000004_collision_4"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.50023 0.069842 0.147912 1" mesh="obj_000004_0_obj_000004_collision_5"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.88017 0.269816 0.541375 1" mesh="obj_000004_0_obj_000004_collision_6"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.74555 0.842185 0.53222 1" mesh="obj_000004_0_obj_000004_collision_7"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.444259 0.036385 0.324976 1" mesh="obj_000004_0_obj_000004_collision_8"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.347628 0.0686269 0.279841 1" mesh="obj_000004_0_obj_000004_collision_9"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.374361 0.812902 0.266144 1" mesh="obj_000004_0_obj_000004_collision_10"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.665169 0.352255 0.103461 1" mesh="obj_000004_0_obj_000004_collision_11"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.377099 0.907753 0.22612 1" mesh="obj_000004_0_obj_000004_collision_12"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.406275 0.537214 0.0919758 1" mesh="obj_000004_0_obj_000004_collision_13"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.516676 0.504394 0.587225 1" mesh="obj_000004_0_obj_000004_collision_14"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.908299 0.180499 0.0679633 1" mesh="obj_000004_0_obj_000004_collision_15"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.39434 0.619763 0.434446 1" mesh="obj_000004_0_obj_000004_collision_16"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.783174 0.425937 0.685752 1" mesh="obj_000004_0_obj_000004_collision_17"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.160968 0.601036 0.0594631 1" mesh="obj_000004_0_obj_000004_collision_18"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.442633 0.250288 0.380142 1" mesh="obj_000004_0_obj_000004_collision_19"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.546303 0.845331 0.0280128 1" mesh="obj_000004_0_obj_000004_collision_20"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.199103 0.853207 0.426782 1" mesh="obj_000004_0_obj_000004_collision_21"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0130817 0.847827 0.576772 1" mesh="obj_000004_0_obj_000004_collision_22"/>
+    </body>
+    <body name="obj_000008_0" pos="0.88596 -0.0924128 1.09433" quat="0.344235 -0.11687 -0.778364 0.511853">
+      <joint name="obj_000008_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000008_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000008_0_mat" mesh="obj_000008_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0167189 0.878356 0.328708 1" mesh="obj_000008_0_obj_000008_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.275991 0.579935 0.464631 1" mesh="obj_000008_0_obj_000008_collision_1"/>
+    </body>
+    <body name="obj_000009_0" pos="0.684107 0.117967 1.10226" quat="0.344095 -0.191719 0.677437 0.621226">
+      <joint name="obj_000009_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000009_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000009_0_mat" mesh="obj_000009_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.470142 0.150587 0.0323256 1" mesh="obj_000009_0_obj_000009_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.633426 0.700059 0.910119 1" mesh="obj_000009_0_obj_000009_collision_1"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.479657 0.351503 0.637523 1" mesh="obj_000009_0_obj_000009_collision_2"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.80059 0.96298 0.317101 1" mesh="obj_000009_0_obj_000009_collision_3"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.731682 0.812595 0.977042 1" mesh="obj_000009_0_obj_000009_collision_4"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0275407 0.947199 0.974403 1" mesh="obj_000009_0_obj_000009_collision_5"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.246803 0.113555 0.640483 1" mesh="obj_000009_0_obj_000009_collision_6"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.263811 0.506423 0.0643443 1" mesh="obj_000009_0_obj_000009_collision_7"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.391041 0.257615 0.982347 1" mesh="obj_000009_0_obj_000009_collision_8"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.901336 0.833646 0.773652 1" mesh="obj_000009_0_obj_000009_collision_9"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.563803 0.230987 0.0561783 1" mesh="obj_000009_0_obj_000009_collision_10"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0753998 0.884021 0.379404 1" mesh="obj_000009_0_obj_000009_collision_11"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.129977 0.219712 0.734877 1" mesh="obj_000009_0_obj_000009_collision_12"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.410203 0.31374 0.922938 1" mesh="obj_000009_0_obj_000009_collision_13"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.677518 0.373086 0.756092 1" mesh="obj_000009_0_obj_000009_collision_14"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.200134 0.046709 0.453083 1" mesh="obj_000009_0_obj_000009_collision_15"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.997743 0.872007 0.228939 1" mesh="obj_000009_0_obj_000009_collision_16"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.248644 0.84824 0.991324 1" mesh="obj_000009_0_obj_000009_collision_17"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.855288 0.878527 0.571431 1" mesh="obj_000009_0_obj_000009_collision_18"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.637526 0.333496 0.0426442 1" mesh="obj_000009_0_obj_000009_collision_19"/>
+    </body>
+    <body name="obj_000010_0" pos="0.276131 0.233522 0.108632" quat="0.149705 -0.708959 -0.672103 -0.152459">
+      <joint name="obj_000010_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000010_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000010_0_mat" mesh="obj_000010_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.873288 0.334335 0.0887188 1" mesh="obj_000010_0_obj_000010_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.776897 0.173028 0.598056 1" mesh="obj_000010_0_obj_000010_collision_1"/>
+    </body>
+    <body name="obj_000012_0" pos="0.618571 0.212905 1.14658" quat="0.90267 -0.0121082 -0.00317136 0.430152">
+      <joint name="obj_000012_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000012_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000012_0_mat" mesh="obj_000012_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.755461 0.648638 0.717659 1" mesh="obj_000012_0_obj_000012_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.700729 0.451793 0.0927653 1" mesh="obj_000012_0_obj_000012_collision_1"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.206654 0.968649 0.0818582 1" mesh="obj_000012_0_obj_000012_collision_2"/>
+    </body>
+    <body name="obj_000016_0" pos="0.80592 0.0250477 1.06686" quat="0.61337 -0.019705 -0.018793 0.789326">
+      <joint name="obj_000016_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000016_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000016_0_mat" mesh="obj_000016_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.260014 0.239239 0.852618 1" mesh="obj_000016_0_obj_000016_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.702263 0.840908 0.580928 1" mesh="obj_000016_0_obj_000016_collision_1"/>
+    </body>
+    <body name="obj_000017_0" pos="0.772915 -0.0870055 1.09519" quat="0.758005 -0.554038 -0.226429 0.259231">
+      <joint name="obj_000017_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000017_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000017_0_mat" mesh="obj_000017_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.830061 0.774645 0.0282597 1" mesh="obj_000017_0_obj_000017_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.872238 0.727477 0.353169 1" mesh="obj_000017_0_obj_000017_collision_1"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.598088 0.0896493 0.982741 1" mesh="obj_000017_0_obj_000017_collision_2"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.128969 0.232625 0.708307 1" mesh="obj_000017_0_obj_000017_collision_3"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.491397 0.892633 0.572559 1" mesh="obj_000017_0_obj_000017_collision_4"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.793778 0.422174 0.0885925 1" mesh="obj_000017_0_obj_000017_collision_5"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.319685 0.0556929 0.133727 1" mesh="obj_000017_0_obj_000017_collision_6"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.13222 0.175263 0.0689655 1" mesh="obj_000017_0_obj_000017_collision_7"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.619765 0.652515 0.194515 1" mesh="obj_000017_0_obj_000017_collision_8"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.754294 0.593245 0.710365 1" mesh="obj_000017_0_obj_000017_collision_9"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.252439 0.42502 0.54842 1" mesh="obj_000017_0_obj_000017_collision_10"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.127476 0.877346 0.290352 1" mesh="obj_000017_0_obj_000017_collision_11"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.367053 0.438579 0.192192 1" mesh="obj_000017_0_obj_000017_collision_12"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0205586 0.215268 0.772726 1" mesh="obj_000017_0_obj_000017_collision_13"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.105472 0.989055 0.267412 1" mesh="obj_000017_0_obj_000017_collision_14"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.536027 0.0470772 0.473206 1" mesh="obj_000017_0_obj_000017_collision_15"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.322247 0.15368 0.332945 1" mesh="obj_000017_0_obj_000017_collision_16"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0621534 0.155035 0.0311078 1" mesh="obj_000017_0_obj_000017_collision_17"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.889434 0.927465 0.896071 1" mesh="obj_000017_0_obj_000017_collision_18"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.64073 0.702485 0.813249 1" mesh="obj_000017_0_obj_000017_collision_19"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.421913 0.12865 0.636259 1" mesh="obj_000017_0_obj_000017_collision_20"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.655349 0.77436 0.240564 1" mesh="obj_000017_0_obj_000017_collision_21"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.00202291 0.30733 0.17781 1" mesh="obj_000017_0_obj_000017_collision_22"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.61798 0.372778 0.759608 1" mesh="obj_000017_0_obj_000017_collision_23"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.25438 0.445766 0.395144 1" mesh="obj_000017_0_obj_000017_collision_24"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.14321 0.402486 0.757209 1" mesh="obj_000017_0_obj_000017_collision_25"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.509009 0.384391 0.53221 1" mesh="obj_000017_0_obj_000017_collision_26"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.402268 0.536482 0.660878 1" mesh="obj_000017_0_obj_000017_collision_27"/>
+    </body>
+    <body name="obj_000051_0" pos="0.780988 -0.177976 1.09832" quat="0.460867 0.00189249 0.00229534 0.887464">
+      <joint name="obj_000051_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000051_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000051_0_mat" mesh="obj_000051_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.00438321 0.416353 0.149356 1" mesh="obj_000051_0_obj_000051_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.850141 0.0378037 0.86319 1" mesh="obj_000051_0_obj_000051_collision_1"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0397926 0.884545 0.104351 1" mesh="obj_000051_0_obj_000051_collision_2"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.312744 0.13914 0.360564 1" mesh="obj_000051_0_obj_000051_collision_3"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.282476 0.821213 0.434684 1" mesh="obj_000051_0_obj_000051_collision_4"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.150588 0.942875 0.0765887 1" mesh="obj_000051_0_obj_000051_collision_5"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.104846 0.493314 0.0140477 1" mesh="obj_000051_0_obj_000051_collision_6"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.924671 0.973415 0.0789088 1" mesh="obj_000051_0_obj_000051_collision_7"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0466048 0.967381 0.110148 1" mesh="obj_000051_0_obj_000051_collision_8"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.254069 0.168813 0.697487 1" mesh="obj_000051_0_obj_000051_collision_9"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.84557 0.57254 0.278116 1" mesh="obj_000051_0_obj_000051_collision_10"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.823308 0.0677722 0.748089 1" mesh="obj_000051_0_obj_000051_collision_11"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.330287 0.30504 0.662969 1" mesh="obj_000051_0_obj_000051_collision_12"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.926022 0.140717 0.147686 1" mesh="obj_000051_0_obj_000051_collision_13"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.405306 0.0163458 0.308043 1" mesh="obj_000051_0_obj_000051_collision_14"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.377353 0.731097 0.306719 1" mesh="obj_000051_0_obj_000051_collision_15"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.833293 0.903418 0.13367 1" mesh="obj_000051_0_obj_000051_collision_16"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.979016 0.346201 0.217186 1" mesh="obj_000051_0_obj_000051_collision_17"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.844484 0.526526 0.0230728 1" mesh="obj_000051_0_obj_000051_collision_18"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.447727 0.145314 0.43185 1" mesh="obj_000051_0_obj_000051_collision_19"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.321729 0.783555 0.488553 1" mesh="obj_000051_0_obj_000051_collision_20"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.219213 0.0077447 0.641037 1" mesh="obj_000051_0_obj_000051_collision_21"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0605539 0.194732 0.556898 1" mesh="obj_000051_0_obj_000051_collision_22"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.406845 0.106869 0.430863 1" mesh="obj_000051_0_obj_000051_collision_23"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.355718 0.0938183 0.135983 1" mesh="obj_000051_0_obj_000051_collision_24"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.311082 0.0708625 0.828486 1" mesh="obj_000051_0_obj_000051_collision_25"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.758914 0.0178865 0.595305 1" mesh="obj_000051_0_obj_000051_collision_26"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.431222 0.584964 0.737579 1" mesh="obj_000051_0_obj_000051_collision_27"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.965626 0.967227 0.0688337 1" mesh="obj_000051_0_obj_000051_collision_28"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.438218 0.240309 0.527479 1" mesh="obj_000051_0_obj_000051_collision_29"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.389665 0.32204 0.88698 1" mesh="obj_000051_0_obj_000051_collision_30"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.868877 0.851685 0.336571 1" mesh="obj_000051_0_obj_000051_collision_31"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0375398 0.236764 0.16246 1" mesh="obj_000051_0_obj_000051_collision_32"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.788232 0.036567 0.969872 1" mesh="obj_000051_0_obj_000051_collision_33"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.700562 0.900575 0.884319 1" mesh="obj_000051_0_obj_000051_collision_34"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.35604 0.3291 0.168239 1" mesh="obj_000051_0_obj_000051_collision_35"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.774209 0.404331 0.747516 1" mesh="obj_000051_0_obj_000051_collision_36"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.440332 0.645168 0.164358 1" mesh="obj_000051_0_obj_000051_collision_37"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.394906 0.332593 0.24747 1" mesh="obj_000051_0_obj_000051_collision_38"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.751562 0.316656 0.71524 1" mesh="obj_000051_0_obj_000051_collision_39"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.892711 0.216266 0.120972 1" mesh="obj_000051_0_obj_000051_collision_40"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.178052 0.154872 0.88746 1" mesh="obj_000051_0_obj_000051_collision_41"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.884464 0.86335 0.832471 1" mesh="obj_000051_0_obj_000051_collision_42"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.713954 0.00843119 0.747903 1" mesh="obj_000051_0_obj_000051_collision_43"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.514716 0.379501 0.514022 1" mesh="obj_000051_0_obj_000051_collision_44"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0807303 0.167077 0.933158 1" mesh="obj_000051_0_obj_000051_collision_45"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.362342 0.394959 0.485472 1" mesh="obj_000051_0_obj_000051_collision_46"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.344727 0.124594 0.767264 1" mesh="obj_000051_0_obj_000051_collision_47"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.181307 0.241021 0.874173 1" mesh="obj_000051_0_obj_000051_collision_48"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.72703 0.513153 0.442579 1" mesh="obj_000051_0_obj_000051_collision_49"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.220627 0.0226115 0.636671 1" mesh="obj_000051_0_obj_000051_collision_50"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.693736 0.996609 0.443737 1" mesh="obj_000051_0_obj_000051_collision_51"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.207454 0.235299 0.504361 1" mesh="obj_000051_0_obj_000051_collision_52"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.223378 0.278387 0.323946 1" mesh="obj_000051_0_obj_000051_collision_53"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.885072 0.264083 0.624695 1" mesh="obj_000051_0_obj_000051_collision_54"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0906372 0.719435 0.665772 1" mesh="obj_000051_0_obj_000051_collision_55"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.445739 0.154036 0.452313 1" mesh="obj_000051_0_obj_000051_collision_56"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.101661 0.192701 0.195645 1" mesh="obj_000051_0_obj_000051_collision_57"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.357371 0.0196722 0.706635 1" mesh="obj_000051_0_obj_000051_collision_58"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.995144 0.222612 0.936403 1" mesh="obj_000051_0_obj_000051_collision_59"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.157313 0.612652 0.199321 1" mesh="obj_000051_0_obj_000051_collision_60"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.543557 0.35061 0.15601 1" mesh="obj_000051_0_obj_000051_collision_61"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.920253 0.226753 0.0860801 1" mesh="obj_000051_0_obj_000051_collision_62"/>
+    </body>
+    <body name="obj_000048_0" pos="0.840982 -0.134854 1.0856" quat="0.595276 0.00399469 0.00420964 -0.803501">
+      <joint name="obj_000048_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000048_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000048_0_mat" mesh="obj_000048_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.344516 0.615277 0.950542 1" mesh="obj_000048_0_obj_000048_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.912582 0.88133 0.577273 1" mesh="obj_000048_0_obj_000048_collision_1"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.633184 0.654285 0.588683 1" mesh="obj_000048_0_obj_000048_collision_2"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.349374 0.41585 0.0630693 1" mesh="obj_000048_0_obj_000048_collision_3"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.894458 0.474053 0.128043 1" mesh="obj_000048_0_obj_000048_collision_4"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.880288 0.50679 0.971469 1" mesh="obj_000048_0_obj_000048_collision_5"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.106709 0.00443428 0.146514 1" mesh="obj_000048_0_obj_000048_collision_6"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.904352 0.729232 0.604829 1" mesh="obj_000048_0_obj_000048_collision_7"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.247375 0.712559 0.683185 1" mesh="obj_000048_0_obj_000048_collision_8"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.396329 0.588219 0.0690131 1" mesh="obj_000048_0_obj_000048_collision_9"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.808186 0.59661 0.319877 1" mesh="obj_000048_0_obj_000048_collision_10"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.838233 0.803176 0.443111 1" mesh="obj_000048_0_obj_000048_collision_11"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.408006 0.869107 0.710278 1" mesh="obj_000048_0_obj_000048_collision_12"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.157102 0.128083 0.114744 1" mesh="obj_000048_0_obj_000048_collision_13"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.906841 0.541727 0.0217314 1" mesh="obj_000048_0_obj_000048_collision_14"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.404111 0.241106 0.261542 1" mesh="obj_000048_0_obj_000048_collision_15"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.55519 0.56054 0.210507 1" mesh="obj_000048_0_obj_000048_collision_16"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.510024 0.902315 0.170704 1" mesh="obj_000048_0_obj_000048_collision_17"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.578313 0.395287 0.732855 1" mesh="obj_000048_0_obj_000048_collision_18"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.858169 0.281284 0.3543 1" mesh="obj_000048_0_obj_000048_collision_19"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.857373 0.911368 0.605256 1" mesh="obj_000048_0_obj_000048_collision_20"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.879757 0.953782 0.493794 1" mesh="obj_000048_0_obj_000048_collision_21"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.849093 0.0686642 0.34403 1" mesh="obj_000048_0_obj_000048_collision_22"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.280805 0.151435 0.984399 1" mesh="obj_000048_0_obj_000048_collision_23"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.865696 0.69619 0.487832 1" mesh="obj_000048_0_obj_000048_collision_24"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.693515 0.575869 0.433221 1" mesh="obj_000048_0_obj_000048_collision_25"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.331731 0.346409 0.910618 1" mesh="obj_000048_0_obj_000048_collision_26"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.884518 0.447926 0.578616 1" mesh="obj_000048_0_obj_000048_collision_27"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.969651 0.670084 0.368439 1" mesh="obj_000048_0_obj_000048_collision_28"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.276865 0.680586 0.294935 1" mesh="obj_000048_0_obj_000048_collision_29"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.248748 0.910039 0.452688 1" mesh="obj_000048_0_obj_000048_collision_30"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.20678 0.564129 0.167993 1" mesh="obj_000048_0_obj_000048_collision_31"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.508578 0.201106 0.0370835 1" mesh="obj_000048_0_obj_000048_collision_32"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.782071 0.396229 0.170879 1" mesh="obj_000048_0_obj_000048_collision_33"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.223573 0.445411 0.490704 1" mesh="obj_000048_0_obj_000048_collision_34"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.180473 0.86434 0.699374 1" mesh="obj_000048_0_obj_000048_collision_35"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0284852 0.465536 0.546798 1" mesh="obj_000048_0_obj_000048_collision_36"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.769798 0.135005 0.185849 1" mesh="obj_000048_0_obj_000048_collision_37"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.237489 0.406228 0.659171 1" mesh="obj_000048_0_obj_000048_collision_38"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.126267 0.795668 0.186863 1" mesh="obj_000048_0_obj_000048_collision_39"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.111517 0.774661 0.289461 1" mesh="obj_000048_0_obj_000048_collision_40"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.111109 0.472361 0.3016 1" mesh="obj_000048_0_obj_000048_collision_41"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.689624 0.937144 0.682163 1" mesh="obj_000048_0_obj_000048_collision_42"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.646243 0.81758 0.247912 1" mesh="obj_000048_0_obj_000048_collision_43"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.851476 0.0776865 0.252548 1" mesh="obj_000048_0_obj_000048_collision_44"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.200723 0.3265 0.814315 1" mesh="obj_000048_0_obj_000048_collision_45"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.353969 0.995121 0.877065 1" mesh="obj_000048_0_obj_000048_collision_46"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.627505 0.85631 0.991411 1" mesh="obj_000048_0_obj_000048_collision_47"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.827422 0.371276 0.822779 1" mesh="obj_000048_0_obj_000048_collision_48"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.40554 0.87641 0.68884 1" mesh="obj_000048_0_obj_000048_collision_49"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.486612 0.295655 0.323884 1" mesh="obj_000048_0_obj_000048_collision_50"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.68025 0.0202908 0.719004 1" mesh="obj_000048_0_obj_000048_collision_51"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.37555 0.356866 0.3992 1" mesh="obj_000048_0_obj_000048_collision_52"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.436439 0.271173 0.679065 1" mesh="obj_000048_0_obj_000048_collision_53"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.804908 0.392941 0.458535 1" mesh="obj_000048_0_obj_000048_collision_54"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.973975 0.45106 0.310029 1" mesh="obj_000048_0_obj_000048_collision_55"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.900591 0.506967 0.888938 1" mesh="obj_000048_0_obj_000048_collision_56"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.782294 0.265335 0.438541 1" mesh="obj_000048_0_obj_000048_collision_57"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.832585 0.327501 0.982825 1" mesh="obj_000048_0_obj_000048_collision_58"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.818504 0.522763 0.952724 1" mesh="obj_000048_0_obj_000048_collision_59"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.964929 0.266904 0.842903 1" mesh="obj_000048_0_obj_000048_collision_60"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.486076 0.836491 0.805841 1" mesh="obj_000048_0_obj_000048_collision_61"/>
+    </body>
+    <body name="obj_000041_0" pos="0.82975 -0.231774 1.08316" quat="0.121632 0.506056 -0.846179 0.114426">
+      <joint name="obj_000041_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000041_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000041_0_mat" mesh="obj_000041_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.777334 0.659591 0.970411 1" mesh="obj_000041_0_obj_000041_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.212022 0.850779 0.749148 1" mesh="obj_000041_0_obj_000041_collision_1"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.223148 0.434869 0.18733 1" mesh="obj_000041_0_obj_000041_collision_2"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.670588 0.699643 0.360243 1" mesh="obj_000041_0_obj_000041_collision_3"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.15696 0.0828269 0.0367746 1" mesh="obj_000041_0_obj_000041_collision_4"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.284739 0.0932065 0.641155 1" mesh="obj_000041_0_obj_000041_collision_5"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0815909 0.877162 0.327753 1" mesh="obj_000041_0_obj_000041_collision_6"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.895185 0.723604 0.872803 1" mesh="obj_000041_0_obj_000041_collision_7"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.068621 0.677806 0.204757 1" mesh="obj_000041_0_obj_000041_collision_8"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.743464 0.936401 0.668826 1" mesh="obj_000041_0_obj_000041_collision_9"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.498337 0.200926 0.53573 1" mesh="obj_000041_0_obj_000041_collision_10"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.291463 0.931202 0.633551 1" mesh="obj_000041_0_obj_000041_collision_11"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.554015 0.610243 0.308776 1" mesh="obj_000041_0_obj_000041_collision_12"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.73263 0.103584 0.312252 1" mesh="obj_000041_0_obj_000041_collision_13"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.799094 0.0914064 0.185248 1" mesh="obj_000041_0_obj_000041_collision_14"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.816017 0.328658 0.613814 1" mesh="obj_000041_0_obj_000041_collision_15"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.89645 0.574429 0.551423 1" mesh="obj_000041_0_obj_000041_collision_16"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.103225 0.602842 0.774182 1" mesh="obj_000041_0_obj_000041_collision_17"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.91476 0.0117792 0.524937 1" mesh="obj_000041_0_obj_000041_collision_18"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.121227 0.509269 0.0666683 1" mesh="obj_000041_0_obj_000041_collision_19"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.690105 0.0624503 0.691456 1" mesh="obj_000041_0_obj_000041_collision_20"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.374356 0.978409 0.276402 1" mesh="obj_000041_0_obj_000041_collision_21"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.882335 0.477207 0.585164 1" mesh="obj_000041_0_obj_000041_collision_22"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.708802 0.692137 0.892919 1" mesh="obj_000041_0_obj_000041_collision_23"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.875175 0.6485 0.0832322 1" mesh="obj_000041_0_obj_000041_collision_24"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0955078 0.37454 0.14508 1" mesh="obj_000041_0_obj_000041_collision_25"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.758834 0.939731 0.33165 1" mesh="obj_000041_0_obj_000041_collision_26"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.786339 0.765088 0.169641 1" mesh="obj_000041_0_obj_000041_collision_27"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.116474 0.497695 0.317313 1" mesh="obj_000041_0_obj_000041_collision_28"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.291715 0.0545731 0.688043 1" mesh="obj_000041_0_obj_000041_collision_29"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.306778 0.720599 0.933038 1" mesh="obj_000041_0_obj_000041_collision_30"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.361269 0.823252 0.179795 1" mesh="obj_000041_0_obj_000041_collision_31"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.944753 0.690332 0.575268 1" mesh="obj_000041_0_obj_000041_collision_32"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0840409 0.494115 0.0277811 1" mesh="obj_000041_0_obj_000041_collision_33"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.408872 0.410451 0.859825 1" mesh="obj_000041_0_obj_000041_collision_34"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.811212 0.280798 0.249407 1" mesh="obj_000041_0_obj_000041_collision_35"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.16142 0.255425 0.525989 1" mesh="obj_000041_0_obj_000041_collision_36"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.634387 0.507782 0.149018 1" mesh="obj_000041_0_obj_000041_collision_37"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.370777 0.31048 0.82676 1" mesh="obj_000041_0_obj_000041_collision_38"/>
+    </body>
+    <body name="obj_000026_0" pos="0.822851 -0.151743 1.06461" quat="0.67802 -0.00156645 0.000822477 0.735041">
+      <joint name="obj_000026_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000026_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000026_0_mat" mesh="obj_000026_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.450415 0.405949 0.595772 1" mesh="obj_000026_0_obj_000026_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.185682 0.85096 0.264377 1" mesh="obj_000026_0_obj_000026_collision_1"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0888726 0.674864 0.43056 1" mesh="obj_000026_0_obj_000026_collision_2"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.63846 0.136742 0.0416254 1" mesh="obj_000026_0_obj_000026_collision_3"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.73409 0.213045 0.499948 1" mesh="obj_000026_0_obj_000026_collision_4"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.974548 0.169549 0.935947 1" mesh="obj_000026_0_obj_000026_collision_5"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.582945 0.390061 0.108817 1" mesh="obj_000026_0_obj_000026_collision_6"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.476395 0.0814184 0.765715 1" mesh="obj_000026_0_obj_000026_collision_7"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.762053 0.819674 0.966594 1" mesh="obj_000026_0_obj_000026_collision_8"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.523036 0.918011 0.433969 1" mesh="obj_000026_0_obj_000026_collision_9"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.398052 0.592941 0.635417 1" mesh="obj_000026_0_obj_000026_collision_10"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.607864 0.5642 0.48963 1" mesh="obj_000026_0_obj_000026_collision_11"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.175901 0.477089 0.37963 1" mesh="obj_000026_0_obj_000026_collision_12"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.66256 0.416943 0.388771 1" mesh="obj_000026_0_obj_000026_collision_13"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.144418 0.860414 0.180678 1" mesh="obj_000026_0_obj_000026_collision_14"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.130907 0.797862 0.156364 1" mesh="obj_000026_0_obj_000026_collision_15"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.721132 0.0352461 0.576638 1" mesh="obj_000026_0_obj_000026_collision_16"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.179495 0.247541 0.173223 1" mesh="obj_000026_0_obj_000026_collision_17"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.365261 0.609664 0.857584 1" mesh="obj_000026_0_obj_000026_collision_18"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.825482 0.631146 0.280059 1" mesh="obj_000026_0_obj_000026_collision_19"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.23329 0.337655 0.75513 1" mesh="obj_000026_0_obj_000026_collision_20"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.571504 0.312442 0.0983021 1" mesh="obj_000026_0_obj_000026_collision_21"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.595341 0.505399 0.586401 1" mesh="obj_000026_0_obj_000026_collision_22"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.75221 0.434942 0.755667 1" mesh="obj_000026_0_obj_000026_collision_23"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.170649 0.357392 0.888036 1" mesh="obj_000026_0_obj_000026_collision_24"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.588572 0.285304 0.874222 1" mesh="obj_000026_0_obj_000026_collision_25"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.450085 0.682682 0.0973122 1" mesh="obj_000026_0_obj_000026_collision_26"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.155968 0.370351 0.974077 1" mesh="obj_000026_0_obj_000026_collision_27"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0914395 0.166673 0.668673 1" mesh="obj_000026_0_obj_000026_collision_28"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.270242 0.374425 0.928061 1" mesh="obj_000026_0_obj_000026_collision_29"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.469364 0.530816 0.982688 1" mesh="obj_000026_0_obj_000026_collision_30"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.497884 0.98766 0.948158 1" mesh="obj_000026_0_obj_000026_collision_31"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.488887 0.398182 0.67662 1" mesh="obj_000026_0_obj_000026_collision_32"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.846269 0.126318 0.0123178 1" mesh="obj_000026_0_obj_000026_collision_33"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.425521 0.233516 0.897642 1" mesh="obj_000026_0_obj_000026_collision_34"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.761456 0.230858 0.295913 1" mesh="obj_000026_0_obj_000026_collision_35"/>
+    </body>
+    <body name="obj_000118_0" pos="0.219925 0.114388 0.0771431" quat="-0.443747 0.702075 0.0242529 -0.556409">
+      <joint name="obj_000118_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000118_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000118_0_mat" mesh="obj_000118_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.37253 0.934474 0.0378659 1" mesh="obj_000118_0_obj_000118_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0485554 0.278547 0.125584 1" mesh="obj_000118_0_obj_000118_collision_1"/>
+    </body>
+    <body name="obj_000125_0" pos="0.759922 0.0384296 1.09195" quat="0.618051 0.212243 -0.732762 0.189804">
+      <joint name="obj_000125_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000125_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000125_0_mat" mesh="obj_000125_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.510406 0.269166 0.947229 1" mesh="obj_000125_0_obj_000125_collision_0"/>
+    </body>
+    <body name="obj_000127_0" pos="0.307605 -0.24654 0.0551725" quat="-0.329019 0.338482 -0.669354 0.573709">
+      <joint name="obj_000127_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000127_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000127_0_mat" mesh="obj_000127_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.757374 0.0600268 0.890151 1" mesh="obj_000127_0_obj_000127_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.338686 0.226987 0.873829 1" mesh="obj_000127_0_obj_000127_collision_1"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.440117 0.291904 0.515635 1" mesh="obj_000127_0_obj_000127_collision_2"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.740614 0.127259 0.70185 1" mesh="obj_000127_0_obj_000127_collision_3"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.233633 0.57201 0.769919 1" mesh="obj_000127_0_obj_000127_collision_4"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.524588 0.42246 0.35717 1" mesh="obj_000127_0_obj_000127_collision_5"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.947821 0.483126 0.817458 1" mesh="obj_000127_0_obj_000127_collision_6"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.412258 0.48661 0.687528 1" mesh="obj_000127_0_obj_000127_collision_7"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.104367 0.842212 0.580737 1" mesh="obj_000127_0_obj_000127_collision_8"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.795536 0.997239 0.0402673 1" mesh="obj_000127_0_obj_000127_collision_9"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0480898 0.148484 0.675248 1" mesh="obj_000127_0_obj_000127_collision_10"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.169676 0.475897 0.810853 1" mesh="obj_000127_0_obj_000127_collision_11"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.746242 0.695926 0.72519 1" mesh="obj_000127_0_obj_000127_collision_12"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.570729 0.282111 0.894169 1" mesh="obj_000127_0_obj_000127_collision_13"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0903139 0.391867 0.837369 1" mesh="obj_000127_0_obj_000127_collision_14"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.488865 0.340039 0.444019 1" mesh="obj_000127_0_obj_000127_collision_15"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.649155 0.625691 0.0746487 1" mesh="obj_000127_0_obj_000127_collision_16"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.700316 0.365267 0.96108 1" mesh="obj_000127_0_obj_000127_collision_17"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.282864 0.340859 0.858565 1" mesh="obj_000127_0_obj_000127_collision_18"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0568673 0.668115 0.912137 1" mesh="obj_000127_0_obj_000127_collision_19"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.844923 0.119335 0.0637824 1" mesh="obj_000127_0_obj_000127_collision_20"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.854108 0.62361 0.800451 1" mesh="obj_000127_0_obj_000127_collision_21"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.951307 0.642949 0.24594 1" mesh="obj_000127_0_obj_000127_collision_22"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.774785 0.665105 0.899645 1" mesh="obj_000127_0_obj_000127_collision_23"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.745841 0.42084 0.313136 1" mesh="obj_000127_0_obj_000127_collision_24"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.243056 0.521588 0.945401 1" mesh="obj_000127_0_obj_000127_collision_25"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.123071 0.367695 0.455541 1" mesh="obj_000127_0_obj_000127_collision_26"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.754939 0.362167 0.625134 1" mesh="obj_000127_0_obj_000127_collision_27"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0901751 0.382983 0.320912 1" mesh="obj_000127_0_obj_000127_collision_28"/>
+    </body>
+    <body name="obj_000130_0" pos="0.100303 0.0105083 0.0434444" quat="-0.314995 0.457562 0.744927 -0.369459">
+      <joint name="obj_000130_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000130_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000130_0_mat" mesh="obj_000130_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.486958 0.234779 0.649791 1" mesh="obj_000130_0_obj_000130_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.284662 0.007581 0.154993 1" mesh="obj_000130_0_obj_000130_collision_1"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.377759 0.713589 0.227611 1" mesh="obj_000130_0_obj_000130_collision_2"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.988829 0.918048 0.265942 1" mesh="obj_000130_0_obj_000130_collision_3"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.505105 0.97933 0.0328144 1" mesh="obj_000130_0_obj_000130_collision_4"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.71614 0.517546 0.474154 1" mesh="obj_000130_0_obj_000130_collision_5"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.52763 0.137772 0.351775 1" mesh="obj_000130_0_obj_000130_collision_6"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.518912 0.135298 0.369987 1" mesh="obj_000130_0_obj_000130_collision_7"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.800921 0.754107 0.0739749 1" mesh="obj_000130_0_obj_000130_collision_8"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.146635 0.762874 0.565584 1" mesh="obj_000130_0_obj_000130_collision_9"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.356775 0.233457 0.697645 1" mesh="obj_000130_0_obj_000130_collision_10"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.806614 0.448808 0.432258 1" mesh="obj_000130_0_obj_000130_collision_11"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.383255 0.172491 0.890912 1" mesh="obj_000130_0_obj_000130_collision_12"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.810373 0.146549 0.711005 1" mesh="obj_000130_0_obj_000130_collision_13"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.758649 0.0961236 0.744028 1" mesh="obj_000130_0_obj_000130_collision_14"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.962715 0.412686 0.7813 1" mesh="obj_000130_0_obj_000130_collision_15"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.828841 0.963988 0.883003 1" mesh="obj_000130_0_obj_000130_collision_16"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.765831 0.962807 0.206179 1" mesh="obj_000130_0_obj_000130_collision_17"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.191154 0.96182 0.195462 1" mesh="obj_000130_0_obj_000130_collision_18"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.263775 0.00730441 0.944506 1" mesh="obj_000130_0_obj_000130_collision_19"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.667502 0.984325 0.479251 1" mesh="obj_000130_0_obj_000130_collision_20"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.38808 0.799022 0.256458 1" mesh="obj_000130_0_obj_000130_collision_21"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.449666 0.856147 0.577744 1" mesh="obj_000130_0_obj_000130_collision_22"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.104776 0.0583681 0.77456 1" mesh="obj_000130_0_obj_000130_collision_23"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.814575 0.888215 0.131504 1" mesh="obj_000130_0_obj_000130_collision_24"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.231002 0.720323 0.947864 1" mesh="obj_000130_0_obj_000130_collision_25"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.549537 0.0131667 0.577524 1" mesh="obj_000130_0_obj_000130_collision_26"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.168733 0.103857 0.473438 1" mesh="obj_000130_0_obj_000130_collision_27"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.683415 0.649432 0.159207 1" mesh="obj_000130_0_obj_000130_collision_28"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.611642 0.804088 0.40207 1" mesh="obj_000130_0_obj_000130_collision_29"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.659401 0.27011 0.671692 1" mesh="obj_000130_0_obj_000130_collision_30"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.995403 0.127938 0.101307 1" mesh="obj_000130_0_obj_000130_collision_31"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.766958 0.904782 0.0900704 1" mesh="obj_000130_0_obj_000130_collision_32"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.49968 0.433365 0.297502 1" mesh="obj_000130_0_obj_000130_collision_33"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.526749 0.573649 0.367959 1" mesh="obj_000130_0_obj_000130_collision_34"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.238557 0.637648 0.0345831 1" mesh="obj_000130_0_obj_000130_collision_35"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.386613 0.812892 0.326879 1" mesh="obj_000130_0_obj_000130_collision_36"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.686964 0.0289908 0.167448 1" mesh="obj_000130_0_obj_000130_collision_37"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.620396 0.0934728 0.453714 1" mesh="obj_000130_0_obj_000130_collision_38"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.771066 0.508967 0.908724 1" mesh="obj_000130_0_obj_000130_collision_39"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.617263 0.458802 0.668574 1" mesh="obj_000130_0_obj_000130_collision_40"/>
+    </body>
+    <body name="obj_000133_0" pos="0.66114 -0.21089 1.09823" quat="0.495881 0.0151069 6.20577e-05 0.868259">
+      <joint name="obj_000133_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000133_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000133_0_mat" mesh="obj_000133_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.52365 0.87293 0.149022 1" mesh="obj_000133_0_obj_000133_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.717003 0.784168 0.255493 1" mesh="obj_000133_0_obj_000133_collision_1"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.734337 0.624945 0.824954 1" mesh="obj_000133_0_obj_000133_collision_2"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.623025 0.171413 0.345938 1" mesh="obj_000133_0_obj_000133_collision_3"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.00377953 0.636619 0.851636 1" mesh="obj_000133_0_obj_000133_collision_4"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.761948 0.111808 0.613326 1" mesh="obj_000133_0_obj_000133_collision_5"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.213086 0.676514 0.987458 1" mesh="obj_000133_0_obj_000133_collision_6"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.40069 0.294413 0.203801 1" mesh="obj_000133_0_obj_000133_collision_7"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.600957 0.777893 0.524996 1" mesh="obj_000133_0_obj_000133_collision_8"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.182989 0.592513 0.0684931 1" mesh="obj_000133_0_obj_000133_collision_9"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.568121 0.288092 0.316802 1" mesh="obj_000133_0_obj_000133_collision_10"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.335875 0.274606 0.977305 1" mesh="obj_000133_0_obj_000133_collision_11"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.23307 0.594791 0.61206 1" mesh="obj_000133_0_obj_000133_collision_12"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0231195 0.811065 0.651233 1" mesh="obj_000133_0_obj_000133_collision_13"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.349754 0.78269 0.648109 1" mesh="obj_000133_0_obj_000133_collision_14"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.471958 0.0267496 0.0431244 1" mesh="obj_000133_0_obj_000133_collision_15"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.15933 0.726147 0.0373256 1" mesh="obj_000133_0_obj_000133_collision_16"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.367749 0.5167 0.669671 1" mesh="obj_000133_0_obj_000133_collision_17"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.375955 0.415601 0.761063 1" mesh="obj_000133_0_obj_000133_collision_18"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0716664 0.661084 0.875763 1" mesh="obj_000133_0_obj_000133_collision_19"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.452439 0.423667 0.00990522 1" mesh="obj_000133_0_obj_000133_collision_20"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.421286 0.259052 0.0372955 1" mesh="obj_000133_0_obj_000133_collision_21"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.494796 0.662604 0.512133 1" mesh="obj_000133_0_obj_000133_collision_22"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.972799 0.291194 0.16269 1" mesh="obj_000133_0_obj_000133_collision_23"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.451426 0.5893 0.544595 1" mesh="obj_000133_0_obj_000133_collision_24"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.894591 0.198602 0.805076 1" mesh="obj_000133_0_obj_000133_collision_25"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.627553 0.0231723 0.639233 1" mesh="obj_000133_0_obj_000133_collision_26"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.917321 0.996978 0.622995 1" mesh="obj_000133_0_obj_000133_collision_27"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.714996 0.683503 0.244178 1" mesh="obj_000133_0_obj_000133_collision_28"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.428155 0.729267 0.127539 1" mesh="obj_000133_0_obj_000133_collision_29"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.743287 0.0509987 0.415631 1" mesh="obj_000133_0_obj_000133_collision_30"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.96254 0.986334 0.471702 1" mesh="obj_000133_0_obj_000133_collision_31"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.517474 0.267718 0.275752 1" mesh="obj_000133_0_obj_000133_collision_32"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.902174 0.987388 0.523006 1" mesh="obj_000133_0_obj_000133_collision_33"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.692802 0.609297 0.596362 1" mesh="obj_000133_0_obj_000133_collision_34"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.980008 0.755095 0.143428 1" mesh="obj_000133_0_obj_000133_collision_35"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.933109 0.810944 0.915551 1" mesh="obj_000133_0_obj_000133_collision_36"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.177819 0.365868 0.394978 1" mesh="obj_000133_0_obj_000133_collision_37"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.930579 0.0379805 0.910993 1" mesh="obj_000133_0_obj_000133_collision_38"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.848927 0.7123 0.642085 1" mesh="obj_000133_0_obj_000133_collision_39"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.402094 0.413335 0.163898 1" mesh="obj_000133_0_obj_000133_collision_40"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0606627 0.854635 0.188418 1" mesh="obj_000133_0_obj_000133_collision_41"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.272601 0.919134 0.20597 1" mesh="obj_000133_0_obj_000133_collision_42"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.59703 0.583003 0.719323 1" mesh="obj_000133_0_obj_000133_collision_43"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.839522 0.326942 0.0746162 1" mesh="obj_000133_0_obj_000133_collision_44"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.968874 0.906895 0.75399 1" mesh="obj_000133_0_obj_000133_collision_45"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.561831 0.0188693 0.228765 1" mesh="obj_000133_0_obj_000133_collision_46"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.918427 0.508368 0.330095 1" mesh="obj_000133_0_obj_000133_collision_47"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.595537 0.848223 0.480308 1" mesh="obj_000133_0_obj_000133_collision_48"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.922856 0.658021 0.594395 1" mesh="obj_000133_0_obj_000133_collision_49"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.823568 0.12486 0.388479 1" mesh="obj_000133_0_obj_000133_collision_50"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.809913 0.0912411 0.611538 1" mesh="obj_000133_0_obj_000133_collision_51"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.168238 0.371056 0.790541 1" mesh="obj_000133_0_obj_000133_collision_52"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.844821 0.0300294 0.613744 1" mesh="obj_000133_0_obj_000133_collision_53"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.559292 0.787692 0.3791 1" mesh="obj_000133_0_obj_000133_collision_54"/>
+    </body>
+    <body name="obj_000090_0" pos="0.84977 0.11821 1.07605" quat="0.26892 -0.607443 0.362393 0.653733">
+      <joint name="obj_000090_0_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="obj_000090_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000090_0_mat" mesh="obj_000090_0_vis"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.206387 0.460655 0.336912 1" mesh="obj_000090_0_obj_000090_collision_0"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.890679 0.871401 0.885996 1" mesh="obj_000090_0_obj_000090_collision_1"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.691108 0.892254 0.818567 1" mesh="obj_000090_0_obj_000090_collision_2"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.325706 0.272043 0.0156088 1" mesh="obj_000090_0_obj_000090_collision_3"/>
+    </body>
+  </worldbody>
+
+  <contact>
+    <exclude body1="base" body2="right_driver"/>
+    <exclude body1="base" body2="right_spring_link"/>
+    <exclude body1="base" body2="left_driver"/>
+    <exclude body1="base" body2="left_spring_link"/>
+    <exclude body1="right_coupler" body2="right_follower"/>
+    <exclude body1="left_coupler" body2="left_follower"/>
+  </contact>
+
+  <equality>
+    <connect body1="right_follower" body2="right_coupler" anchor="0 0 0" solref="0.005" solimp="0.95 0.99"/>
+    <connect body1="left_follower" body2="left_coupler" anchor="0 0 0" solref="0.005" solimp="0.95 0.99"/>
+    <joint joint1="right_driver_joint" joint2="left_driver_joint" polycoef="0 1 0 0 0" solref="0.005" solimp="0.95 0.99"/>
+  </equality>
+
+  <tendon>
+    <fixed name="split">
+      <joint joint="right_driver_joint" coef="0.5"/>
+      <joint joint="left_driver_joint" coef="0.5"/>
+    </fixed>
+  </tendon>
+
+  <actuator>
+    <general name="left_driver" class="2f85" tendon="split" ctrlrange="0 255" forcerange="-5 5" gainprm="0.313725" biasprm="0 -100 -10"/>
+    <general name="torso_b1" class="p_general" joint="torso_joint_b1" ctrlrange="-2.96 2.96"/>
+    <general name="arm_left_1_s" class="p_general" joint="arm_left_joint_1_s" ctrlrange="-3.13 3.13"/>
+    <general name="arm_left_2_l" class="p_general" joint="arm_left_joint_2_l" ctrlrange="-1.9 1.9"/>
+    <general name="arm_left_3_e" class="p_general" joint="arm_left_joint_3_e" ctrlrange="-2.95 2.95"/>
+    <general name="arm_left_4_u" class="p_general" joint="arm_left_joint_4_u" ctrlrange="-2.36 2.36"/>
+    <general name="arm_left_5_r" class="p_RB" joint="arm_left_joint_5_r" ctrlrange="-3.13 3.13"/>
+    <general name="arm_left_6_b" class="p_RB" joint="arm_left_joint_6_b" ctrlrange="-1.9 1.9"/>
+    <general name="arm_left_7_t" class="p_T" joint="arm_left_joint_7_t" ctrlrange="-3.13 3.13"/>
+    <general name="arm_right_1_s" class="p_general" joint="arm_right_joint_1_s" ctrlrange="-3.13 3.13"/>
+    <general name="arm_right_2_l" class="p_general" joint="arm_right_joint_2_l" ctrlrange="-1.9 1.9"/>
+    <general name="arm_right_3_e" class="p_general" joint="arm_right_joint_3_e" ctrlrange="-2.95 2.95"/>
+    <general name="arm_right_4_u" class="p_general" joint="arm_right_joint_4_u" ctrlrange="-2.36 2.36"/>
+    <general name="arm_right_5_r" class="p_RB" joint="arm_right_joint_5_r" ctrlrange="-3.13 3.13"/>
+    <general name="arm_right_6_b" class="p_RB" joint="arm_right_joint_6_b" ctrlrange="-1.9 1.9"/>
+    <general name="arm_right_7_t" class="p_T" joint="arm_right_joint_7_t" ctrlrange="-3.13 3.13"/>
+    <general name="torso_intv_b1" class="intvel_general" joint="torso_joint_b1" actrange="-2.96 2.96"/>
+    <general name="arm_left_intv_1_s" class="intvel_general" joint="arm_left_joint_1_s" actrange="-3.13 3.13"/>
+    <general name="arm_left_intv_2_l" class="intvel_general" joint="arm_left_joint_2_l" actrange="-1.9 1.9"/>
+    <general name="arm_left_intv_3_e" class="intvel_general" joint="arm_left_joint_3_e" actrange="-2.95 2.95"/>
+    <general name="arm_left_intv_4_u" class="intvel_general" joint="arm_left_joint_4_u" actrange="-2.36 2.36"/>
+    <general name="arm_left_intv_5_r" class="intvel_RB" joint="arm_left_joint_5_r" actrange="-3.13 3.13"/>
+    <general name="arm_left_intv_6_b" class="intvel_RB" joint="arm_left_joint_6_b" actrange="-1.9 1.9"/>
+    <general name="arm_left_intv_7_t" class="intvel_T" joint="arm_left_joint_7_t" actrange="-3.13 3.13"/>
+    <general name="arm_right_intv_1_s" class="intvel_general" joint="arm_right_joint_1_s" actrange="-3.13 3.13"/>
+    <general name="arm_right_intv_2_l" class="intvel_general" joint="arm_right_joint_2_l" actrange="-1.9 1.9"/>
+    <general name="arm_right_intv_3_e" class="intvel_general" joint="arm_right_joint_3_e" actrange="-2.95 2.95"/>
+    <general name="arm_right_intv_4_u" class="intvel_general" joint="arm_right_joint_4_u" actrange="-2.36 2.36"/>
+    <general name="arm_right_intv_5_r" class="intvel_RB" joint="arm_right_joint_5_r" actrange="-3.13 3.13"/>
+    <general name="arm_right_intv_6_b" class="intvel_RB" joint="arm_right_joint_6_b" actrange="-1.9 1.9"/>
+    <general name="arm_right_intv_7_t" class="intvel_T" joint="arm_right_joint_7_t" actrange="-3.13 3.13"/>
+  </actuator>
+</mujoco>

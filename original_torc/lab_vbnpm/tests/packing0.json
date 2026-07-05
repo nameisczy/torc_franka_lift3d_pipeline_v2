@@ -1,0 +1,109 @@
+{
+    "shelf_dimensions": {
+        "width_x": 5.0,
+        "height_z": 4.0,
+        "depth_y": 6.0
+    },
+    "objects": [
+        {
+            "id": 5,
+            "dimensions": {
+                "width_x": 2,
+                "height_z": 3,
+                "depth_y": 2
+            },
+            "bottom_left_pos": {
+                "x": 0,
+                "y": 4,
+                "z": 0
+            }
+        },
+        {
+            "id": 3,
+            "dimensions": {
+                "width_x": 2,
+                "height_z": 3,
+                "depth_y": 2
+            },
+            "bottom_left_pos": {
+                "x": 2,
+                "y": 4,
+                "z": 0
+            }
+        },
+        {
+            "id": 2,
+            "dimensions": {
+                "width_x": 2,
+                "height_z": 3,
+                "depth_y": 3
+            },
+            "bottom_left_pos": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            }
+        },
+        {
+            "id": 1,
+            "dimensions": {
+                "width_x": 1,
+                "height_z": 3,
+                "depth_y": 2
+            },
+            "bottom_left_pos": {
+                "x": 4,
+                "y": 4,
+                "z": 0
+            }
+        },
+        {
+            "id": 6,
+            "dimensions": {
+                "width_x": 1,
+                "height_z": 3,
+                "depth_y": 2
+            },
+            "bottom_left_pos": {
+                "x": 2,
+                "y": 2,
+                "z": 0
+            }
+        },
+        {
+            "id": 4,
+            "dimensions": {
+                "width_x": 2,
+                "height_z": 3,
+                "depth_y": 2
+            },
+            "bottom_left_pos": {
+                "x": 3,
+                "y": 2,
+                "z": 0
+            }
+        },
+        {
+            "id": 0,
+            "dimensions": {
+                "width_x": 1,
+                "height_z": 2,
+                "depth_y": 1
+            },
+            "bottom_left_pos": {
+                "x": 2,
+                "y": 1,
+                "z": 0
+            }
+        }
+    ],
+    "placement_order": [
+        1,
+        3,
+        5,
+        4,
+        6,
+        0,
+        2
+    ]
+}

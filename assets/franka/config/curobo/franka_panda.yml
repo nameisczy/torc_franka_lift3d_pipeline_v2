@@ -1,0 +1,252 @@
+##
+## Phase 4.3 Franka Panda CuRobo replacement config.
+##
+## Source asset family:
+##   /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka
+##
+## This file intentionally contains no legacy robot or legacy gripper
+## end-effector names. It is the planning-side robot contract paired with the
+## MuJoCo robosuite Panda asset used by Phase 4.1/4.2.
+## The panda_tcp fixed joint includes the robosuite right_gripper yaw so that
+## CuRobo's ee_link frame matches gripper0_right_grip_site in MuJoCo.
+##
+
+robot_cfg:
+  kinematics:
+    usd_path: ""
+    usd_robot_root: "/robot"
+    isaac_usd_path: ""
+    usd_flip_joints: {}
+    usd_flip_joint_limits: []
+
+    urdf_path: "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/urdf/franka_panda_phase4.urdf"
+    asset_root_path: "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka"
+
+    base_link: "panda_link0"
+    ee_link: "panda_tcp"
+    link_names: null
+    lock_joints:
+      gripper0_right_finger_joint1: 0.04
+      gripper0_right_finger_joint2: -0.04
+    extra_links: null
+
+    collision_link_names: [
+      "panda_link0",
+      "panda_link1",
+      "panda_link2",
+      "panda_link3",
+      "panda_link4",
+      "panda_link5",
+      "panda_link6",
+      "panda_link7",
+      "panda_hand",
+      "panda_leftfinger",
+      "panda_rightfinger",
+      "panda_tcp",
+    ]
+
+    collision_spheres:
+      panda_link0:
+        - center: [0.0, 0.0, 0.085]
+          radius: 0.03
+        - center: [-0.1, 0.0, 0.085]
+          radius: 0.03
+      panda_link1:
+        - center: [0.0, -0.08, 0.0]
+          radius: 0.055
+        - center: [0.0, -0.03, 0.0]
+          radius: 0.06
+        - center: [0.0, 0.0, -0.12]
+          radius: 0.06
+        - center: [0.0, 0.0, -0.17]
+          radius: 0.06
+      panda_link2:
+        - center: [0.0, 0.0, 0.03]
+          radius: 0.055
+        - center: [0.0, 0.0, 0.08]
+          radius: 0.055
+        - center: [0.0, -0.12, 0.0]
+          radius: 0.055
+        - center: [0.0, -0.17, 0.0]
+          radius: 0.055
+      panda_link3:
+        - center: [0.0, 0.0, -0.06]
+          radius: 0.05
+        - center: [0.0, 0.0, -0.1]
+          radius: 0.06
+        - center: [0.08, 0.06, 0.0]
+          radius: 0.052
+        - center: [0.08, 0.02, 0.0]
+          radius: 0.052
+      panda_link4:
+        - center: [0.0, 0.0, 0.02]
+          radius: 0.052
+        - center: [0.0, 0.0, 0.06]
+          radius: 0.052
+        - center: [-0.08, 0.095, 0.0]
+          radius: 0.055
+        - center: [-0.08, 0.06, 0.0]
+          radius: 0.052
+      panda_link5:
+        - center: [0.0, 0.03, 0.0]
+          radius: 0.05
+        - center: [0.0, 0.082, 0.0]
+          radius: 0.05
+        - center: [0.0, 0.0, -0.22]
+          radius: 0.05
+        - center: [0.0, 0.052, -0.18]
+          radius: 0.04
+        - center: [0.01, 0.08, -0.14]
+          radius: 0.022
+        - center: [0.01, 0.085, -0.11]
+          radius: 0.022
+        - center: [0.01, 0.09, -0.08]
+          radius: 0.022
+        - center: [0.01, 0.095, -0.05]
+          radius: 0.022
+        - center: [-0.01, 0.08, -0.14]
+          radius: 0.022
+        - center: [-0.01, 0.085, -0.11]
+          radius: 0.022
+        - center: [-0.01, 0.09, -0.08]
+          radius: 0.022
+        - center: [-0.01, 0.095, -0.05]
+          radius: 0.022
+        - center: [0.0, -0.009, 0.0]
+          radius: 0.05
+      panda_link6:
+        - center: [0.085, 0.035, 0.0]
+          radius: 0.045
+        - center: [0.085, 0.0, 0.0]
+          radius: 0.045
+        - center: [0.085, -0.015, 0.0]
+          radius: 0.045
+      panda_link7:
+        - center: [0.0, 0.0, 0.07]
+          radius: 0.045
+        - center: [0.02, 0.04, 0.08]
+          radius: 0.024
+        - center: [0.04, 0.02, 0.08]
+          radius: 0.024
+        - center: [0.04, 0.06, 0.085]
+          radius: 0.02
+        - center: [0.06, 0.04, 0.085]
+          radius: 0.02
+      panda_hand:
+        - center: [0.0, -0.075, 0.01]
+          radius: 0.023
+        - center: [0.0, -0.045, 0.01]
+          radius: 0.023
+        - center: [0.0, -0.015, 0.01]
+          radius: 0.023
+        - center: [0.0, 0.015, 0.01]
+          radius: 0.023
+        - center: [0.0, 0.045, 0.01]
+          radius: 0.023
+        - center: [0.0, 0.075, 0.01]
+          radius: 0.023
+        - center: [0.0, -0.08, 0.03]
+          radius: 0.022
+        - center: [0.0, -0.045, 0.03]
+          radius: 0.022
+        - center: [0.0, -0.015, 0.03]
+          radius: 0.022
+        - center: [0.0, 0.015, 0.03]
+          radius: 0.022
+        - center: [0.0, 0.045, 0.03]
+          radius: 0.022
+        - center: [0.0, 0.08, 0.03]
+          radius: 0.022
+        - center: [0.0, -0.08, 0.045]
+          radius: 0.022
+        - center: [0.0, -0.045, 0.045]
+          radius: 0.022
+        - center: [0.0, -0.015, 0.045]
+          radius: 0.022
+        - center: [0.0, 0.015, 0.045]
+          radius: 0.022
+        - center: [0.0, 0.045, 0.045]
+          radius: 0.022
+        - center: [0.0, 0.08, 0.045]
+          radius: 0.022
+      panda_leftfinger:
+        - center: [0.0, 0.01, 0.043]
+          radius: 0.011
+        - center: [0.0, 0.02, 0.015]
+          radius: 0.011
+      panda_rightfinger:
+        - center: [0.0, -0.01, 0.043]
+          radius: 0.011
+        - center: [0.0, -0.02, 0.015]
+          radius: 0.011
+      panda_tcp:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.01
+
+    collision_sphere_buffer: 0.002
+    extra_collision_spheres: null
+    self_collision_ignore:
+      panda_link0: ["panda_link1", "panda_link2"]
+      panda_link1: ["panda_link2", "panda_link3"]
+      panda_link2: ["panda_link3", "panda_link4"]
+      panda_link3: ["panda_link4", "panda_link5"]
+      panda_link4: ["panda_link5", "panda_link6"]
+      panda_link5: ["panda_link6", "panda_link7", "panda_hand"]
+      panda_link6: ["panda_link7", "panda_hand", "panda_leftfinger", "panda_rightfinger", "panda_tcp"]
+      panda_link7: ["panda_hand", "panda_leftfinger", "panda_rightfinger", "panda_tcp"]
+      panda_hand: ["panda_leftfinger", "panda_rightfinger", "panda_tcp"]
+      panda_leftfinger: ["panda_rightfinger", "panda_tcp"]
+      panda_rightfinger: ["panda_tcp"]
+    self_collision_buffer: {}
+
+    use_global_cumul: True
+    mesh_link_names: [
+      "panda_link0",
+      "panda_link1",
+      "panda_link2",
+      "panda_link3",
+      "panda_link4",
+      "panda_link5",
+      "panda_link6",
+      "panda_link7",
+      "panda_hand",
+      "panda_leftfinger",
+      "panda_rightfinger",
+    ]
+
+    cspace:
+      joint_names: [
+        "robot0_joint1",
+        "robot0_joint2",
+        "robot0_joint3",
+        "robot0_joint4",
+        "robot0_joint5",
+        "robot0_joint6",
+        "robot0_joint7",
+      ]
+      retract_config: [0.0, -1.25, 0.0, -2.35, 0.0, 1.10, 0.0]
+      null_space_weight: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+      cspace_distance_weight: [1.0, 1.0, 1.0, 1.2, 1.0, 0.9, 0.7]
+      max_jerk: 500.0
+      max_acceleration: 15.0
+
+  planning:
+    base_frame: "panda_link0"
+    tcp_frame: "panda_tcp"
+    mujoco_base_body: "robot0_base"
+    mujoco_tcp_site: "gripper0_right_grip_site"
+    base_pose_world_m: [0.0, 0.0, 0.86]
+    gripper_opening_total_m: 0.08
+    robosuite_gripper_joint_contract:
+      open:
+        gripper0_right_finger_joint1: 0.04
+        gripper0_right_finger_joint2: -0.04
+      close:
+        gripper0_right_finger_joint1: 0.0
+        gripper0_right_finger_joint2: 0.0
+      note: "MuJoCo robosuite Panda uses opposite signed finger joint ranges; do not map both fingers to +0.04."
+    pose_filter_contract:
+      canonical_contact_pose_world_only: true
+      approach_axis_world: "Franka TCP local +Z points along the canonical approach direction after RobotAdapter mapping"
+      closing_axis_world: "Franka TCP local +Y, derived from candidate horizontal closing direction"
+      forbidden_legacy_offsets: ["fixed hand-depth shift", "legacy end-effector frame", "legacy gripper width filter", "robot-type pre-IK translation"]

@@ -1,0 +1,26 @@
+# input:
+# - trajectory
+# - execution_window: points spaning this window are sent to the controller;
+#   points beyond the window can be overwritten until the next window is reached
+# - retime: if true, the trajectory is retimed before execution
+trajectory_msgs/JointTrajectory trajectory
+duration execution_window
+bool retime
+uint8 mode
+uint8 STREAM = 0
+uint8 INTERUPT = 1
+uint8 SYNCHRONOUS = 2
+---
+# output:
+# - interrupt_points: points at the end/start of execution windows;
+#   these points can be used to initialize planning for the next window
+# - error_code: error code follows convention from control_msgs/FollowJointTrajectoryResult.msg
+trajectory_msgs/JointTrajectory interrupt_points
+int32 error_code
+int32 RESTARTED_STREAM = 1
+int32 SUCCESSFUL = 0
+int32 INVALID_GOAL = -1
+int32 INVALID_JOINTS = -2
+int32 OLD_HEADER_TIMESTAMP = -3
+int32 PATH_TOLERANCE_VIOLATED = -4
+int32 GOAL_TOLERANCE_VIOLATED = -5

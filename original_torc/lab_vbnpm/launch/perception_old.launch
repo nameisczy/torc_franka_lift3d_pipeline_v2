@@ -1,0 +1,104 @@
+<launch>
+  <arg name="known_models" default="false" />
+  <arg name="auto_ws_fitting" default="false" />
+  <arg name="real_tracking" default="false" />
+  <arg name="real_segmentation" default="true" />
+  <arg name="verbose" default="true" />
+  <arg name="model_type" default="swin" />
+  <arg name="out_debug_img" default="true" />
+  <arg name="confidence_threshold" default="0.25" />
+  <arg name="input_image" default="/camera/color/image_raw" />
+  <arg name="vocabulary" default="lvis" />
+  <arg name="custom_vocabulary" default="tomato,pop,can,bottle,toothpaste,box" />
+  <arg name="model_dir" default="$(find detic_ros)/models" />
+
+  <arg name="_seg_img_topic" default="/segmentation/image_encoded" if="$(arg real_segmentation)"/>
+  <arg name="_seg_img_topic" default="/ground_truth/seg_image" unless="$(arg real_segmentation)"/>
+
+  <!-- main interface 
+  <node name="perception" pkg="lab_vbnpm" type="perception_interface.py" args="" >
+    <param name="known_models" value="$(arg known_models)" />
+    <param name="auto_ws_fitting" value="$(arg auto_ws_fitting)" />
+    <param name="real_tracking" value="$(arg real_tracking)" />
+    <param name="real_segmentation" value="$(arg real_segmentation)" />
+  </node>
+  -->
+
+  <node name="object_tracker" pkg="lab_vbnpm" type="inertial_tracker.py" args="" if="$(arg real_tracking)"/>
+
+  <!-- real segmentation -->
+  <group if="$(arg real_segmentation)">
+    <include file="$(find detic_ros)/launch/container.launch">
+      <arg name="verbose" value="$(arg verbose)" />
+      <arg name="model_type" value="$(arg model_type)" />
+      <arg name="out_debug_img" value="$(arg out_debug_img)" />
+      <arg name="confidence_threshold" value="$(arg confidence_threshold)" />
+      <arg name="input_image" value="$(arg input_image)" />
+      <arg name="vocabulary" value="$(arg vocabulary)" />
+      <arg name="custom_vocabulary" value="$(arg custom_vocabulary)" />
+      <arg name="model_dir" default="$(arg model_dir)" />
+    </include>
+    <node name="segmentation" pkg="lab_vbnpm" type="segmentation.py" args=""/>
+  </group>
+
+  <!-- Nodelet manager for image processing -->
+  <node pkg="nodelet" type="nodelet" args="manager" name="image_nodelet_manager" output="screen" />
+
+    <!--
+  <node pkg="nodelet" type="nodelet" name="rectify_color" args="load image_proc/rectify image_nodelet_manager">
+    <remap from="camera_info" to="/rgb/camera_info" />
+    <remap from="image_mono" to="/rgb/image_raw" />
+    <remap from="image_rect" to="/rgb/image_rect" />
+  </node>
+
+  <node pkg="nodelet" type="nodelet" name="rectify_depth" args="load image_proc/rectify image_nodelet_manager">
+    <remap from="camera_info" to="/depth/camera_info" />
+    <remap from="image_mono" to="/depth/image_raw" />
+    <remap from="image_rect" to="/depth/image_rect" />
+  </node>
+    -->
+
+  <!-- Register depth image to rgb camera -->
+  <!--
+  <node pkg="nodelet" type="nodelet" name="depth_image_proc_reg" args="load depth_image_proc/register image_nodelet_manager _queue_size:=10">
+    <remap from="rgb/camera_info" to="/camera_info" />
+    <remap from="depth/camera_info" to="/camera_info" />
+    <remap from="depth/image_rect" to="/depth/image_raw" />
+    <remap from="depth_registered/camera_info" to="/depth/registered/camera_info" />
+    <remap from="depth_registered/image_rect" to="/depth/registered/image_rect" />
+  </node>
+  -->
+
+  <!-- Convert to point cloud -->
+  <node pkg="nodelet" type="nodelet" name="depth_image_proc" args="load depth_image_proc/point_cloud_xyzrgb image_nodelet_manager _queue_size:=10">
+    <!--remap from your specific sensors-->
+    <!-- Input: Camera calibration and metadata.  (sensor_msgs/CameraInfo) -->
+    <remap from="rgb/camera_info" to="/camera/color/camera_info" />
+    <!-- Input: Rectified color image. (sensor_msgs/Image) -->
+    <!-- <remap from="rgb/image_rect_color" to="/rgb/image_raw" /> -->
+    <remap from="rgb/image_rect_color" to="$(arg _seg_img_topic)" />
+
+    <!-- Input: Rectified depth image, registered to the RGB camera. (sensor_msgs/Image) -->
+    <remap from="depth_registered/image_rect" to="/camera/aligned_depth_to_color/image_raw" />
+
+    <!-- Output: XYZ point cloud. If using PCL, subscribe as PointCloud<PointXYZ>.  (sensor_msgs/PointCloud2)  -->
+    <remap from="depth_registered/points" to="/point_cloud/points" />
+  </node>
+
+  <!-- Convert to point cloud -->
+  <node pkg="nodelet" type="nodelet" name="color_image_proc" args="load depth_image_proc/point_cloud_xyzrgb image_nodelet_manager _queue_size:=10">
+    <!--remap from your specific sensors-->
+    <!-- Input: Camera calibration and metadata.  (sensor_msgs/CameraInfo) -->
+    <remap from="rgb/camera_info" to="/camera/color/camera_info" />
+    <!-- Input: Rectified color image. (sensor_msgs/Image) -->
+    <!-- <remap from="rgb/image_rect_color" to="/rgb/image_raw" /> -->
+    <remap from="rgb/image_rect_color" to="/camera/color/image_raw" />
+
+    <!-- Input: Rectified depth image, registered to the RGB camera. (sensor_msgs/Image) -->
+    <remap from="depth_registered/image_rect" to="/camera/aligned_depth_to_color/image_raw" />
+
+    <!-- Output: XYZ point cloud. If using PCL, subscribe as PointCloud<PointXYZ>.  (sensor_msgs/PointCloud2)  -->
+    <remap from="depth_registered/points" to="/point_cloud/color_points" />
+  </node>
+
+</launch>

@@ -1,0 +1,148 @@
+{
+	"shelf_dimensions": {
+		"width_x": 25.0,
+		"height_z": 25.0,
+		"depth_y": 25.0
+	},
+	"objects": [
+		{
+			"id": 5,
+			"dimensions": {
+				"width_x": 7,
+				"height_z": 23,
+				"depth_y": 7
+			},
+			"bottom_left_pos": {
+				"x": 0,
+				"y": 18,
+				"z": 0
+			}
+		},
+		{
+			"id": 7,
+			"dimensions": {
+				"width_x": 6,
+				"height_z": 20,
+				"depth_y": 9
+			},
+			"bottom_left_pos": {
+				"x": 7,
+				"y": 16,
+				"z": 0
+			}
+		},
+		{
+			"id": 8,
+			"dimensions": {
+				"width_x": 7,
+				"height_z": 20,
+				"depth_y": 7
+			},
+			"bottom_left_pos": {
+				"x": 13,
+				"y": 18,
+				"z": 0
+			}
+		},
+		{
+			"id": 3,
+			"dimensions": {
+				"width_x": 5,
+				"height_z": 18,
+				"depth_y": 11
+			},
+			"bottom_left_pos": {
+				"x": 20,
+				"y": 14,
+				"z": 0
+			}
+		},
+		{
+			"id": 6,
+			"dimensions": {
+				"width_x": 5,
+				"height_z": 17,
+				"depth_y": 9
+			},
+			"bottom_left_pos": {
+				"x": 0,
+				"y": 9,
+				"z": 0
+			}
+		},
+		{
+			"id": 4,
+			"dimensions": {
+				"width_x": 5,
+				"height_z": 14,
+				"depth_y": 7
+			},
+			"bottom_left_pos": {
+				"x": 13,
+				"y": 11,
+				"z": 0
+			}
+		},
+		{
+			"id": 1,
+			"dimensions": {
+				"width_x": 6,
+				"height_z": 13,
+				"depth_y": 13
+			},
+			"bottom_left_pos": {
+				"x": 5,
+				"y": 3,
+				"z": 0
+			}
+		},
+		{
+			"id": 0,
+			"dimensions": {
+				"width_x": 7,
+				"height_z": 9,
+				"depth_y": 7
+			},
+			"bottom_left_pos": {
+				"x": 18,
+				"y": 7,
+				"z": 0
+			}
+		},
+		{
+			"id": 2,
+			"dimensions": {
+				"width_x": 7,
+				"height_z": 8,
+				"depth_y": 7
+			},
+			"bottom_left_pos": {
+				"x": 11,
+				"y": 4,
+				"z": 0
+			}
+		}
+	],
+	"placement_order": [
+		5,
+		7,
+		8,
+		3,
+		4,
+		0,
+		6,
+		2,
+		1
+	],
+	"names": [
+		"White toy box",
+		"Door Stopper",
+		"Tea (orange)",
+		"Dominos Sugar",
+		"Antiacid bottle",
+		"Crackers",
+		"Garlic Powder",
+		"Almond Milk",
+		"Pumpkin Spice (round)"
+	]
+}

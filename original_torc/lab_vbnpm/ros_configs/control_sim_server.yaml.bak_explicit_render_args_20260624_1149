@@ -1,0 +1,26 @@
+session_name: "control_sim_server"
+vars:
+  CUROBO_CONTROL_ADDRESS:
+    type: str
+    default: "tcp://*:5757"
+    help: "Address to host the Curobo Control server on."
+  MOTOMAN_NODE_ADDRESS:
+    type: str
+    default: "tcp://*:5858"
+    help: "Address to host the motoman node server on."
+pre_cmd: "./7kill.sh"
+post_attach: false
+windows:
+  - "Roscore": "roscore"
+
+  - "Control Launch": "DISABLE_ROS1_EOL_WARNINGS=1 roslaunch --wait lab_vbnpm control_server.launch motoman_node_server_address:=\"$MOTOMAN_NODE_ADDRESS\""
+  
+  - "Grasp Planner Launch": "roslaunch --wait cgn_ros container.launch"
+    post_delay: 6.0
+  
+  - "Calibration Sim Parameters": "python3 ./launch/calibration/sim_params.py"
+    post_delay: 3.0
+  
+  - "Curobo Control": 
+    - "source API_KEY"
+    - "python3 ./scripts/task_planner/curobo_control.py --vlm --server --server-address \"$CUROBO_CONTROL_ADDRESS\""

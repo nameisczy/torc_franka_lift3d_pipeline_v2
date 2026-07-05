@@ -1,0 +1,91 @@
+{
+  "phase": "4.2",
+  "scene": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/tests/scenes/tabletop_unstructured/scene20.xml",
+  "target_object": "obj_000044_0",
+  "requested_target_object": "obj_000044_0",
+  "target_metadata": {
+    "selected_object": "obj_000044_0",
+    "selected_object_id": 8,
+    "requested_target_object": "obj_000044_0",
+    "fallback_used": false,
+    "candidate_source": "phase4_artifacts/cgn_lowlevel/scene20/*.raw_output.npz",
+    "forbidden_source": "gc6d_grasp_poses.npy/build_6d_grasp pose",
+    "lowlevel_source_index": 40,
+    "lowlevel_selection_index": 25,
+    "lowlevel_score": 0.35617390275001526,
+    "selection_errors": [],
+    "canonical_opening_width_m": 0.05663827165961265
+  },
+  "target_grasp_index": 0,
+  "franka_base_world_m": [
+    0.0,
+    0.0,
+    0.86
+  ],
+  "tcp_site": "gripper0_right_grip_site",
+  "canonical_target_matrix": [
+    [
+      0.11693352800666482,
+      -0.8930064485820461,
+      0.4345871981763798,
+      0.7544729931921365
+    ],
+    [
+      -0.992454492839439,
+      -0.12132388439633267,
+      0.01773681814185586,
+      -0.1659591367174729
+    ],
+    [
+      0.03688671401367291,
+      -0.4333820460815916,
+      -0.900455091863779,
+      1.1156171180080587
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "old_torc_shifted_target_matrix": null,
+  "achieved_tcp_matrix": [
+    [
+      0.011451782925557132,
+      -0.9018917321768503,
+      0.43181032884689474,
+      0.7552274168211066
+    ],
+    [
+      -0.9999126788394341,
+      -0.007480645498260129,
+      0.01089378901360799,
+      -0.16164366294644203
+    ],
+    [
+      -0.0065947982508613445,
+      -0.4318973759748568,
+      -0.9018986446724824,
+      1.115837510880855
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "ik_metrics": {
+    "final_pos_err_m": 0.004386461204522754,
+    "final_rot_err_norm": 0.11420400409304048,
+    "best_pos_err_m": 0.004386461204522754,
+    "best_rot_err_norm": 0.11420400409304048
+  },
+  "notes": [
+    "No CuRobo planning was run.",
+    "Collision is ignored; penetration is allowed for this pose-space check.",
+    "TORC-specific EE link semantics are replaced by a canonical Franka TCP adapter at gripper0_right_grip_site.",
+    "The old TORC/build_6d shifted pose is not loaded or rendered; lowlevel CGN contact/axis fields are the only grasp source."
+  ]
+}

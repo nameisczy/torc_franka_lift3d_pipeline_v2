@@ -1,0 +1,5 @@
+string target
+---
+bool success
+string[] dropped
+string[] grasping

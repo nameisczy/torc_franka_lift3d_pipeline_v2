@@ -1,0 +1,19 @@
+<launch>
+    <include file="$(find easy_handeye)/launch/publish.launch">
+        <!-- <arg name="robot_base_frame" value="base_link"/>
+        <arg name="tracking_base_frame" value="camera_color_optical_frame"/> -->
+        <arg name="eye_on_hand" value="true"/>
+        <arg name="namespace_prefix" value="my_eob_calib1"/> <!-- use the same namespace that you used during calibration! -->
+        <arg name="calibration_file" value="$(find lab_vbnpm)/launch/calibration/camera_arm_calib.yaml" />
+        <!-- <arg name="calibration_file" value="/home/lab/.ros/easy_handeye/my_eob_calib_eye_on_base.yaml" /> -->
+    </include>
+
+    <include file="$(find easy_handeye)/launch/publish.launch">
+        <!-- <arg name="robot_base_frame" value="base_link"/>
+        <arg name="tracking_base_frame" value="camera_color_optical_frame"/> -->
+        <arg name="eye_on_hand" value="true"/>
+        <arg name="namespace_prefix" value="my_eob_calib2"/> <!-- use the same namespace that you used during calibration! -->
+        <arg name="calibration_file" value="$(find lab_vbnpm)/launch/calibration/camera_torso_calib.yaml" />
+        <!-- <arg name="calibration_file" value="/home/lab/.ros/easy_handeye/my_eob_calib_eye_on_base.yaml" /> -->
+    </include>
+</launch>

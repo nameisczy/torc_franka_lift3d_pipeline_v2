@@ -1,0 +1,1 @@
+./run_experiment.sh trial unstructured --method dg_only --server

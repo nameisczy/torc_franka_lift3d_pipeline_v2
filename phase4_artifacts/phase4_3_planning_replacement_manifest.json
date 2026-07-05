@@ -1,0 +1,46 @@
+{
+  "phase": "4.3",
+  "entrypoint": "original_torc_pipeline_with_franka_robot_selector",
+  "scene": "tests/scenes/final/difficult_116.xml",
+  "target_object": "obj_000070_0",
+  "method": "dg_only",
+  "pick_limit": 1,
+  "run_dir": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783238466",
+  "cmd": [
+    "/home/ziyaochen/miniconda3/envs/ros_env/bin/python",
+    "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/experiments/run_experiment.py",
+    "experiment",
+    "--scene",
+    "tests/scenes/final/difficult_116.xml",
+    "--target-object",
+    "obj_000070_0",
+    "--method",
+    "dg_only",
+    "--headless",
+    "--server",
+    "--pick-limit",
+    "1",
+    "--base-dir",
+    "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783238466",
+    "--mj-pickle"
+  ],
+  "returncode": 0,
+  "stdout_tail": "\ud83e\uddea run_experiment:\n  mode             experiment\n  scene            tests/scenes/final/difficult_116.xml\n  target_object    obj_000070_0\n  method           ['dg_only']\n  rosbag           False\n  headless         True\n  dry              False\n  pick_limit       1\n  server           True\n  base_dir         /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783238466\n  real             False\n  docker           False\n  profile_grasping False\n  profiler         line_profiler\n  mj_pickle        True\n\nError executing git command: Command '['git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.\nexperiment\n  scene:            tests/scenes/final/difficult_116.xml\n  target_object:    obj_000070_0\n  rosbag:           False\n  method:           dg_only\n  headless:         True\n  exp_info_file:    ../../phase4_artifacts/torc_franka_pipeline_1783238466/exp_2026-07-05_12-01-16__difficult_116_obj_000070_0_dg_only/info_experiment.json\n  real:             False\n  server:           True\n  profile_grasping: False\n  profiler:         line_profiler\n  mj_pickle:        True\n\n  Motoman request:\n  {\n    \"cmd\": \"reset\",\n    \"args\": {\n      \"xml_file\": \"/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/tests/scenes/final/difficult_116.xml\",\n      \"gui\": false,\n      \"experiment_dir\": \"/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783238466/exp_2026-07-05_12-01-16__difficult_116_obj_000070_0_dg_only\",\n      \"mj_pickle\": true\n    }\n  }\n  Curobo control request:\n  {\n    \"cmd\": \"run\",\n    \"args\": {\n      \"method\": \"dg_only\",\n      \"sim\": true,\n      \"ground_truth\": true,\n      \"rosbag\": false,\n      \"vlm\": true,\n      \"debug_show\": false,\n      \"out_file\": \"/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783238466/exp_2026-07-05_12-01-16__difficult_116_obj_000070_0_dg_only/output.csv\",\n      \"target_object\": \"obj_000070_0\",\n      \"pick_limit\": 1,\n      \"profile_grasping\": false,\n      \"profiler\": \"line_profiler\",\n      \"capture_original_pick1_allpts\": false\n    }\n  }\n\n  Sent experiment to motoman node.\n  Sent experiment to curobo control.\n  Received result: retrieve_failed\n  Elapsed time: 93.00826168060303s\n",
+  "stderr_tail": "",
+  "robot_boundary": {
+    "TORC_ROBOT": "franka",
+    "TORC_GRASP_PLANNER": "cgn",
+    "TORC_USE_CGN_ZMQ": "1",
+    "TORC_ROS_SETUP": "/home/ziyaochen/gc6d_lift3d_traj/ros_workspace/devel/setup.bash",
+    "TORC_CONDA_PREFIX": "/home/ziyaochen/miniconda3/envs/ros_env",
+    "TORC_CUROBO_SRC": "/home/ziyaochen/curobo_v0_7_8_torc/src",
+    "ROS_PACKAGE_PATH_prefix": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc",
+    "PYTHONPATH_prefix": [
+      "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/scripts",
+      "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm"
+    ],
+    "render_execution_video": "0",
+    "grasp_reconstruction": "CGN infer_lowlevel -> CanonicalGrasp -> RobotAdapter -> TORC Pose",
+    "forbidden": "no local object-selection or DepGraph reimplementation in phase4 script"
+  }
+}

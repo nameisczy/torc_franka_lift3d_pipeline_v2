@@ -1,0 +1,46 @@
+Init Import Duration,9.859280824661255
+Init Perception Planning Duration,8.900931119918823
+Init Functions Duration,0.0003974437713623047
+Init Post Duration,0.13225817680358887
+Total Init Duration,18.894160270690918
+Target Object,obj_000070_0
+Pick Count,1
+Unhandled Error,"Traceback (most recent call last):
+  File ""/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/scripts/grasp_planner/curobo_grasp_planner.py"", line 197, in _call_cgn_zmq
+    response = socket.recv_pyobj()
+               ^^^^^^^^^^^^^^^^^^^
+  File ""/home/ziyaochen/miniconda3/envs/ros_env/lib/python3.12/site-packages/zmq/sugar/socket.py"", line 989, in recv_pyobj
+    msg = self.recv(flags)
+          ^^^^^^^^^^^^^^^^
+  File ""zmq/backend/cython/_zmq.py"", line 1218, in zmq.backend.cython._zmq.Socket.recv
+    def recv(self, flags=0, copy: bint = True, track: bint = False):
+    ^^^^^^^^^^^
+  File ""zmq/backend/cython/_zmq.py"", line 1253, in zmq.backend.cython._zmq.Socket.recv
+    return _recv_copy(self.handle, flags)
+    ^^^^^^^^^^^
+  File ""zmq/backend/cython/_zmq.py"", line 1413, in zmq.backend.cython._zmq._recv_copy
+    raise
+  File ""zmq/backend/cython/_zmq.py"", line 1408, in zmq.backend.cython._zmq._recv_copy
+    _check_rc(rc)
+    ^^^^^^^^^^^
+  File ""zmq/backend/cython/_zmq.py"", line 186, in zmq.backend.cython._zmq._check_rc
+    raise Again(errno)
+    ^^^^^^^^^^^
+zmq.error.Again: Resource temporarily unavailable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File ""/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/./scripts/task_planner/curobo_control.py"", line 1265, in run
+    result = open_loop_pick_or_place(
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/scripts/task_planner/curobo_open_loop.py"", line 581, in open_loop_pick_or_place
+    ikres = grasp_planner.get_ik_grasps(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/scripts/grasp_planner/curobo_grasp_planner.py"", line 757, in get_ik_grasps
+    zmq_poses, zmq_scores, zmq_samples, zmq_object_ids = _call_cgn_zmq(
+                                                         ^^^^^^^^^^^^^^
+  File ""/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/scripts/grasp_planner/curobo_grasp_planner.py"", line 199, in _call_cgn_zmq
+    raise RuntimeError(
+RuntimeError: Timed out waiting for CGN ZMQ server at tcp://127.0.0.1:6007 after 180000 ms
+"

@@ -1,0 +1,53 @@
+"""Franka robot metadata wrapper for opt-in TORC dry-runs.
+
+This module intentionally depends on the repro workspace adapter rather than
+copying that implementation into the lab package.  It is not a full Stage 3
+planner/execution replacement yet.
+"""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+from typing import Any
+
+
+REPRO_SRC = Path("/home/ziyaochen/torc_franka_lift3d_repro/src")
+if str(REPRO_SRC) not in sys.path:
+    sys.path.insert(0, str(REPRO_SRC))
+
+from franka_torc_adapter import FrankaRobot  # noqa: E402
+
+
+class FrankaTORCRobot(FrankaRobot):
+    """Production-path visible Franka robot selector target."""
+
+    def __init__(self, is_sim: bool, ground_truth: bool = False):
+        super().__init__(is_sim=is_sim, ground_truth=ground_truth)
+        self.camera = ["camera0", "camera1"] if is_sim else ["zedm"]
+        self.curobo_config = {
+            "kinematics": {
+                "base_link": "panda_link0",
+                "ee_link": "panda_hand",
+            },
+            "stage": "stage2_6_dryrun_metadata_only",
+        }
+        self.urdf = str(self.curobo_config_hint)
+
+    def init_perception_interface(self) -> Any:
+        raise NotImplementedError(
+            "Franka perception interface is not wired for Stage 2.6. "
+            "Use the production dry-run only; do not start Stage 3 physical pick yet."
+        )
+
+    def init_motion_planner(self, planner: str = "curobo", warmup: bool = True) -> Any:
+        raise NotImplementedError(
+            "Franka planner integration is gated after Stage 2.6. "
+            "This robot selector only validates opt-in production call-path selection."
+        )
+
+    def init_adapter_node(self, scene_xml: str):
+        import mujoco
+        from franka_torc_adapter import FrankaNodeAdapter
+
+        return FrankaNodeAdapter(scene_xml, mujoco_module=mujoco)

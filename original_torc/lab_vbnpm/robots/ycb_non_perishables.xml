@@ -1,0 +1,166 @@
+<mujoco model="World">
+  <compiler angle="radian" meshdir="../" texturedir="../"/>
+  <option solver="CG" noslip_iterations="1" integrator="implicitfast" cone="elliptic">
+    <flag warmstart="disable" multiccd="enable"/>
+  </option>
+
+  <default>
+    <default class="p_general">
+      <general forcerange="-30 30" biastype="affine" gainprm="2000" biasprm="0 -2000"/>
+    </default>
+    <default class="v_general">
+      <general ctrlrange="-2.2 2.2" forcerange="-30 30" biastype="affine" gainprm="100000" biasprm="0 0 -100000"/>
+    </default>
+    <default class="intvel_general">
+      <general ctrlrange="-2.2 2.2" forcerange="-30 30" actlimited="true" dyntype="integrator" biastype="affine" gainprm="100000" biasprm="0 -100000"/>
+    </default>
+    <default class="p_RB">
+      <general forcerange="-30 30" biastype="affine" gainprm="2000" biasprm="0 -2000"/>
+    </default>
+    <default class="v_RB">
+      <general ctrlrange="-3.4 3.4" forcerange="-30 30" biastype="affine" gainprm="100000" biasprm="0 0 -100000"/>
+    </default>
+    <default class="intvel_RB">
+      <general ctrlrange="-3.4 3.4" forcerange="-30 30" actlimited="true" dyntype="integrator" biastype="affine" gainprm="100000" biasprm="0 -100000"/>
+    </default>
+    <default class="p_T">
+      <general forcerange="-18 18" biastype="affine" gainprm="2000" biasprm="0 -2000"/>
+    </default>
+    <default class="v_T">
+      <general ctrlrange="-6.9 6.9" forcerange="-18 18" biastype="affine" gainprm="100000" biasprm="0 0 -100000"/>
+    </default>
+    <default class="intvel_T">
+      <general ctrlrange="-6.9 6.9" forcerange="-18 18" actlimited="true" dyntype="integrator" biastype="affine" gainprm="100000" biasprm="0 -100000"/>
+    </default>
+    <default class="hidden">
+      <joint armature="0.1" damping="50"/>
+      <geom contype="3" conaffinity="3" group="3"/>
+    </default>
+    <default class="2f85">
+      <mesh scale="0.001 0.001 0.001"/>
+      <general biastype="affine"/>
+      <default class="driver">
+        <joint solreflimit="0.005" solimplimit="0.95 0.99" range="0 0.8" armature="0.005" damping="0.1"/>
+      </default>
+      <default class="follower">
+        <joint solreflimit="0.005" solimplimit="0.95 0.99" range="-0.872664 0.872664" armature="0.001"/>
+      </default>
+      <default class="spring_link">
+        <joint springref="2.62" stiffness="0.05" range="-0.296706 0.8" armature="0.001" damping="0.00125"/>
+      </default>
+      <default class="coupler">
+        <joint solreflimit="0.005" solimplimit="0.95 0.99" range="-1.57 0" armature="0.001"/>
+      </default>
+      <default class="visual">
+        <geom type="mesh" contype="0" conaffinity="0" group="1"/>
+      </default>
+      <default class="collision">
+        <geom type="mesh" contype="3" conaffinity="3" group="3"/>
+        <default class="pad_box1">
+          <geom size="0.011 0.004 0.009375" type="box" priority="1" friction="1 0.9 0.9" solref="0.004" solimp="0.95 0.99" rgba="0.55 0.55 0.55 1"/>
+        </default>
+        <default class="pad_box2">
+          <geom size="0.011 0.004 0.009375" type="box" priority="1" friction="1 0.9 0.9" solref="0.004" solimp="0.95 0.99" rgba="0.45 0.45 0.45 1"/>
+        </default>
+      </default>
+    </default>
+  </default>
+
+  <asset>
+    <texture type="skybox" builtin="flat" rgb1="1 1 1" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="grid" builtin="checker" rgb1="0.1 0.2 0.3" rgb2="0.2 0.3 0.4" width="512" height="512"/>
+    <texture type="cube" name="tex-ceramic" file="models/rs_table/ceramic.png"/>
+    <texture type="2d" name="001_chips_can" file="models/objects/ycb_se3tn/001_chips_can/texture_map.png"/>
+    <texture type="2d" name="005_tomato_soup_can" file="models/objects/ycb_se3tn/005_tomato_soup_can/texture_map.png"/>
+    <texture type="2d" name="006_mustard_bottle" file="models/objects/ycb_se3tn/006_mustard_bottle/texture_map.png"/>
+    <texture type="2d" name="010_potted_meat_can" file="models/objects/ycb_se3tn/010_potted_meat_can/texture_map.png"/>
+    <material name="metal" rgba="0.58 0.58 0.58 1"/>
+    <material name="silicone" rgba="0.1882 0.1882 0.1882 1"/>
+    <material name="gray" rgba="0.4627 0.4627 0.4627 1"/>
+    <material name="black" rgba="0.149 0.149 0.149 1"/>
+    <material name="grid" texture="grid" texuniform="true" texrepeat="2 2" emission="1" specular="0" shininess="0"/>
+    <material name="table_ceramic" texture="tex-ceramic" specular="0.2" shininess="0"/>
+    <material name="001_chips_can" texture="001_chips_can"/>
+    <material name="005_tomato_soup_can" texture="005_tomato_soup_can"/>
+    <material name="006_mustard_bottle" texture="006_mustard_bottle"/>
+    <material name="010_potted_meat_can" texture="010_potted_meat_can"/>
+    
+    <mesh name="robotiq_85_base_link_coarse" file="robots/robotiq_85_base_link_coarse.STL"/>
+    <mesh name="outer_knuckle_coarse" file="robots/outer_knuckle_coarse.STL"/>
+    <mesh name="outer_finger_coarse" file="robots/outer_finger_coarse.STL"/>
+    <mesh name="inner_knuckle_coarse" file="robots/inner_knuckle_coarse.STL"/>
+    <mesh name="inner_finger_coarse" file="robots/inner_finger_coarse.STL"/>
+    
+    <mesh name="001_chips_can_vis" file="models/objects/ycb_se3tn/001_chips_can/textured_simple.obj"/>
+    <mesh name="005_tomato_soup_can_vis" file="models/objects/ycb_se3tn/005_tomato_soup_can/textured_simple.obj"/>
+    <mesh name="006_mustard_bottle_vis" file="models/objects/ycb_se3tn/006_mustard_bottle/textured_simple.obj"/>
+    <mesh name="010_potted_meat_can_vis" file="models/objects/ycb_se3tn/010_potted_meat_can/textured_simple.obj"/>
+  </asset>
+
+  <worldbody>
+    <geom name="floor" size="2 2 0.05" type="plane" material="grid"/>
+    <light pos="-0.5 0.5 3" dir="0 0 -1" directional="true" castshadow="false" diffuse="1 1 1"/>
+    <body name="robotiq_85_base_link">
+      <inertial pos="0.00021987 -2.3546e-10 0.030163" quat="0.707058 0.00723369 0.00723345 0.707081" mass="0.30915" diaginertia="0.00030737 0.000289758 0.000199102"/>
+      <joint name="floating joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom type="mesh" rgba="0.1 0.1 0.1 1" mesh="robotiq_85_base_link_coarse"/>
+      <body name="left_outer_knuckle" pos="0.0306011 0 0.062792">
+        <inertial pos="0.0299636 7.39879e-12 0.0161054" quat="0.704933 0.0554073 0.0554073 0.704933" mass="0.0341578" diaginertia="1.12323e-05 1.05984e-05 4.63087e-06"/>
+        <joint name="finger_joint" pos="0 0 0" axis="0 -1 0" range="0 0.725" actuatorfrcrange="-1000 1000"/>
+        <geom type="mesh" rgba="0.1 0.1 0.1 1" mesh="outer_knuckle_coarse"/>
+        <geom pos="0.031691 0 -0.00193396" type="mesh" rgba="0.1 0.1 0.1 1" mesh="outer_finger_coarse"/>
+      </body>
+      <body name="left_inner_knuckle" pos="0.0127 0 0.0693075">
+        <inertial pos="0.0170975 -3.93809e-10 0.0224918" quat="0.947655 0 -0.319297 0" mass="0.0110931" diaginertia="5.59353e-06 3.96549e-06 1.88108e-06"/>
+        <joint name="left_inner_knuckle_joint" pos="0 0 0" axis="0 -1 0" range="0 0.8757" actuatorfrcrange="-1000 1000"/>
+        <geom type="mesh" rgba="0.1 0.1 0.1 1" mesh="inner_knuckle_coarse"/>
+        <body name="left_inner_finger" pos="0.0345853 0 0.045497">
+          <inertial pos="0.00602756 0 0.00669926" quat="0.699065 0.106339 0.106339 0.699065" mass="0.00724255" diaginertia="1.70064e-06 1.58577e-06 3.69621e-07"/>
+          <joint name="left_inner_finger_joint" pos="0 0 0" axis="0 -1 0" range="0 0.8757" actuatorfrcrange="-1000 1000"/>
+          <geom type="mesh" rgba="0.1 0.1 0.1 1" mesh="inner_finger_coarse"/>
+        </body>
+      </body>
+      <body name="right_inner_knuckle" pos="-0.0127 0 0.0693075" quat="0 0 0 1">
+        <inertial pos="0.0168606 3.93808e-10 0.02267" quat="0.949317 0 -0.314322 0" mass="0.0110931" diaginertia="5.59353e-06 3.96549e-06 1.88108e-06"/>
+        <joint name="right_inner_knuckle_joint" pos="0 0 0" axis="0 1 0" range="0 0.8757" actuatorfrcrange="-1000 1000"/>
+        <geom type="mesh" rgba="0.1 0.1 0.1 1" mesh="inner_knuckle_coarse"/>
+        <body name="right_inner_finger" pos="0.034106 0 0.0458574">
+          <inertial pos="0.00602756 0 0.00669926" quat="0.699065 0.106339 0.106339 0.699065" mass="0.00724255" diaginertia="1.70064e-06 1.58577e-06 3.69621e-07"/>
+          <joint name="right_inner_finger_joint" pos="0 0 0" axis="0 1 0" range="0 0.8757" actuatorfrcrange="-1000 1000"/>
+          <geom type="mesh" rgba="0.1 0.1 0.1 1" mesh="inner_finger_coarse"/>
+        </body>
+      </body>
+      <body name="right_outer_knuckle" pos="-0.0306011 0 0.062792" quat="0 0 0 1">
+        <inertial pos="0.029793 7.22554e-12 0.0164189" quat="0.704767 0.057475 0.057475 0.704767" mass="0.0341578" diaginertia="1.12323e-05 1.06532e-05 4.57606e-06"/>
+        <joint name="right_outer_knuckle_joint" pos="0 0 0" axis="0 1 0" range="0 0.8757" actuatorfrcrange="-1000 1000"/>
+        <geom type="mesh" rgba="0.1 0.1 0.1 1" mesh="outer_knuckle_coarse"/>
+        <geom pos="0.0317096 0 -0.00160136" type="mesh" rgba="0.1 0.1 0.1 1" mesh="outer_finger_coarse"/>
+      </body>
+    </body>
+    <body name="workspace" pos="1.1 0 0">
+      <geom name="shelf_bottom" size="0.25 0.68 0.475" pos="0 0 0.475" type="box" material="table_ceramic"/>
+      <geom name="shelf_top" size="0.25 0.68 0.04" pos="0 0 1.49" type="box" material="table_ceramic"/>
+      <geom name="shelf_padding_left" size="0.25 0.025 0.25" pos="0 -0.655 1.2" type="box" material="table_ceramic"/>
+      <geom name="shelf_padding_right" size="0.25 0.025 0.25" pos="0 0.655 1.2" type="box" material="table_ceramic"/>
+      <geom name="shelf_padding_back" size="0.025 0.63 0.25" pos="0.225 0 1.2" type="box" material="table_ceramic"/>
+    </body>
+    <body name="001_chips_can" pos="1.12 0.140001 1.05591" quat="0.970143 -6.64528e-06 -5.56385e-06 0.242535">
+      <joint type="free" limited="false" actuatorfrclimited="false"/>
+      <geom quat="0.581683 0 0 0.813416" type="mesh" contype="0" conaffinity="0" group="1" material="001_chips_can" mesh="001_chips_can_vis"/>
+      <geom size="0.038 0.12" pos="0 0 0.014" type="cylinder" contype="3" conaffinity="3" group="3" mass="0"/>
+    </body>
+    <body name="005_tomato_soup_can" pos="0.990081 -0.0601543 1.00917" quat="0.707128 0.00139915 -0.000452979 0.707084">
+      <joint type="free" limited="false" actuatorfrclimited="false"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="005_tomato_soup_can" mesh="005_tomato_soup_can_vis"/>
+    </body>
+    <body name="006_mustard_bottle" pos="1.04997 -0.219925 1.03373" quat="0.316215 4.9045e-05 -0.000500936 -0.948687">
+      <joint type="free" limited="false" actuatorfrclimited="false"/>
+      <geom pos="0.002 0 0" quat="0.828148 0 0 -0.560509" type="mesh" contype="3" conaffinity="3" group="1" material="006_mustard_bottle" mesh="006_mustard_bottle_vis"/>
+    </body>
+    <body name="010_potted_meat_can" pos="1.02018 -0.400089 0.999601" quat="0.316219 -0.0014043 0.00145551 -0.948684">
+      <joint type="free" limited="false" actuatorfrclimited="false"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="010_potted_meat_can" mesh="010_potted_meat_can_vis"/>
+    </body>
+  </worldbody>
+
+</mujoco>

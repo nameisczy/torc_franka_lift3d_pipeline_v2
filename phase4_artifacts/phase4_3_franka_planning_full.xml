@@ -1,0 +1,732 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mujoco model="World">
+  <compiler angle="radian" meshdir="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm" texturedir="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm" />
+
+  <option integrator="implicitfast" cone="elliptic" solver="CG" noslip_iterations="2">
+    <flag warmstart="disable" multiccd="enable" />
+  </option>
+
+  <default>
+    <geom density="50" />
+    <default class="p_general">
+      <general forcerange="-300 300" biastype="affine" gainprm="2000" biasprm="0 -2000" />
+    </default>
+    <default class="v_general">
+      <general ctrlrange="-2.2 2.2" forcerange="-300 300" biastype="affine" gainprm="100000" biasprm="0 0 -100000" />
+    </default>
+    <default class="intvel_general">
+      <general ctrlrange="-2.2 2.2" forcerange="-300 300" actlimited="true" dyntype="integrator" biastype="affine" gainprm="100000" biasprm="0 -100000" />
+    </default>
+    <default class="p_RB">
+      <general forcerange="-300 300" biastype="affine" gainprm="2000" biasprm="0 -2000" />
+    </default>
+    <default class="v_RB">
+      <general ctrlrange="-3.4 3.4" forcerange="-300 300" biastype="affine" gainprm="100000" biasprm="0 0 -100000" />
+    </default>
+    <default class="intvel_RB">
+      <general ctrlrange="-3.4 3.4" forcerange="-300 300" actlimited="true" dyntype="integrator" biastype="affine" gainprm="100000" biasprm="0 -100000" />
+    </default>
+    <default class="p_T">
+      <general forcerange="-180 180" biastype="affine" gainprm="2000" biasprm="0 -2000" />
+    </default>
+    <default class="v_T">
+      <general ctrlrange="-6.9 6.9" forcerange="-180 180" biastype="affine" gainprm="100000" biasprm="0 0 -100000" />
+    </default>
+    <default class="intvel_T">
+      <general ctrlrange="-6.9 6.9" forcerange="-180 180" actlimited="true" dyntype="integrator" biastype="affine" gainprm="100000" biasprm="0 -100000" />
+    </default>
+    <default class="hidden">
+      <joint armature="0.1" damping="50" />
+      <geom contype="3" conaffinity="3" group="3" density="1" />
+    </default>
+    <default class="2f85">
+      <mesh scale="0.001 0.001 0.001" />
+      <general biastype="affine" />
+      <default class="driver">
+        <joint solreflimit="0.005" solimplimit="0.95 0.99" range="0 0.8" armature="0.005" damping="0.1" />
+      </default>
+      <default class="follower">
+        <joint solreflimit="0.005" solimplimit="0.95 0.99" range="-0.872664 0.872664" armature="0.001" />
+      </default>
+      <default class="spring_link">
+        <joint springref="2.62" stiffness="0.05" range="-0.296706 0.8" armature="0.001" damping="0.00125" />
+      </default>
+      <default class="coupler">
+        <joint solreflimit="0.005" solimplimit="0.95 0.99" range="-1.57 0" armature="0.001" />
+      </default>
+      <default class="visual">
+        <geom type="mesh" contype="0" conaffinity="0" group="1" />
+      </default>
+      <default class="collision">
+        <geom type="mesh" contype="3" conaffinity="3" group="3" />
+        <default class="pad_box1">
+          <geom size="0.011 0.004 0.009375" type="box" priority="1" friction="1 0.9 0.9" solref="0.004" solimp="0.95 0.99" rgba="0.55 0.55 0.55 1" />
+        </default>
+        <default class="pad_box2">
+          <geom size="0.011 0.004 0.009375" type="box" priority="1" friction="1 0.9 0.9" solref="0.004" solimp="0.95 0.99" rgba="0.45 0.45 0.45 1" />
+        </default>
+      </default>
+    </default>
+  </default>
+
+  <asset>
+    <texture type="skybox" builtin="flat" rgb1="1 1 1" rgb2="0 0 0" width="512" height="3072" />
+    <texture type="2d" name="grid" builtin="checker" rgb1="0.1 0.2 0.3" rgb2="0.2 0.3 0.4" width="512" height="512" />
+    <texture type="cube" name="tex-ceramic" file="models/rs_table/ceramic.png" />
+    <texture type="2d" name="obj_000006_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006.png" />
+    <texture type="2d" name="obj_000010_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000010/obj_000011.png" />
+    <texture type="2d" name="obj_000012_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000012/obj_000013.png" />
+    <texture type="2d" name="obj_000015_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000015/obj_000015.png" />
+    <texture type="2d" name="obj_000016_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000016/obj_000016.png" />
+    <texture type="2d" name="obj_000051_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051.png" />
+    <texture type="2d" name="obj_000053_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000053/obj_000053.png" />
+    <texture type="2d" name="obj_000065_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000065/obj_000065.png" />
+    <texture type="2d" name="obj_000058_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058.png" />
+    <texture type="2d" name="obj_000068_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000068/obj_000068.png" />
+    <texture type="2d" name="obj_000063_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000063/obj_000063.png" />
+    <texture type="2d" name="obj_000020_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000020/obj_000020.png" />
+    <texture type="2d" name="obj_000021_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000021/obj_000021.png" />
+    <texture type="2d" name="obj_000070_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000070/obj_000070.png" />
+    <texture type="2d" name="obj_000079_0_tex" file="models/objects/GraspClutter6D/models_obj_m/obj_000079/obj_000079.png" />
+    <material name="metal" rgba="0.58 0.58 0.58 1" />
+    <material name="silicone" rgba="0.1882 0.1882 0.1882 1" />
+    <material name="gray" rgba="0.4627 0.4627 0.4627 1" />
+    <material name="black" rgba="0.149 0.149 0.149 1" />
+    <material name="grid" texture="grid" texuniform="true" texrepeat="2 2" emission="1" specular="0" shininess="0" />
+    <material name="table_ceramic" texture="tex-ceramic" specular="0.2" shininess="0" />
+    <material name="obj_000006_0_mat" texture="obj_000006_0_tex" specular="1" shininess="0" />
+    <material name="obj_000010_0_mat" texture="obj_000010_0_tex" specular="1" shininess="0" />
+    <material name="obj_000012_0_mat" texture="obj_000012_0_tex" specular="1" shininess="0" />
+    <material name="obj_000015_0_mat" texture="obj_000015_0_tex" specular="1" shininess="0" />
+    <material name="obj_000016_0_mat" texture="obj_000016_0_tex" specular="1" shininess="0" />
+    <material name="obj_000051_0_mat" texture="obj_000051_0_tex" specular="1" shininess="0" />
+    <material name="obj_000053_0_mat" texture="obj_000053_0_tex" specular="1" shininess="0" />
+    <material name="obj_000065_0_mat" texture="obj_000065_0_tex" specular="1" shininess="0" />
+    <material name="obj_000058_0_mat" texture="obj_000058_0_tex" specular="1" shininess="0" />
+    <material name="obj_000068_0_mat" texture="obj_000068_0_tex" specular="1" shininess="0" />
+    <material name="obj_000063_0_mat" texture="obj_000063_0_tex" specular="1" shininess="0" />
+    <material name="obj_000020_0_mat" texture="obj_000020_0_tex" specular="1" shininess="0" />
+    <material name="obj_000021_0_mat" texture="obj_000021_0_tex" specular="1" shininess="0" />
+    <material name="obj_000070_0_mat" texture="obj_000070_0_tex" specular="1" shininess="0" />
+    <material name="obj_000079_0_mat" texture="obj_000079_0_tex" specular="1" shininess="0" />
+    <mesh name="v_base" file="robots/motoman/meshes/v_base.stl" />
+    <mesh name="c_base" file="robots/motoman/meshes/c_base.stl" />
+    <mesh name="v_link_b1" file="robots/motoman/meshes/v_link_b1.stl" />
+    <mesh name="c_link_b1" file="robots/motoman/meshes/c_link_b1.stl" />
+    <mesh name="v_link_s" file="robots/motoman/meshes/v_link_s.stl" />
+    <mesh name="c_link_s" file="robots/motoman/meshes/c_link_s.stl" />
+    <mesh name="v_link_l" file="robots/motoman/meshes/v_link_l.stl" />
+    <mesh name="c_link_l" file="robots/motoman/meshes/c_link_l.stl" />
+    <mesh name="v_link_e" file="robots/motoman/meshes/v_link_e.stl" />
+    <mesh name="c_link_e" file="robots/motoman/meshes/c_link_e.stl" />
+    <mesh name="v_link_u" file="robots/motoman/meshes/v_link_u.stl" />
+    <mesh name="c_link_u" file="robots/motoman/meshes/c_link_u.stl" />
+    <mesh name="v_link_r" file="robots/motoman/meshes/v_link_r.stl" />
+    <mesh name="c_link_r" file="robots/motoman/meshes/c_link_r.stl" />
+    <mesh name="v_link_b" file="robots/motoman/meshes/v_link_b.stl" />
+    <mesh name="c_link_b" file="robots/motoman/meshes/c_link_b.stl" />
+    <mesh name="v_link_t" file="robots/motoman/meshes/v_link_t.stl" />
+    <mesh name="c_link_t" file="robots/motoman/meshes/c_link_t.stl" />
+    <mesh name="base_mount" class="2f85" file="robots/motoman/meshes/base_mount.stl" />
+    <mesh name="base" class="2f85" file="robots/motoman/meshes/base.stl" />
+    <mesh name="driver" class="2f85" file="robots/motoman/meshes/driver.stl" />
+    <mesh name="coupler" class="2f85" file="robots/motoman/meshes/coupler.stl" />
+    <mesh name="follower" class="2f85" file="robots/motoman/meshes/follower.stl" />
+    <mesh name="pad" class="2f85" file="robots/motoman/meshes/pad.stl" />
+    <mesh name="silicone_pad" class="2f85" file="robots/motoman/meshes/silicone_pad.stl" />
+    <mesh name="spring_link" class="2f85" file="robots/motoman/meshes/spring_link.stl" />
+    <mesh name="obj_000006_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_0.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_1.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_2.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_3.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_4" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_4.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_5" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_5.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_6" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_6.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_7" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_7.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_8" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_8.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_9" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_9.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_10" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_10.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_11" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_11.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_12" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_12.obj" />
+    <mesh name="obj_000006_0_obj_000006_collision_13" file="models/objects/GraspClutter6D/models_obj_m/obj_000006/obj_000006_collision_13.obj" />
+    <mesh name="obj_000010_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000010/obj_000010.obj" />
+    <mesh name="obj_000010_0_obj_000010_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000010/obj_000010_collision_0.obj" />
+    <mesh name="obj_000010_0_obj_000010_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000010/obj_000010_collision_1.obj" />
+    <mesh name="obj_000012_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000012/obj_000012.obj" />
+    <mesh name="obj_000012_0_obj_000012_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000012/obj_000012_collision_0.obj" />
+    <mesh name="obj_000012_0_obj_000012_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000012/obj_000012_collision_1.obj" />
+    <mesh name="obj_000012_0_obj_000012_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000012/obj_000012_collision_2.obj" />
+    <mesh name="obj_000015_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000015/obj_000015.obj" />
+    <mesh name="obj_000015_0_obj_000015_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000015/obj_000015_collision_0.obj" />
+    <mesh name="obj_000015_0_obj_000015_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000015/obj_000015_collision_1.obj" />
+    <mesh name="obj_000016_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000016/obj_000016.obj" />
+    <mesh name="obj_000016_0_obj_000016_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000016/obj_000016_collision_0.obj" />
+    <mesh name="obj_000016_0_obj_000016_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000016/obj_000016_collision_1.obj" />
+    <mesh name="obj_000051_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_0.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_1.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_2.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_3.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_4" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_4.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_5" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_5.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_6" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_6.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_7" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_7.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_8" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_8.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_9" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_9.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_10" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_10.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_11" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_11.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_12" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_12.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_13" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_13.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_14" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_14.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_15" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_15.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_16" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_16.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_17" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_17.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_18" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_18.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_19" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_19.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_20" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_20.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_21" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_21.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_22" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_22.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_23" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_23.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_24" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_24.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_25" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_25.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_26" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_26.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_27" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_27.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_28" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_28.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_29" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_29.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_30" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_30.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_31" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_31.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_32" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_32.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_33" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_33.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_34" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_34.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_35" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_35.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_36" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_36.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_37" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_37.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_38" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_38.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_39" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_39.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_40" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_40.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_41" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_41.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_42" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_42.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_43" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_43.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_44" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_44.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_45" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_45.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_46" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_46.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_47" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_47.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_48" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_48.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_49" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_49.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_50" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_50.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_51" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_51.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_52" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_52.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_53" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_53.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_54" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_54.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_55" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_55.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_56" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_56.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_57" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_57.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_58" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_58.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_59" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_59.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_60" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_60.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_61" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_61.obj" />
+    <mesh name="obj_000051_0_obj_000051_collision_62" file="models/objects/GraspClutter6D/models_obj_m/obj_000051/obj_000051_collision_62.obj" />
+    <mesh name="obj_000053_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000053/obj_000053.obj" />
+    <mesh name="obj_000053_0_obj_000053_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000053/obj_000053_collision_0.obj" />
+    <mesh name="obj_000065_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000065/obj_000065.obj" />
+    <mesh name="obj_000065_0_obj_000065_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000065/obj_000065_collision_0.obj" />
+    <mesh name="obj_000065_0_obj_000065_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000065/obj_000065_collision_1.obj" />
+    <mesh name="obj_000065_0_obj_000065_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000065/obj_000065_collision_2.obj" />
+    <mesh name="obj_000058_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058.obj" />
+    <mesh name="obj_000058_0_obj_000058_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058_collision_0.obj" />
+    <mesh name="obj_000058_0_obj_000058_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058_collision_1.obj" />
+    <mesh name="obj_000058_0_obj_000058_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058_collision_2.obj" />
+    <mesh name="obj_000058_0_obj_000058_collision_3" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058_collision_3.obj" />
+    <mesh name="obj_000058_0_obj_000058_collision_4" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058_collision_4.obj" />
+    <mesh name="obj_000058_0_obj_000058_collision_5" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058_collision_5.obj" />
+    <mesh name="obj_000058_0_obj_000058_collision_6" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058_collision_6.obj" />
+    <mesh name="obj_000058_0_obj_000058_collision_7" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058_collision_7.obj" />
+    <mesh name="obj_000058_0_obj_000058_collision_8" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058_collision_8.obj" />
+    <mesh name="obj_000058_0_obj_000058_collision_9" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058_collision_9.obj" />
+    <mesh name="obj_000058_0_obj_000058_collision_10" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058_collision_10.obj" />
+    <mesh name="obj_000058_0_obj_000058_collision_11" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058_collision_11.obj" />
+    <mesh name="obj_000058_0_obj_000058_collision_12" file="models/objects/GraspClutter6D/models_obj_m/obj_000058/obj_000058_collision_12.obj" />
+    <mesh name="obj_000068_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000068/obj_000068.obj" />
+    <mesh name="obj_000068_0_obj_000068_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000068/obj_000068_collision_0.obj" />
+    <mesh name="obj_000068_0_obj_000068_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000068/obj_000068_collision_1.obj" />
+    <mesh name="obj_000063_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000063/obj_000063.obj" />
+    <mesh name="obj_000063_0_obj_000063_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000063/obj_000063_collision_0.obj" />
+    <mesh name="obj_000020_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000020/obj_000020.obj" />
+    <mesh name="obj_000020_0_obj_000020_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000020/obj_000020_collision_0.obj" />
+    <mesh name="obj_000020_0_obj_000020_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000020/obj_000020_collision_1.obj" />
+    <mesh name="obj_000021_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000021/obj_000021.obj" />
+    <mesh name="obj_000021_0_obj_000021_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000021/obj_000021_collision_0.obj" />
+    <mesh name="obj_000021_0_obj_000021_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000021/obj_000021_collision_1.obj" />
+    <mesh name="obj_000070_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000070/obj_000070.obj" />
+    <mesh name="obj_000070_0_obj_000070_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000070/obj_000070_collision_0.obj" />
+    <mesh name="obj_000079_0_vis" file="models/objects/GraspClutter6D/models_obj_m/obj_000079/obj_000079.obj" />
+    <mesh name="obj_000079_0_obj_000079_collision_0" file="models/objects/GraspClutter6D/models_obj_m/obj_000079/obj_000079_collision_0.obj" />
+    <mesh name="obj_000079_0_obj_000079_collision_1" file="models/objects/GraspClutter6D/models_obj_m/obj_000079/obj_000079_collision_1.obj" />
+    <mesh name="obj_000079_0_obj_000079_collision_2" file="models/objects/GraspClutter6D/models_obj_m/obj_000079/obj_000079_collision_2.obj" />
+    
+    
+  <material name="robot0_Face636_001" shininess="0.45" rgba="0.901961 0.921569 0.929412 1" />
+    <material name="robot0_Part__Feature017_001" shininess="0.45" />
+    <material name="robot0_Part__Feature018_001" shininess="0.45" />
+    <material name="robot0_Part__Feature019_001" shininess="0.45" />
+    <material name="robot0_Part__Feature022_001" shininess="0.45" rgba="0.901961 0.921569 0.929412 1" />
+    <material name="robot0_Part__Feature023_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Shell001_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Shell002_001" shininess="0.45" rgba="0.901961 0.921569 0.929412 1" />
+    <material name="robot0_Shell003_001" shininess="0.45" rgba="0.901961 0.921569 0.929412 1" />
+    <material name="robot0_Shell009_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Shell010_001" shininess="0.45" rgba="0.901961 0.921569 0.929412 1" />
+    <material name="robot0_Shell_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Part__Feature_001" shininess="0.45" />
+    <material name="robot0_Part__Feature024" shininess="0.45" />
+    <material name="robot0_Part__Feature001_010_001_002" shininess="0.45" />
+    <material name="robot0_Part__Feature002_007_001_002" shininess="0.45" />
+    <material name="robot0_Part__Feature003_004_001_002" shininess="0.45" />
+    <material name="robot0_Part__Feature_001_001_001_002" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Part__Feature001_001_003_001" shininess="0.45" />
+    <material name="robot0_Part__Feature002_001_003_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Part__Feature003_001_003_001" shininess="0.45" />
+    <material name="robot0_Part__Feature_002_003_001" shininess="0.45" />
+    <material name="robot0_Part__Feature_002_004_003" shininess="0.45" />
+    <material name="robot0_Shell001_001_001_003" shininess="0.45" rgba="0.25 0.25 0.25 1" />
+    <material name="robot0_Shell_001_001_003" shininess="0.45" />
+    <material name="robot0_Face064_002_001_002_001" shininess="0.45" rgba="1 0 0 1" />
+    <material name="robot0_Face065_002_001_002_001" shininess="0.45" rgba="0 1 0 1" />
+    <material name="robot0_Face374_002_001_002_001" shininess="0.45" />
+    <material name="robot0_Face539_002_001_002_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Part__Feature001_009_001_002_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Part__Feature002_006_001_002_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Shell002_002_001_002_001" shininess="0.45" />
+    <material name="robot0_Shell003_002_001_002_001" shininess="0.45" />
+    <material name="robot0_Shell004_001_001_002_001" shininess="0.45" />
+    <material name="robot0_Shell005_001_001_002_001" shininess="0.45" />
+    <material name="robot0_Shell006_003_002_001" shininess="0.45" rgba="0.901961 0.921569 0.929412 1" />
+    <material name="robot0_Shell007_002_002_001" shininess="0.45" rgba="0.25 0.25 0.25 1" />
+    <material name="robot0_Shell011_002_002_001" shininess="0.45" />
+    <material name="robot0_Shell012_002_002_001" shininess="0.45" />
+    <material name="robot0_Shell_003_001_002_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Union001_001_001_002_001" shininess="0.45" rgba="0.039216 0.541176 0.780392 1" />
+    <material name="robot0_Union_001_001_002_001" shininess="0.45" rgba="0.039216 0.541176 0.780392 1" />
+    <material name="robot0_Part__Mirroring001_004_002" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Part__Mirroring002_004_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Part__Mirroring003_004_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Part__Mirroring004_004_002" shininess="0.45" />
+    <material name="robot0_Part__Mirroring005_004_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Part__Mirroring006_004_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Part__Mirroring007_004_001" shininess="0.45" rgba="0.25098 0.25098 0.25098 1" />
+    <material name="robot0_Part__Mirroring_004_001" shininess="0.45" rgba="0.898039 0.917647 0.929412 1" />
+    <mesh name="robot0_link0" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/meshes/link0.stl" />
+    <mesh name="robot0_link1" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/meshes/link1.stl" />
+    <mesh name="robot0_link2" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/meshes/link2.stl" />
+    <mesh name="robot0_link3" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/meshes/link3.stl" />
+    <mesh name="robot0_link4" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/meshes/link4.stl" />
+    <mesh name="robot0_link5" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/meshes/link5.stl" />
+    <mesh name="robot0_link6" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/meshes/link6.stl" />
+    <mesh name="robot0_link7" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/meshes/link7.stl" />
+    <mesh name="robot0_link0_vis_0" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link0_vis/link0_vis_0.obj" />
+    <mesh name="robot0_link0_vis_1" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link0_vis/link0_vis_1.obj" />
+    <mesh name="robot0_link0_vis_2" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link0_vis/link0_vis_2.obj" />
+    <mesh name="robot0_link0_vis_3" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link0_vis/link0_vis_3.obj" />
+    <mesh name="robot0_link0_vis_4" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link0_vis/link0_vis_4.obj" />
+    <mesh name="robot0_link0_vis_5" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link0_vis/link0_vis_5.obj" />
+    <mesh name="robot0_link0_vis_6" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link0_vis/link0_vis_6.obj" />
+    <mesh name="robot0_link0_vis_7" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link0_vis/link0_vis_7.obj" />
+    <mesh name="robot0_link0_vis_8" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link0_vis/link0_vis_8.obj" />
+    <mesh name="robot0_link0_vis_9" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link0_vis/link0_vis_9.obj" />
+    <mesh name="robot0_link0_vis_10" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link0_vis/link0_vis_10.obj" />
+    <mesh name="robot0_link0_vis_11" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link0_vis/link0_vis_11.obj" />
+    <mesh name="robot0_link1_vis" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link1_vis/link1_vis.obj" />
+    <mesh name="robot0_link2_vis" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link2_vis/link2_vis.obj" />
+    <mesh name="robot0_link3_vis_0" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link3_vis/link3_vis_0.obj" />
+    <mesh name="robot0_link3_vis_1" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link3_vis/link3_vis_1.obj" />
+    <mesh name="robot0_link3_vis_2" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link3_vis/link3_vis_2.obj" />
+    <mesh name="robot0_link3_vis_3" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link3_vis/link3_vis_3.obj" />
+    <mesh name="robot0_link4_vis_0" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link4_vis/link4_vis_0.obj" />
+    <mesh name="robot0_link4_vis_1" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link4_vis/link4_vis_1.obj" />
+    <mesh name="robot0_link4_vis_2" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link4_vis/link4_vis_2.obj" />
+    <mesh name="robot0_link4_vis_3" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link4_vis/link4_vis_3.obj" />
+    <mesh name="robot0_link5_vis_0" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link5_vis/link5_vis_0.obj" />
+    <mesh name="robot0_link5_vis_1" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link5_vis/link5_vis_1.obj" />
+    <mesh name="robot0_link5_vis_2" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link5_vis/link5_vis_2.obj" />
+    <mesh name="robot0_link6_vis_0" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_0.obj" />
+    <mesh name="robot0_link6_vis_1" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_1.obj" />
+    <mesh name="robot0_link6_vis_2" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_2.obj" />
+    <mesh name="robot0_link6_vis_3" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_3.obj" />
+    <mesh name="robot0_link6_vis_4" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_4.obj" />
+    <mesh name="robot0_link6_vis_5" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_5.obj" />
+    <mesh name="robot0_link6_vis_6" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_6.obj" />
+    <mesh name="robot0_link6_vis_7" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_7.obj" />
+    <mesh name="robot0_link6_vis_8" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_8.obj" />
+    <mesh name="robot0_link6_vis_9" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_9.obj" />
+    <mesh name="robot0_link6_vis_10" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_10.obj" />
+    <mesh name="robot0_link6_vis_11" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_11.obj" />
+    <mesh name="robot0_link6_vis_12" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_12.obj" />
+    <mesh name="robot0_link6_vis_13" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_13.obj" />
+    <mesh name="robot0_link6_vis_14" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_14.obj" />
+    <mesh name="robot0_link6_vis_15" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_15.obj" />
+    <mesh name="robot0_link6_vis_16" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link6_vis/link6_vis_16.obj" />
+    <mesh name="robot0_link7_vis_0" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link7_vis/link7_vis_0.obj" />
+    <mesh name="robot0_link7_vis_1" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link7_vis/link7_vis_1.obj" />
+    <mesh name="robot0_link7_vis_2" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link7_vis/link7_vis_2.obj" />
+    <mesh name="robot0_link7_vis_3" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link7_vis/link7_vis_3.obj" />
+    <mesh name="robot0_link7_vis_4" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link7_vis/link7_vis_4.obj" />
+    <mesh name="robot0_link7_vis_5" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link7_vis/link7_vis_5.obj" />
+    <mesh name="robot0_link7_vis_6" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link7_vis/link7_vis_6.obj" />
+    <mesh name="robot0_link7_vis_7" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/robosuite_panda_assets/obj_meshes/link7_vis/link7_vis_7.obj" />
+    <mesh name="fixed_mount0_pedestal" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/bases/rethink_mount/pedestal.stl" />
+    <mesh name="gripper0_right_hand" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/panda_gripper/hand.stl" />
+    <mesh name="gripper0_right_hand_vis" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/panda_gripper/hand_vis.stl" />
+    <mesh name="gripper0_right_finger" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/panda_gripper/finger.stl" />
+    <mesh name="gripper0_right_finger_vis" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/panda_gripper/finger_vis.stl" />
+    <mesh name="gripper0_right_finger_vis2" file="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/meshes/panda_gripper/finger_longer.stl" />
+  </asset>
+
+  <worldbody>
+    <geom name="floor" size="2 2 0.05" type="plane" material="grid" />
+    <light pos="-0.5 0.5 3" dir="0 0 -1" directional="true" castshadow="false" diffuse="1 1 1" />
+    <body name="robot0_base" pos="0 0 0.86">
+      <inertial pos="0 0 0" mass="0" diaginertia="0 0 0" />
+      <camera name="robot0_robotview" pos="1 0 0.4" quat="0.653098 0.271041 0.271041 0.653098" />
+      <body name="robot0_link0">
+        <inertial pos="0 0 0.05" mass="4" diaginertia="0.4 0.4 0.4" />
+        <geom name="robot0_g0_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell010_001" mesh="robot0_link0_vis_0" />
+        <geom name="robot0_g1_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell009_001" mesh="robot0_link0_vis_1" />
+        <geom name="robot0_g2_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell003_001" mesh="robot0_link0_vis_2" />
+        <geom name="robot0_g3_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell_001" mesh="robot0_link0_vis_3" />
+        <geom name="robot0_g4_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell002_001" mesh="robot0_link0_vis_4" />
+        <geom name="robot0_g5_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell001_001" mesh="robot0_link0_vis_5" />
+        <geom name="robot0_g6_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Face636_001" mesh="robot0_link0_vis_6" />
+        <geom name="robot0_g7_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature018_001" mesh="robot0_link0_vis_7" />
+        <geom name="robot0_g8_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature019_001" mesh="robot0_link0_vis_8" />
+        <geom name="robot0_g9_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature023_001" mesh="robot0_link0_vis_9" />
+        <geom name="robot0_g10_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature022_001" mesh="robot0_link0_vis_10" />
+        <geom name="robot0_g11_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature017_001" mesh="robot0_link0_vis_11" />
+        <geom name="robot0_link0_collision" type="mesh" rgba="0 0.5 0 1" mesh="robot0_link0" />
+        <site name="robot0_right_center" pos="0 0 0" size="0.01" group="2" rgba="1 0.3 0.3 -1" />
+        <body name="robot0_link1" pos="0 0 0.333">
+          <inertial pos="0 0 -0.07" mass="3" diaginertia="0.3 0.3 0.3" />
+          <joint name="robot0_joint1" pos="0 0 0" axis="0 0 1" limited="true" range="-2.8973 2.8973" armature="5" damping="0.1" frictionloss="0.1" />
+          <geom name="robot0_g12_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature_001" mesh="robot0_link1_vis" />
+          <geom name="robot0_link1_collision" type="mesh" rgba="0 0.5 0 1" mesh="robot0_link1" />
+          <body name="robot0_link2" quat="0.707107 -0.707107 0 0">
+            <inertial pos="0 -0.1 0" mass="3" diaginertia="0.3 0.3 0.3" />
+            <joint name="robot0_joint2" pos="0 0 0" axis="0 0 1" limited="true" range="-1.7628 1.7628" armature="2.5" damping="0.1" frictionloss="0.1" />
+            <geom name="robot0_g13_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature024" mesh="robot0_link2_vis" />
+            <geom name="robot0_link2_collision" type="mesh" rgba="0 0.5 0 1" mesh="robot0_link2" />
+            <body name="robot0_link3" pos="0 -0.316 0" quat="0.707107 0.707107 0 0">
+              <inertial pos="0.04 0 -0.05" mass="2" diaginertia="0.2 0.2 0.2" />
+              <joint name="robot0_joint3" pos="0 0 0" axis="0 0 1" limited="true" range="-2.8973 2.8973" armature="1.66667" damping="0.1" frictionloss="0.1" />
+              <geom name="robot0_g14_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature003_004_001_002" mesh="robot0_link3_vis_0" />
+              <geom name="robot0_g15_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature002_007_001_002" mesh="robot0_link3_vis_1" />
+              <geom name="robot0_g16_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature001_010_001_002" mesh="robot0_link3_vis_2" />
+              <geom name="robot0_g17_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature_001_001_001_002" mesh="robot0_link3_vis_3" />
+              <geom name="robot0_link3_collision" type="mesh" rgba="0 0.5 0 1" mesh="robot0_link3" />
+              <body name="robot0_link4" pos="0.0825 0 0" quat="0.707107 0.707107 0 0">
+                <inertial pos="-0.04 0.05 0" mass="2" diaginertia="0.2 0.2 0.2" />
+                <joint name="robot0_joint4" pos="0 0 0" axis="0 0 1" limited="true" range="-3.0718 -0.0698" armature="1.25" damping="0.1" frictionloss="0.1" />
+                <geom name="robot0_g18_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature001_001_003_001" mesh="robot0_link4_vis_0" />
+                <geom name="robot0_g19_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature003_001_003_001" mesh="robot0_link4_vis_1" />
+                <geom name="robot0_g20_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature002_001_003_001" mesh="robot0_link4_vis_2" />
+                <geom name="robot0_g21_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature_002_003_001" mesh="robot0_link4_vis_3" />
+                <geom name="robot0_link4_collision" type="mesh" rgba="0 0.5 0 1" mesh="robot0_link4" />
+                <body name="robot0_link5" pos="-0.0825 0.384 0" quat="0.707107 -0.707107 0 0">
+                  <inertial pos="0 0 -0.15" mass="2" diaginertia="0.2 0.2 0.2" />
+                  <joint name="robot0_joint5" pos="0 0 0" axis="0 0 1" limited="true" range="-2.8973 2.8973" armature="1" damping="0.1" frictionloss="0.1" />
+                  <geom name="robot0_g22_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell001_001_001_003" mesh="robot0_link5_vis_0" />
+                  <geom name="robot0_g23_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell_001_001_003" mesh="robot0_link5_vis_1" />
+                  <geom name="robot0_g24_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature_002_004_003" mesh="robot0_link5_vis_2" />
+                  <geom name="robot0_link5_collision" type="mesh" rgba="0 0.5 0 1" mesh="robot0_link5" />
+                  <body name="robot0_link6" quat="0.707107 0.707107 0 0">
+                    <inertial pos="0.06 0 0" mass="1.5" diaginertia="0.1 0.1 0.1" />
+                    <joint name="robot0_joint6" pos="0 0 0" axis="0 0 1" limited="true" range="-0.0175 3.7525" armature="0.833333" damping="0.01" frictionloss="0.1" />
+                    <geom name="robot0_g25_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell006_003_002_001" mesh="robot0_link6_vis_0" />
+                    <geom name="robot0_g26_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell011_002_002_001" mesh="robot0_link6_vis_1" />
+                    <geom name="robot0_g27_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell007_002_002_001" mesh="robot0_link6_vis_2" />
+                    <geom name="robot0_g28_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell005_001_001_002_001" mesh="robot0_link6_vis_3" />
+                    <geom name="robot0_g29_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell004_001_001_002_001" mesh="robot0_link6_vis_4" />
+                    <geom name="robot0_g30_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell003_002_001_002_001" mesh="robot0_link6_vis_5" />
+                    <geom name="robot0_g31_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell002_002_001_002_001" mesh="robot0_link6_vis_6" />
+                    <geom name="robot0_g32_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Union001_001_001_002_001" mesh="robot0_link6_vis_7" />
+                    <geom name="robot0_g33_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Union_001_001_002_001" mesh="robot0_link6_vis_8" />
+                    <geom name="robot0_g34_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Face539_002_001_002_001" mesh="robot0_link6_vis_9" />
+                    <geom name="robot0_g35_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell_003_001_002_001" mesh="robot0_link6_vis_10" />
+                    <geom name="robot0_g36_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Face374_002_001_002_001" mesh="robot0_link6_vis_11" />
+                    <geom name="robot0_g37_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Face065_002_001_002_001" mesh="robot0_link6_vis_12" />
+                    <geom name="robot0_g38_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Face064_002_001_002_001" mesh="robot0_link6_vis_13" />
+                    <geom name="robot0_g39_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature002_006_001_002_001" mesh="robot0_link6_vis_14" />
+                    <geom name="robot0_g40_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Feature001_009_001_002_001" mesh="robot0_link6_vis_15" />
+                    <geom name="robot0_g41_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Shell012_002_002_001" mesh="robot0_link6_vis_16" />
+                    <geom name="robot0_link6_collision" type="mesh" rgba="0 0.5 0 1" mesh="robot0_link6" />
+                    <body name="robot0_link7" pos="0.088 0 0" quat="0.707107 0.707107 0 0">
+                      <inertial pos="0 0 0.08" mass="0.5" diaginertia="0.05 0.05 0.05" />
+                      <joint name="robot0_joint7" pos="0 0 0" axis="0 0 1" limited="true" range="-2.8973 2.8973" armature="0.714286" damping="0.01" frictionloss="0.1" />
+                      <geom name="robot0_g42_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Mirroring004_004_002" mesh="robot0_link7_vis_0" />
+                      <geom name="robot0_g43_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Mirroring001_004_002" mesh="robot0_link7_vis_1" />
+                      <geom name="robot0_g44_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Mirroring007_004_001" mesh="robot0_link7_vis_2" />
+                      <geom name="robot0_g45_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Mirroring006_004_001" mesh="robot0_link7_vis_3" />
+                      <geom name="robot0_g46_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Mirroring005_004_001" mesh="robot0_link7_vis_4" />
+                      <geom name="robot0_g47_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Mirroring003_004_001" mesh="robot0_link7_vis_5" />
+                      <geom name="robot0_g48_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Mirroring002_004_001" mesh="robot0_link7_vis_6" />
+                      <geom name="robot0_g49_vis" type="mesh" contype="0" conaffinity="0" group="1" material="robot0_Part__Mirroring_004_001" mesh="robot0_link7_vis_7" />
+                      <geom name="robot0_link7_collision" type="mesh" rgba="0 0.5 0 1" mesh="robot0_link7" />
+                      <body name="robot0_right_hand" pos="0 0 0.1065" quat="0.923785 0 0 -0.382911">
+                        <inertial pos="0 0 0" mass="0.5" diaginertia="0.05 0.05 0.05" />
+                        <camera name="robot0_eye_in_hand" pos="0.05 0 0" quat="0 0.707107 0.707107 0" fovy="75" />
+                        <body name="gripper0_right_right_gripper" quat="0.707107 0 0 -0.707107">
+                          <inertial pos="0 0 0.17" quat="0.707107 0.707107 0 0" mass="0.3" diaginertia="0.09 0.07 0.05" />
+                          <geom name="gripper0_right_hand_visual" quat="0.707107 0 0 0.707107" type="mesh" contype="0" conaffinity="0" group="1" rgba="1 1 1 1" mesh="gripper0_right_hand_vis" />
+                          <geom name="gripper0_right_hand_collision" quat="0.707107 0 0 0.707107" type="mesh" rgba="0 0 0.5 1" mesh="gripper0_right_hand" />
+                          <site name="gripper0_right_ft_frame" pos="0 0 0" size="0.01" group="1" rgba="1 0 0 -1" />
+                          <body name="gripper0_right_eef" pos="0 0 0.097">
+                            <site name="gripper0_right_grip_site" pos="0 0 0" size="0.01" group="1" rgba="1 0 0 -0.5" />
+                            <site name="gripper0_right_ee_x" pos="0.1 0 0" quat="0.707105 0 0.707108 0" size="0.005 0.1" group="1" type="cylinder" rgba="1 0 0 0" />
+                            <site name="gripper0_right_ee_y" pos="0 0.1 0" quat="0.707105 0.707108 0 0" size="0.005 0.1" group="1" type="cylinder" rgba="0 1 0 0" />
+                            <site name="gripper0_right_ee_z" pos="0 0 0.1" size="0.005 0.1" group="1" type="cylinder" rgba="0 0 1 0" />
+                            <site name="gripper0_right_grip_site_cylinder" pos="0 0 0" size="0.005 10" group="1" type="cylinder" rgba="0 1 0 -0.3" />
+                          </body>
+                          <body name="gripper0_right_leftfinger" pos="0 0 0.0524" quat="0.707107 0 0 0.707107">
+                            <inertial pos="0 0 0.05" mass="0.1" diaginertia="0.01 0.01 0.005" />
+                            <joint name="gripper0_right_finger_joint1" pos="0 0 0" axis="0 1 0" type="slide" limited="true" range="0 0.04" armature="1" damping="100" frictionloss="1" />
+                            <geom name="gripper0_right_finger1_visual" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.499 0.499 0.499 1" mesh="gripper0_right_finger_vis" />
+                            <geom name="gripper0_right_finger1_collision" type="mesh" contype="0" condim="4" rgba="0 0 0.5 1" mesh="gripper0_right_finger" />
+                            <body name="gripper0_right_finger_joint1_tip" pos="0 0.0085 0.056">
+                              <inertial pos="0 0 0" quat="0 0 0 1" mass="0.01" diaginertia="0.01 0.01 0.01" />
+                              <geom name="gripper0_right_finger1_pad_collision" size="0.008 0.004 0.008" pos="0 -0.005 -0.015" quat="0 0 0 1" type="box" friction="2 0.05" solref="0.01 0.5" rgba="0 0 0.5 1" />
+                            </body>
+                          </body>
+                          <body name="gripper0_right_rightfinger" pos="0 0 0.0524" quat="0.707107 0 0 0.707107">
+                            <inertial pos="0 0 0.05" mass="0.1" diaginertia="0.01 0.01 0.005" />
+                            <joint name="gripper0_right_finger_joint2" pos="0 0 0" axis="0 1 0" type="slide" limited="true" range="-0.04 0" armature="1" damping="100" frictionloss="1" />
+                            <geom name="gripper0_right_finger2_visual" quat="0 0 0 1" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.499 0.499 0.499 1" mesh="gripper0_right_finger_vis" />
+                            <geom name="gripper0_right_finger2_collision" quat="0 0 0 1" type="mesh" contype="0" condim="4" rgba="0 0 0.5 1" mesh="gripper0_right_finger" />
+                            <body name="gripper0_right_finger_joint2_tip" pos="0 -0.0085 0.056">
+                              <inertial pos="0 0 0" quat="0 0 0 1" mass="0.01" diaginertia="0.01 0.01 0.01" />
+                              <geom name="gripper0_right_finger2_pad_collision" size="0.008 0.004 0.008" pos="0 0.005 -0.015" quat="0 0 0 1" type="box" friction="2 0.05" solref="0.01 0.5" rgba="0 0 0.5 1" />
+                            </body>
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="fixed_mount0_base" pos="0 0 0.01">
+        <body name="fixed_mount0_controller_box">
+          <inertial pos="-0.325 0 -0.38" mass="46.64" diaginertia="1.71363 1.27988 0.809981" />
+          <geom name="fixed_mount0_controller_box_col" size="0.11 0.2 0.265" pos="-0.325 0 -0.38" type="box" rgba="0.5 0.5 0 1" />
+        </body>
+        <body name="fixed_mount0_pedestal_feet">
+          <inertial pos="-0.1225 0 -0.758" mass="167.09" diaginertia="8.16095 9.59375 15.0785" />
+          <geom name="fixed_mount0_pedestal_feet_col" size="0.385 0.35 0.155" pos="-0.1225 0 -0.758" type="box" rgba="0.5 0.5 0 1" />
+        </body>
+        <body name="fixed_mount0_torso">
+          <inertial pos="0 0 0" mass="0.0001" diaginertia="1e-08 1e-08 1e-08" />
+          <geom name="fixed_mount0_torso_vis" size="0.05 0.05 0.05" pos="0 0 -0.05" type="box" contype="0" conaffinity="0" group="1" rgba="0.2 0.2 0.2 1" />
+        </body>
+        <body name="fixed_mount0_pedestal">
+          <inertial pos="0 0 0" quat="0.659267 -0.259505 -0.260945 0.655692" mass="60.864" diaginertia="6.0869 5.81635 4.20915" />
+          <geom name="fixed_mount0_pedestal_vis" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.2 0.2 0.2 1" mesh="fixed_mount0_pedestal" />
+          <geom name="fixed_mount0_pedestal_col" size="0.18 0.31" pos="-0.02 0 -0.29" type="cylinder" rgba="0.5 0.5 0 1" />
+        </body>
+      </body>
+    </body>
+    <camera name="cam_torso" pos="0.1 0 1.38" fovy="80" quat="0.52 0.48 -0.48 -0.52" />
+    <body name="workspace" pos="0.8 0 0">
+      <geom name="shelf_bottom" size="0.25 0.68 0.525" pos="0 0 0.525" type="box" material="table_ceramic" />
+      <geom name="shelf_padding_left" size="0.25 0.025 0.02" pos="0 -0.655 1.07" type="box" material="table_ceramic" />
+       <geom name="shelf_padding_right" size="0.25 0.025 0.02" pos="0 0.655 1.07" type="box" material="table_ceramic" />
+      <geom name="shelf_padding_back" size="0.025 0.63 0.02" pos="0.225 0 1.07" type="box" material="table_ceramic" />
+       <geom name="shelf_padding_front" size="0.0125 0.68 0.02" pos="-0.2625 0 1.07" type="box" material="table_ceramic" />
+      <camera name="back_view" pos="0.5 0 1.5" quat="0.601501 0.371748 0.371748 0.601501" fovy="70" />
+    </body>
+    <body name="obj_000006_0" pos="0.761391 -0.189633 1.09445" quat="-0.177971 0.362321 -0.913222 0.055452">
+      <joint name="obj_000006_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000006_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000006_0_mat" mesh="obj_000006_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.282674 0.373261 0.785096 1" mesh="obj_000006_0_obj_000006_collision_0" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.277812 0.852701 0.913125 1" mesh="obj_000006_0_obj_000006_collision_1" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.802059 0.302579 0.262021 1" mesh="obj_000006_0_obj_000006_collision_2" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.874928 0.719378 0.13459 1" mesh="obj_000006_0_obj_000006_collision_3" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.213019 0.655887 0.950904 1" mesh="obj_000006_0_obj_000006_collision_4" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.715044 0.633758 0.595979 1" mesh="obj_000006_0_obj_000006_collision_5" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.591443 0.639773 0.477048 1" mesh="obj_000006_0_obj_000006_collision_6" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.537069 0.565004 0.419357 1" mesh="obj_000006_0_obj_000006_collision_7" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.458225 0.532296 0.222167 1" mesh="obj_000006_0_obj_000006_collision_8" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.00699276 0.226178 0.640432 1" mesh="obj_000006_0_obj_000006_collision_9" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.113719 0.640306 0.656521 1" mesh="obj_000006_0_obj_000006_collision_10" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.547945 0.87157 0.882749 1" mesh="obj_000006_0_obj_000006_collision_11" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.296395 0.716942 0.668554 1" mesh="obj_000006_0_obj_000006_collision_12" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.240608 0.114261 0.664345 1" mesh="obj_000006_0_obj_000006_collision_13" />
+    </body>
+    <body name="obj_000010_0" pos="0.663509 0.00697205 1.1317" quat="0.430638 0.392525 0.589761 0.559157">
+      <joint name="obj_000010_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000010_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000010_0_mat" mesh="obj_000010_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.873288 0.334335 0.0887188 1" mesh="obj_000010_0_obj_000010_collision_0" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.776897 0.173028 0.598056 1" mesh="obj_000010_0_obj_000010_collision_1" />
+    </body>
+    <body name="obj_000012_0" pos="0.644284 -0.0974667 1.14661" quat="0.799436 -0.00781852 0.0100872 -0.600616">
+      <joint name="obj_000012_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000012_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000012_0_mat" mesh="obj_000012_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.755461 0.648638 0.717659 1" mesh="obj_000012_0_obj_000012_collision_0" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.700729 0.451793 0.0927653 1" mesh="obj_000012_0_obj_000012_collision_1" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.206654 0.968649 0.0818582 1" mesh="obj_000012_0_obj_000012_collision_2" />
+    </body>
+    <body name="obj_000015_0" pos="0.798105 -0.00128503 1.09537" quat="0.709386 0.595161 0.374517 0.0478762">
+      <joint name="obj_000015_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000015_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000015_0_mat" mesh="obj_000015_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.319032 0.19527 0.868196 1" mesh="obj_000015_0_obj_000015_collision_0" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0549609 0.16901 0.297617 1" mesh="obj_000015_0_obj_000015_collision_1" />
+    </body>
+    <body name="obj_000016_0" pos="0.613205 -0.0656482 1.24388" quat="0.969308 -0.172221 -0.100982 0.143471">
+      <joint name="obj_000016_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000016_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000016_0_mat" mesh="obj_000016_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.260014 0.239239 0.852618 1" mesh="obj_000016_0_obj_000016_collision_0" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.702263 0.840908 0.580928 1" mesh="obj_000016_0_obj_000016_collision_1" />
+    </body>
+    <body name="obj_000051_0" pos="0.728825 0.115832 1.09176" quat="-0.00206541 -0.867471 -0.497479 0.00208855">
+      <joint name="obj_000051_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000051_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000051_0_mat" mesh="obj_000051_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.00438321 0.416353 0.149356 1" mesh="obj_000051_0_obj_000051_collision_0" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.850141 0.0378037 0.86319 1" mesh="obj_000051_0_obj_000051_collision_1" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0397926 0.884545 0.104351 1" mesh="obj_000051_0_obj_000051_collision_2" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.312744 0.13914 0.360564 1" mesh="obj_000051_0_obj_000051_collision_3" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.282476 0.821213 0.434684 1" mesh="obj_000051_0_obj_000051_collision_4" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.150588 0.942875 0.0765887 1" mesh="obj_000051_0_obj_000051_collision_5" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.104846 0.493314 0.0140477 1" mesh="obj_000051_0_obj_000051_collision_6" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.924671 0.973415 0.0789088 1" mesh="obj_000051_0_obj_000051_collision_7" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0466048 0.967381 0.110148 1" mesh="obj_000051_0_obj_000051_collision_8" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.254069 0.168813 0.697487 1" mesh="obj_000051_0_obj_000051_collision_9" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.84557 0.57254 0.278116 1" mesh="obj_000051_0_obj_000051_collision_10" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.823308 0.0677722 0.748089 1" mesh="obj_000051_0_obj_000051_collision_11" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.330287 0.30504 0.662969 1" mesh="obj_000051_0_obj_000051_collision_12" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.926022 0.140717 0.147686 1" mesh="obj_000051_0_obj_000051_collision_13" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.405306 0.0163458 0.308043 1" mesh="obj_000051_0_obj_000051_collision_14" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.377353 0.731097 0.306719 1" mesh="obj_000051_0_obj_000051_collision_15" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.833293 0.903418 0.13367 1" mesh="obj_000051_0_obj_000051_collision_16" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.979016 0.346201 0.217186 1" mesh="obj_000051_0_obj_000051_collision_17" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.844484 0.526526 0.0230728 1" mesh="obj_000051_0_obj_000051_collision_18" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.447727 0.145314 0.43185 1" mesh="obj_000051_0_obj_000051_collision_19" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.321729 0.783555 0.488553 1" mesh="obj_000051_0_obj_000051_collision_20" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.219213 0.0077447 0.641037 1" mesh="obj_000051_0_obj_000051_collision_21" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0605539 0.194732 0.556898 1" mesh="obj_000051_0_obj_000051_collision_22" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.406845 0.106869 0.430863 1" mesh="obj_000051_0_obj_000051_collision_23" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.355718 0.0938183 0.135983 1" mesh="obj_000051_0_obj_000051_collision_24" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.311082 0.0708625 0.828486 1" mesh="obj_000051_0_obj_000051_collision_25" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.758914 0.0178865 0.595305 1" mesh="obj_000051_0_obj_000051_collision_26" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.431222 0.584964 0.737579 1" mesh="obj_000051_0_obj_000051_collision_27" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.965626 0.967227 0.0688337 1" mesh="obj_000051_0_obj_000051_collision_28" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.438218 0.240309 0.527479 1" mesh="obj_000051_0_obj_000051_collision_29" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.389665 0.32204 0.88698 1" mesh="obj_000051_0_obj_000051_collision_30" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.868877 0.851685 0.336571 1" mesh="obj_000051_0_obj_000051_collision_31" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0375398 0.236764 0.16246 1" mesh="obj_000051_0_obj_000051_collision_32" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.788232 0.036567 0.969872 1" mesh="obj_000051_0_obj_000051_collision_33" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.700562 0.900575 0.884319 1" mesh="obj_000051_0_obj_000051_collision_34" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.35604 0.3291 0.168239 1" mesh="obj_000051_0_obj_000051_collision_35" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.774209 0.404331 0.747516 1" mesh="obj_000051_0_obj_000051_collision_36" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.440332 0.645168 0.164358 1" mesh="obj_000051_0_obj_000051_collision_37" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.394906 0.332593 0.24747 1" mesh="obj_000051_0_obj_000051_collision_38" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.751562 0.316656 0.71524 1" mesh="obj_000051_0_obj_000051_collision_39" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.892711 0.216266 0.120972 1" mesh="obj_000051_0_obj_000051_collision_40" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.178052 0.154872 0.88746 1" mesh="obj_000051_0_obj_000051_collision_41" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.884464 0.86335 0.832471 1" mesh="obj_000051_0_obj_000051_collision_42" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.713954 0.00843119 0.747903 1" mesh="obj_000051_0_obj_000051_collision_43" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.514716 0.379501 0.514022 1" mesh="obj_000051_0_obj_000051_collision_44" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0807303 0.167077 0.933158 1" mesh="obj_000051_0_obj_000051_collision_45" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.362342 0.394959 0.485472 1" mesh="obj_000051_0_obj_000051_collision_46" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.344727 0.124594 0.767264 1" mesh="obj_000051_0_obj_000051_collision_47" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.181307 0.241021 0.874173 1" mesh="obj_000051_0_obj_000051_collision_48" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.72703 0.513153 0.442579 1" mesh="obj_000051_0_obj_000051_collision_49" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.220627 0.0226115 0.636671 1" mesh="obj_000051_0_obj_000051_collision_50" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.693736 0.996609 0.443737 1" mesh="obj_000051_0_obj_000051_collision_51" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.207454 0.235299 0.504361 1" mesh="obj_000051_0_obj_000051_collision_52" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.223378 0.278387 0.323946 1" mesh="obj_000051_0_obj_000051_collision_53" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.885072 0.264083 0.624695 1" mesh="obj_000051_0_obj_000051_collision_54" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0906372 0.719435 0.665772 1" mesh="obj_000051_0_obj_000051_collision_55" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.445739 0.154036 0.452313 1" mesh="obj_000051_0_obj_000051_collision_56" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.101661 0.192701 0.195645 1" mesh="obj_000051_0_obj_000051_collision_57" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.357371 0.0196722 0.706635 1" mesh="obj_000051_0_obj_000051_collision_58" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.995144 0.222612 0.936403 1" mesh="obj_000051_0_obj_000051_collision_59" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.157313 0.612652 0.199321 1" mesh="obj_000051_0_obj_000051_collision_60" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.543557 0.35061 0.15601 1" mesh="obj_000051_0_obj_000051_collision_61" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.920253 0.226753 0.0860801 1" mesh="obj_000051_0_obj_000051_collision_62" />
+    </body>
+    <body name="obj_000053_0" pos="0.785607 0.127594 1.06507" quat="0.00842189 -0.710668 -0.00528791 -0.703457">
+      <joint name="obj_000053_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000053_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000053_0_mat" mesh="obj_000053_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.33274 0.471923 0.0362518 1" mesh="obj_000053_0_obj_000053_collision_0" />
+    </body>
+    <body name="obj_000065_0" pos="0.786457 -0.0731909 1.11562" quat="0.887494 0.0179598 -0.380119 0.259889">
+      <joint name="obj_000065_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000065_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000065_0_mat" mesh="obj_000065_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.47402 0.288794 0.356649 1" mesh="obj_000065_0_obj_000065_collision_0" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.108353 0.339703 0.968244 1" mesh="obj_000065_0_obj_000065_collision_1" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0916354 0.913847 0.624888 1" mesh="obj_000065_0_obj_000065_collision_2" />
+    </body>
+    <body name="obj_000058_0" pos="0.700328 -0.149121 1.14595" quat="0.792671 -0.00138167 0.00470954 0.60963">
+      <joint name="obj_000058_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000058_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000058_0_mat" mesh="obj_000058_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0978575 0.404583 0.857979 1" mesh="obj_000058_0_obj_000058_collision_0" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.540925 0.110256 0.989406 1" mesh="obj_000058_0_obj_000058_collision_1" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.648959 0.696579 0.335127 1" mesh="obj_000058_0_obj_000058_collision_2" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.101677 0.271915 0.997281 1" mesh="obj_000058_0_obj_000058_collision_3" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.694246 0.331872 0.774792 1" mesh="obj_000058_0_obj_000058_collision_4" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.839139 0.265588 0.882837 1" mesh="obj_000058_0_obj_000058_collision_5" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.116529 0.442092 0.266493 1" mesh="obj_000058_0_obj_000058_collision_6" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.572943 0.956938 0.0833106 1" mesh="obj_000058_0_obj_000058_collision_7" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.942827 0.160508 0.412031 1" mesh="obj_000058_0_obj_000058_collision_8" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.131629 0.570925 0.611735 1" mesh="obj_000058_0_obj_000058_collision_9" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.180831 0.554082 0.49779 1" mesh="obj_000058_0_obj_000058_collision_10" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.719086 0.958056 0.936551 1" mesh="obj_000058_0_obj_000058_collision_11" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.383997 0.7963 0.030753 1" mesh="obj_000058_0_obj_000058_collision_12" />
+    </body>
+    <body name="obj_000068_0" pos="0.660235 -0.225028 1.16049" quat="0.937848 0.00306386 0.0156094 0.346681">
+      <joint name="obj_000068_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000068_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000068_0_mat" mesh="obj_000068_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.507614 0.396687 0.105255 1" mesh="obj_000068_0_obj_000068_collision_0" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.129841 0.449207 0.136724 1" mesh="obj_000068_0_obj_000068_collision_1" />
+    </body>
+    <body name="obj_000063_0" pos="0.707179 -0.229218 1.06524" quat="0.538776 -0.457695 0.538791 0.458192">
+      <joint name="obj_000063_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000063_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000063_0_mat" mesh="obj_000063_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.478454 0.700215 0.743789 1" mesh="obj_000063_0_obj_000063_collision_0" />
+    </body>
+    <body name="obj_000020_0" pos="1.42828 -0.517978 0.00560764" quat="-0.0283062 0.0409676 0.996189 -0.0716151">
+      <joint name="obj_000020_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000020_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000020_0_mat" mesh="obj_000020_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.0759232 0.798996 0.437201 1" mesh="obj_000020_0_obj_000020_collision_0" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.534456 0.776982 0.761772 1" mesh="obj_000020_0_obj_000020_collision_1" />
+    </body>
+    <body name="obj_000021_0" pos="0.748882 0.180171 1.07918" quat="0.407958 -0.09417 0.0971212 0.902923">
+      <joint name="obj_000021_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000021_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000021_0_mat" mesh="obj_000021_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.237805 0.803349 0.813036 1" mesh="obj_000021_0_obj_000021_collision_0" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.813239 0.305167 0.992685 1" mesh="obj_000021_0_obj_000021_collision_1" />
+    </body>
+    <body name="obj_000070_0" pos="0.788307 -0.129804 1.07087" quat="0.948302 -0.000672172 0.000204156 0.317368">
+      <joint name="obj_000070_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000070_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000070_0_mat" mesh="obj_000070_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.243783 0.523537 0.880018 1" mesh="obj_000070_0_obj_000070_collision_0" />
+    </body>
+    <body name="obj_000079_0" pos="0.717132 0.177367 1.1222" quat="0.941935 -1.14682e-05 3.76533e-06 0.335796">
+      <joint name="obj_000079_0_joint" type="free" limited="false" actuatorfrclimited="false" />
+      <geom name="obj_000079_0_geom" type="mesh" contype="0" conaffinity="0" group="1" material="obj_000079_0_mat" mesh="obj_000079_0_vis" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.192367 0.93412 0.731498 1" mesh="obj_000079_0_obj_000079_collision_0" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.759058 0.0947434 0.0305422 1" mesh="obj_000079_0_obj_000079_collision_1" />
+      <geom type="mesh" contype="3" conaffinity="3" group="3" rgba="0.375706 0.380186 0.645844 1" mesh="obj_000079_0_obj_000079_collision_2" />
+    </body>
+  <body name="phase4_1_torc_base_origin_marker" pos="0 0 0"><geom name="torc_base_origin_disc" type="cylinder" pos="0 0 0.01" size="0.12 0.01" rgba="1 0.18 0.05 1" contype="0" conaffinity="0" group="1" /><geom name="phase4_1_franka_z_support" type="cylinder" pos="0 0 0.43" size="0.055 0.43" rgba="0.1 0.1 0.12 0.85" contype="0" conaffinity="0" group="1" /><site name="torc_base_origin_site" pos="0 0 0" size="0.025" rgba="1 0 0 1" /></body></worldbody>
+
+  <actuator>
+    <general name="gripper0_right_gripper_finger_joint1" joint="gripper0_right_finger_joint1" ctrllimited="true" ctrlrange="0 0.04" forcelimited="true" forcerange="-20 20" biastype="affine" gainprm="1000" biasprm="0 -1000" />
+    <general name="gripper0_right_gripper_finger_joint2" joint="gripper0_right_finger_joint2" ctrllimited="true" ctrlrange="-0.04 0" forcelimited="true" forcerange="-20 20" biastype="affine" gainprm="1000" biasprm="0 -1000" />
+  <position name="robot0_pos_j1" joint="robot0_joint1" kp="650" ctrllimited="true" ctrlrange="-2.8973 2.8973" forcelimited="true" forcerange="-80 80" /><position name="robot0_pos_j2" joint="robot0_joint2" kp="650" ctrllimited="true" ctrlrange="-1.7628 1.7628" forcelimited="true" forcerange="-80 80" /><position name="robot0_pos_j3" joint="robot0_joint3" kp="650" ctrllimited="true" ctrlrange="-2.8973 2.8973" forcelimited="true" forcerange="-80 80" /><position name="robot0_pos_j4" joint="robot0_joint4" kp="650" ctrllimited="true" ctrlrange="-3.0718 -0.0698" forcelimited="true" forcerange="-80 80" /><position name="robot0_pos_j5" joint="robot0_joint5" kp="650" ctrllimited="true" ctrlrange="-2.8973 2.8973" forcelimited="true" forcerange="-12 12" /><position name="robot0_pos_j6" joint="robot0_joint6" kp="650" ctrllimited="true" ctrlrange="-0.0175 3.7525" forcelimited="true" forcerange="-12 12" /><position name="robot0_pos_j7" joint="robot0_joint7" kp="650" ctrllimited="true" ctrlrange="-2.8973 2.8973" forcelimited="true" forcerange="-12 12" /></actuator>
+
+  <sensor>
+    <force site="gripper0_right_ft_frame" name="gripper0_right_force_ee" />
+    <torque site="gripper0_right_ft_frame" name="gripper0_right_torque_ee" />
+  </sensor>
+<visual><global offwidth="1400" offheight="950" /></visual></mujoco>

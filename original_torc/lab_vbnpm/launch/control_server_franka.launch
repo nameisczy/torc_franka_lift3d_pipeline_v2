@@ -1,0 +1,27 @@
+<launch>
+  <arg name="franka_node_server_address" default="tcp://*:5858" />
+  <arg name="render_execution_video" default="0" />
+  <arg name="render_cameras" default="back_view" />
+  <arg name="render_stride" default="5" />
+  <arg name="render_fps" default="20" />
+  <arg name="render_width" default="1280" />
+  <arg name="render_height" default="720" />
+
+  <param name="use_sim_time" value="true"/>
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="world_to_base" args="0 0 0 0 0 0 1 world base" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <node name="franka_node" pkg="lab_vbnpm" type="franka_node.py" args="--server-address $(arg franka_node_server_address)" output="screen">
+    <env name="TORC_RENDER_EXECUTION_VIDEO" value="$(arg render_execution_video)" />
+    <env name="TORC_RENDER_CAMERAS" value="$(arg render_cameras)" />
+    <env name="TORC_RENDER_STRIDE" value="$(arg render_stride)" />
+    <env name="TORC_RENDER_FPS" value="$(arg render_fps)" />
+    <env name="TORC_RENDER_WIDTH" value="$(arg render_width)" />
+    <env name="TORC_RENDER_HEIGHT" value="$(arg render_height)" />
+  </node>
+  <node name="franka_interface" pkg="lab_vbnpm" type="franka_interface.py" args="" output="screen" />
+
+  <param name="robot_description" textfile="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/urdf/franka_panda_phase4.urdf" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="world_to_panda_link0" args="0 0 0.86 0 0 0 1 world panda_link0" />
+</launch>

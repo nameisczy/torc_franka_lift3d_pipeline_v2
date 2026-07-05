@@ -1,0 +1,7 @@
+<launch>
+  <arg name="config" default="$(find lab_vbnpm)/launch/j_user.rviz"/>
+  <param name="config_path_debug" value="$(arg config)"/>
+
+  <node name="j_userviz" pkg="rviz" type="rviz" args="$(arg config)"/>
+  <!-- supposedly this runs from the directory where I run rosrun -->
+</launch>

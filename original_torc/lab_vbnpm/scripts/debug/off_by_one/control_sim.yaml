@@ -1,0 +1,26 @@
+session_name: "control_sim"
+vars:
+  SCENE:
+    type: str
+    default: "./tests/scenes/tabletop_structured/scene198.xml"
+    help: "Path to the scene"
+pre_cmd: "./7kill.sh"
+post_attach: false
+windows:
+  - "core": "roscore"
+
+  - "Control Launch": "DISABLE_ROS1_EOL_WARNINGS=1 roslaunch --wait lab_vbnpm obo_control.launch is_sim:=true scene:=$SCENE"
+  
+  - "Grasp Planner Launch": "roslaunch --wait cgn_ros container.launch"
+    post_delay: 6.0
+  
+  - "Calibration Sim Parameters": "python3 ./launch/calibration/sim_params.py"
+    post_delay: 3.0
+  
+  - "Window Control": "./winctrl.sh ./ros_configs/control_sim.windows.yaml"
+  
+  - "Control Terminal": 
+    - "wmctrl -c 'Selected Info'"
+    - "gnome-terminal --title 'Selected Info' -- bash -c './show_selected_obj.sh; exec bash'"
+    - "wmctrl -c 'Control Terminal'"
+    - "gnome-terminal --title 'Control Terminal' -- bash -c 'tmux attach; exec bash'"

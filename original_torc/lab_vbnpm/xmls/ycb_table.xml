@@ -1,0 +1,159 @@
+<mujoco model="World">
+  <compiler angle="radian" balanceinertia="true" inertiafromgeom="true"
+    meshdir="../"
+    texturedir="../"
+    autolimits="true"/>
+  <option integrator="Euler" cone="elliptic" solver="CG" noslip_iterations="2">
+    <flag warmstart="disable" multiccd="enable"/>
+  </option>
+  <!-- <default> -->
+  <!--     <geom condim="6"/> -->
+  <!-- </default> -->
+  <default>
+    <geom density="10"/>
+  </default>
+  <asset>
+    <include file="robot_asset.xml"/>
+    <!-- background -->
+    <texture type="skybox" builtin="flat" rgb1="1 1 1" rgb2="0 0 0" width="512" height="512"/>
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="2 2" texuniform="true" specular="0" shininess="0" reflectance="0" emission="1" />
+    <!-- ceramic table texture and material-->
+    <texture file="models/rs_table/ceramic.png" type="cube" name="tex-ceramic"/>
+    <material name="table_ceramic" reflectance="0.0" shininess="0.0" specular="0.2" texrepeat="1 1" texture="tex-ceramic" />
+    <!-- steel legs -->
+    <texture file="models/rs_table/steel-brushed.png" type="cube" name="tex-steel-brushed"/>
+    <material name="table_legs_metal" reflectance="0.8" shininess="0.8" texrepeat="1 1" texture="tex-steel-brushed" />
+    <!-- ycb assets -->
+    <texture type="2d" name="003_cracker_box" file="models/objects/ycb_se3tn/003_cracker_box/texture_map.png"/>
+    <material name="003_cracker_box" texture="003_cracker_box"/>
+    <mesh name="003_cracker_box_vis" file="models/objects/ycb_se3tn/003_cracker_box/textured_simple.obj"/>
+    <!-- <mesh name="003_cracker_box_col" file="models/objects/ycb_se3tn/003_cracker_box/textured_simple.obj"/> -->
+
+    <texture type="2d" name="004_sugar_box" file="models/objects/ycb_se3tn/004_sugar_box/texture_map.png"/>
+    <material name="004_sugar_box" texture="004_sugar_box"/>
+    <mesh name="004_sugar_box_vis" file="models/objects/ycb_se3tn/004_sugar_box/textured_simple.obj"/>
+    <!-- <mesh name="004_sugar_box_col" file="models/objects/ycb_se3tn/004_sugar_box/textured_simple.obj"/> -->
+
+    <texture type="2d" name="005_tomato_soup_can" file="models/objects/ycb_se3tn/005_tomato_soup_can/texture_map.png"/>
+    <material name="005_tomato_soup_can" texture="005_tomato_soup_can"/>
+    <mesh name="005_tomato_soup_can_vis" file="models/objects/ycb_se3tn/005_tomato_soup_can/textured_simple.obj"/>
+    <!-- <mesh name="005_tomato_soup_can_col" file="models/objects/ycb_se3tn/005_tomato_soup_can/textured_simple.obj"/> -->
+
+    <texture type="2d" name="006_mustard_bottle" file="models/objects/ycb_se3tn/006_mustard_bottle/texture_map.png"/>
+    <material name="006_mustard_bottle" texture="006_mustard_bottle"/>
+    <!-- <mesh name="006_mustard_bottle_vis" file="models/objects/ycb_se3tn/006_mustard_bottle/textured.obj"/> -->
+    <mesh name="006_mustard_bottle_vis" file="models/objects/ycb_se3tn/006_mustard_bottle/textured_simple.obj"/>
+
+    <texture type="2d" name="008_pudding_box" file="models/objects/ycb_se3tn/008_pudding_box/texture_map.png"/>
+    <material name="008_pudding_box" texture="008_pudding_box"/>
+    <mesh name="008_pudding_box_vis" file="models/objects/ycb_se3tn/008_pudding_box/textured_simple.obj"/>
+    <!-- <mesh name="008_pudding_box_col" file="models/objects/ycb_se3tn/008_pudding_box/textured_simple.obj"/> -->
+
+    <texture type="2d" name="009_gelatin_box" file="models/objects/ycb_se3tn/009_gelatin_box/texture_map.png"/>
+    <material name="009_gelatin_box" texture="009_gelatin_box"/>
+    <mesh name="009_gelatin_box_vis" file="models/objects/ycb_se3tn/009_gelatin_box/textured_simple.obj"/>
+    <!-- <mesh name="009_gelatin_box_col" file="models/objects/ycb_se3tn/009_gelatin_box/textured_simple.obj"/> -->
+
+    <texture type="2d" name="010_potted_meat_can" file="models/objects/ycb_se3tn/010_potted_meat_can/texture_map.png"/>
+    <material name="010_potted_meat_can" texture="010_potted_meat_can"/>
+    <mesh name="010_potted_meat_can_vis" file="models/objects/ycb_se3tn/010_potted_meat_can/textured_simple.obj"/>
+    <!-- <mesh name="010_potted_meat_can_col" file="models/objects/ycb_se3tn/010_potted_meat_can/textured_simple.obj"/> -->
+
+    <texture type="2d" name="025_mug" file="models/objects/ycb_se3tn/025_mug/texture_map.png"/>
+    <material name="025_mug" texture="025_mug"/>
+    <!-- <mesh name="025_mug_vis" file="models/objects/ycb_se3tn/025_mug/textured.obj"/> -->
+    <mesh name="025_mug_vis" file="models/objects/ycb_se3tn/025_mug/textured_simple.obj"/>
+
+    <texture type="2d" name="036_wood_block" file="models/objects/ycb_se3tn/036_wood_block/texture_map.png"/>
+    <material name="036_wood_block" texture="036_wood_block"/>
+    <!-- <mesh name="036_wood_block_vis" file="models/objects/ycb_se3tn/036_wood_block/textured.obj"/> -->
+    <mesh name="036_wood_block_vis" file="models/objects/ycb_se3tn/036_wood_block/textured_simple.obj"/>
+
+  </asset>
+  <worldbody>
+    <geom name="floor" size="2 2 0.05" type="plane" material="grid" condim="3"/>
+    <light directional="true" pos="-0.5 0.5 3" dir="0 0 -1" castshadow="false" diffuse="1 1 1"/>
+    <!-- <body name="body_cam" pos="0.35 0 1.1" xyaxes="0 -1 0 0 0 1" mocap="true"> -->
+    <!--   <camera name="cam" fovy="90"/> -->
+    <!--   <geom name="geom_cam" size="0.04 0.04 0.01" type="box" rgba="0 0 0 1" contype="0" conaffinity="0"/> -->
+    <!-- </body> -->
+    <include file="robot_body.xml"/>
+    <body name="workspace" pos="0 0 0">
+      <body name="table" pos="0.9 0 0.4">
+        <!-- <geom pos="0 0 0.50" size="0.29 0.5 0.50" type="plane" conaffinity="4" contype="4" group="3" name="table_top" friction="1 0.005 0.0001"/> -->
+        <geom pos="0 0 0.00" size="0.29 0.5 0.50" type="box" conaffinity="3" contype="3" group="3" name="table_collision" friction="1 0.005 0.0001"/>
+        <geom pos="0 0 0.45" size="0.29 0.5 0.05" type="box" conaffinity="0" contype="0" group="1" name="table_visual" material="table_ceramic"/>
+        <!-- Legs (visual only) -->
+        <geom pos="0.24 0.45 -.05" size="0.05 0.45" type="cylinder" conaffinity="0" contype="0" group="1" name="table_leg1_visual" material="table_legs_metal"/>
+        <geom pos="0.24 -.45 -.05" size="0.05 0.45" type="cylinder" conaffinity="0" contype="0" group="1" name="table_leg2_visual" material="table_legs_metal"/>
+        <geom pos="-.24 0.45 -.05" size="0.05 0.45" type="cylinder" conaffinity="0" contype="0" group="1" name="table_leg3_visual" material="table_legs_metal"/>
+        <geom pos="-.24 -.45 -.05" size="0.05 0.45" type="cylinder" conaffinity="0" contype="0" group="1" name="table_leg4_visual" material="table_legs_metal"/>
+
+        <!-- <geom pos="0 0.5 0.5" size="0.29 0.01 0.50" type="box" conaffinity="1" contype="1" group="3" name="wall1" friction="1 0.005 0.0001"/> -->
+        <!-- <geom pos="0 -.5 0.5" size="0.29 0.01 0.50" type="box" conaffinity="1" contype="1" group="3" name="wall2" friction="1 0.005 0.0001"/> -->
+        <!-- <geom pos="0.29 0 0.5" size="0.01 0.50 0.50" type="box" conaffinity="1" contype="1" group="3" name="wall3" friction="1 0.005 0.0001"/> -->
+        <!-- <geom pos="-.29 0 0.5" size="0.01 0.50 0.50" type="box" conaffinity="1" contype="1" group="3" name="wall4" friction="1 0.005 0.0001"/> -->
+      </body>
+    </body>
+
+    <body name="003_cracker_box" pos="0.731725 -0.241262 1.00118" quat="-0.0047043 0.978247 -0.206916 -0.0140083">
+      <joint type="free"/>
+      <geom type="mesh" contype="0" conaffinity="0" group="1" material="003_cracker_box" mesh="003_cracker_box_vis"/>
+      <geom type="box" contype="3" conaffinity="3" group="3" size=".033 .08 .105" mass="0.000453"/>
+    </body>
+    <body name="004_sugar_box" pos="0.783113 0.135336 0.991932" quat="0.730639 -0.00125645 -0.00261409 0.682758">
+      <joint type="free"/>
+      <geom type="mesh" contype="0" conaffinity="0" group="1" material="004_sugar_box" mesh="004_sugar_box_vis" euler="0.01 .02 0"/>
+      <geom type="box" contype="3" conaffinity="3" group="3" size=".021 .045 .088" mass="0.000514"/>
+    </body>
+    <body name="005_tomato_soup_can" pos="0.661805 -0.137799 0.959148" quat="0.90509 2.21176e-07 -0.00123276 -0.425219">
+      <joint type="free"/>
+      <geom type="mesh" contype="0" conaffinity="0" group="1" material="005_tomato_soup_can" mesh="005_tomato_soup_can_vis"/>
+      <geom type="cylinder" contype="3" conaffinity="3" group="3" size=".033 .05" mass="0.000349"/>
+    </body>
+    <body name="006_mustard_bottle" pos="0.945132 -0.349991 0.983594" quat="0.321147 -0.00148272 0.00178492 0.947027">
+      <joint type="free"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="006_mustard_bottle" mesh="006_mustard_bottle_vis" mass="0.000514"/>
+    </body>
+    <body name="008_pudding_box" pos="0.975638 0.218729 0.947962" quat="-0.0948083 -0.234281 0.657616 -0.709693">
+      <joint type="free"/>
+      <geom type="mesh" contype="0" conaffinity="0" group="1" material="008_pudding_box" mesh="008_pudding_box_vis" euler="-.04 0 1.09"/>
+      <geom type="box" contype="3" conaffinity="3" group="3" size=".045 .055 .018" mass="0.000187"/>
+    </body>
+    <body name="009_gelatin_box" pos="0.649735 0.0550225 0.937151" quat="-0.0711878 -0.705203 -0.0978693 -0.698601">
+      <joint type="free"/>
+      <geom type="mesh" contype="0" conaffinity="0" group="1" material="009_gelatin_box" mesh="009_gelatin_box_vis" euler="0 0 -.25"/>
+      <geom type="box" contype="3" conaffinity="3" group="3" size=".036 .044 .014" mass="0.000097"/>
+    </body>
+    <body name="010_potted_meat_can" pos="0.825904 0.28672 0.949479" quat="-0.240264 -0.000278726 0.00211749 -0.970705">
+      <joint type="free"/>
+      <geom type="mesh" contype="0" conaffinity="0" group="1" material="010_potted_meat_can" mesh="010_potted_meat_can_vis" euler="0 0 -.05"/>
+      <geom type="box" contype="3" conaffinity="3" group="3" size=".048 .026 .041" mass="0.000370"/>
+    </body>
+    <body name="025_mug" pos="0.99887 -0.00446003 0.93869" quat="0.999708 -0.000545576 -0.000570109 0.0241458">
+      <joint type="free"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="025_mug" mesh="025_mug_vis" mass="0.000187"/>
+    </body>
+    <body name="036_wood_block" pos="0.789004 0.000854583 1.01988" quat="0.993939 3.50652e-05 -0.000649017 0.109932">
+      <joint type="free"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="036_wood_block" mesh="036_wood_block_vis" mass="0.000514"/>
+    </body>
+
+  </worldbody>
+  <actuator>
+    <include file="robot_actuator.xml"/>
+  </actuator>
+  <contact>
+    <include file="robot_contact.xml"/>
+  </contact>
+  <tendon>
+    <include file="robot_tendon.xml"/>
+  </tendon>
+  <equality>
+    <include file="robot_equality.xml"/>
+  </equality>
+  <default>
+    <include file="robot_default.xml"/>
+  </default>
+</mujoco>

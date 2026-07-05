@@ -1,0 +1,1 @@
+./run_experiment.sh experiment --scene tests/scenes/adjusted/tabletop_structured_198.xml --target-object obj_000041_0 --method human --server

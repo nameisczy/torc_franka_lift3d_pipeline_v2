@@ -1,0 +1,42 @@
+parameters:
+  eye_on_hand: true
+  freehand_robot_movement: false
+  move_group: arm_right
+  move_group_namespace: /
+  namespace: /my_eob_calib_eye_on_hand/
+  robot_base_frame: base_link
+  robot_effector_frame: arm_right_link_7_t
+  tracking_base_frame: d435_link
+  tracking_marker_frame: checkerboard
+transformation:
+  x: 0.002348054417687352
+  y: -0.05154984743572769
+  z: 0.06702094391388778
+  qx: 0.5
+  qy: -0.5
+  qz: 0.5
+  qw: 0.5
+  # qx: -0.5050944225413423
+  # qy: -0.4904519041204567
+  # qz: -0.5057318092120442
+  # qw: 0.49856984587253045
+
+#   translation: 
+#   x: 0.002348054417687352
+#   y: -0.05154984743572769
+#   z: 0.06702094391388778
+# rotation: 
+#   x: 0.49428156792090827
+#   y: -0.49353602916884876
+#   z: 0.502158133681356
+#   w: 0.5098481423949214
+
+# translation: 
+#   x: 0.0013575287335465744
+#   y: -0.05118726746086935
+#   z: 0.06671726825768183
+# rotation: 
+#   x: 0.49484403522023696
+#   y: -0.4933701724259043
+#   z: 0.5022369916890854
+#   w: 0.5093851764102318

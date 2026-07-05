@@ -1,0 +1,12 @@
+{
+  "protocol": "phase4_current_project_cgn_lowlevel_input_v1",
+  "object": "obj_000044_1",
+  "object_id": 9,
+  "points_shape": [
+    8784,
+    3
+  ],
+  "mask_points": 1008,
+  "point_cloud_frame": "fresh_capture_mujoco_world",
+  "forbidden_source": "gc6d_grasp_poses.npy/build_6d_grasp pose"
+}

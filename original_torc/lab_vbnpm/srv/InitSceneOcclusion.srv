@@ -1,0 +1,7 @@
+geometry_msgs/Pose pose
+# pose of the (0,0,0) and the coordinate system
+# For scene occlusion: this is world_T_voxel
+geometry_msgs/Vector3 resols
+geometry_msgs/Vector3 xyz_size # float size
+---
+bool success

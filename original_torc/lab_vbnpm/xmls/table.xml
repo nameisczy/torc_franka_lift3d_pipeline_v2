@@ -1,0 +1,61 @@
+<mujoco model="World">
+  <compiler angle="radian" balanceinertia="true" inertiafromgeom="true" 
+    meshdir="../"
+    texturedir="../"
+    autolimits="true"/>
+  <option integrator="Euler" cone="elliptic" solver="CG" noslip_iterations="2">
+    <flag warmstart="disable" multiccd="enable"/>
+  </option>
+  <default>
+    <geom density="10"/>
+  </default>
+  <asset>
+    <include file="robot_asset.xml"/>
+    <!-- background -->
+    <texture type="skybox" builtin="flat" rgb1="1 1 1" rgb2="0 0 0" width="512" height="512"/>
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="2 2" texuniform="true" specular="0" shininess="0" reflectance="0" emission="1" />
+    <!-- ceramic table texture and material-->
+    <texture file="models/rs_table/ceramic.png" type="cube" name="tex-ceramic"/>
+    <material name="table_ceramic" reflectance="0.0" shininess="0.0" specular="0.2" texrepeat="1 1" texture="tex-ceramic" />
+    <!-- steel legs -->
+    <texture file="models/rs_table/steel-brushed.png" type="cube" name="tex-steel-brushed"/>
+    <material name="table_legs_metal" reflectance="0.8" shininess="0.8" texrepeat="1 1" texture="tex-steel-brushed" />
+  </asset>
+  <worldbody>
+    <geom name="floor" size="2 2 0.05" type="plane" material="grid" condim="3"/>
+    <light directional="true" pos="-0.5 0.5 3" dir="0 0 -1" castshadow="false" diffuse="1 1 1"/>
+    <!-- <body name="body_cam" pos="0.4 0 1.1" xyaxes="0 -1 0 0 0 1" mocap="true"> -->
+    <!--   <camera name="cam" fovy="90"/> -->
+    <!--   <geom name="geom_cam" size="0.04 0.04 0.01" type="box" rgba="0 0 0 1" contype="0" conaffinity="0"/> -->
+    <!-- </body> -->
+    <include file="robot_body.xml"/>
+    <body name="workspace" pos="0 0 0">
+      <body name="table" pos="0.9 0 0.4">
+        <!-- <geom pos="0 0 0.50" size="0.29 0.5 0.50" type="plane" conaffinity="2" contype="2" group="3" name="table_top" friction="1 0.005 0.0001"/> -->
+        <geom pos="0 0 0.00" size="0.29 0.5 0.50" type="box" conaffinity="3" contype="3" group="3" name="table_collision" friction="1 0.005 0.0001"/>
+        <geom pos="0 0 0.45" size="0.29 0.5 0.05" type="box" conaffinity="0" contype="0" group="1" name="table_visual" material="table_ceramic"/>
+        <!-- Legs (visual only) -->
+        <geom pos="0.24 0.45 -.05" size="0.05 0.45" type="cylinder" conaffinity="0" contype="0" group="1" name="table_leg1_visual" material="table_legs_metal"/>
+        <geom pos="0.24 -.45 -.05" size="0.05 0.45" type="cylinder" conaffinity="0" contype="0" group="1" name="table_leg2_visual" material="table_legs_metal"/>
+        <geom pos="-.24 0.45 -.05" size="0.05 0.45" type="cylinder" conaffinity="0" contype="0" group="1" name="table_leg3_visual" material="table_legs_metal"/>
+        <geom pos="-.24 -.45 -.05" size="0.05 0.45" type="cylinder" conaffinity="0" contype="0" group="1" name="table_leg4_visual" material="table_legs_metal"/>
+      </body>
+    </body>
+  </worldbody>
+  <actuator>
+    <include file="robot_actuator.xml"/>
+  </actuator>
+  <contact>
+    <include file="robot_contact.xml"/>
+  </contact>
+  <tendon>
+    <include file="robot_tendon.xml"/>
+  </tendon>
+  <equality>
+    <include file="robot_equality.xml"/>
+  </equality>
+  <default>
+    <include file="robot_default.xml"/>
+  </default>
+</mujoco>

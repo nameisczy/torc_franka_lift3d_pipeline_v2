@@ -1,0 +1,29 @@
+windows:
+  "mujoco-python-viewer":
+    position: 140,0%
+    size: 27%,45%
+    monitor: 0
+
+  "Control Terminal":
+    position: 100,49%
+    size: 29%,53%
+
+  "sim.rviz* - RViz":
+    position: 30%,0%
+    size: 27%,45%
+
+  "Selected Info":
+    position: 29%,54%
+    size: 15%,53%
+
+  "img_labeled":
+    position: 57%,0%
+    size: 42%,45%
+
+  "dep_graph":
+    position: 45%,54%
+    size: 27%,45%
+    
+  "vlm_dep_graph":
+    position: 72%,54%
+    size: 27%,45%

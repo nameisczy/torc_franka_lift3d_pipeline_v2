@@ -1,0 +1,64 @@
+<default>
+  <default class="p_general">
+    <position kp="2000" forcerange="-30 30"/>
+  </default>
+  <default class="v_general">
+    <velocity kv="100000" forcerange="-30 30" ctrlrange="-2.2 2.2"/>
+  </default>
+  <default class="intvel_general">
+    <intvelocity kp="100000" forcerange="-30 30" ctrlrange="-2.2 2.2"/>
+  </default>
+  <default class="p_RB">
+    <position kp="2000" forcerange="-30 30"/>
+  </default>
+  <default class="v_RB">
+    <velocity kv="100000" forcerange="-30 30" ctrlrange="-3.4 3.4"/>
+  </default>
+  <default class="intvel_RB">
+    <intvelocity kp="100000" forcerange="-30 30" ctrlrange="-3.4 3.4"/>
+  </default>
+  <default class="p_T">
+    <position kp="2000" forcerange="-18 18"/>
+  </default>
+  <default class="v_T">
+    <velocity kv="100000" forcerange="-18 18" ctrlrange="-6.9 6.9"/>
+  </default>
+  <default class="intvel_T">
+    <intvelocity kp="100000" forcerange="-18 18" ctrlrange="-6.9 6.9"/>
+  </default>
+  <default class="hidden">
+    <geom group="3" conaffinity="3" contype="3"/>
+    <joint armature="0.1" damping="50"/>
+  </default>
+  <default class="2f85">
+    <mesh scale="0.001 0.001 0.001"/>
+    <general biastype="affine"/>
+    <joint axis="1 0 0" />
+    <default class="driver">
+      <joint range="0 0.8" armature="0.005" damping="0.1" solimplimit="0.95 0.99 0.001"
+        solreflimit="0.005 1"/>
+    </default>
+    <default class="follower">
+      <joint range="-0.872664 0.872664" pos="0 -0.018 0.0065" solimplimit="0.95 0.99 0.001"
+        solreflimit="0.005 1"/>
+    </default>
+    <default class="spring_link">
+      <joint range="-0.29670597283 0.8" stiffness="0.05" springref="2.62" damping="0.00125"/>
+    </default>
+    <default class="coupler">
+      <joint range="-1.57 0" solimplimit="0.95 0.99 0.001" solreflimit="0.005 1"/>
+    </default>
+    <default class="visual">
+      <geom type="mesh" contype="0" conaffinity="0" group="1"/>
+    </default>
+    <default class="collision">
+      <geom type="mesh" group="3" conaffinity="3" contype="3"/>
+      <default class="pad_box1">
+          <geom size="0.011 0.004 0.009375" type="box" priority="1" friction="1 0.9 0.9" solref="0.004" solimp="0.95 0.99" rgba="0.55 0.55 0.55 1"/>
+        </default>
+        <default class="pad_box2">
+          <geom size="0.011 0.004 0.009375" type="box" priority="1" friction="1 0.9 0.9" solref="0.004" solimp="0.95 0.99" rgba="0.45 0.45 0.45 1"/>
+        </default>
+    </default>
+  </default>
+</default>

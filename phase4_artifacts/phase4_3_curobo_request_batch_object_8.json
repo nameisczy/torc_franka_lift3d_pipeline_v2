@@ -1,0 +1,148 @@
+{
+  "type": "phase4_3_torc_equivalent_anonymous_allpts_pregrasp_planning_batch",
+  "policy": "torc_equivalent_anonymous_allpts_pointcloud_motiongen_world_batch_same_order",
+  "current_project_franka_yaml": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/config/curobo/franka_panda.yml",
+  "current_project_franka_urdf": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/urdf/franka_panda_phase4.urdf",
+  "start_qpos": [
+    0.0,
+    -1.25,
+    0.0,
+    -2.35,
+    0.0,
+    1.1,
+    0.0
+  ],
+  "goals": [
+    {
+      "candidate_index": 20,
+      "goal_pose_base_wxyz": [
+        0.7104560422883557,
+        -0.19664790491002687,
+        0.33187860313987694,
+        -0.05940668342670117,
+        0.8383824364562088,
+        -0.5150936716444645,
+        0.16811973601518457
+      ]
+    },
+    {
+      "candidate_index": 21,
+      "goal_pose_base_wxyz": [
+        0.7104560422883557,
+        -0.19664790491002687,
+        0.33187860313987694,
+        0.16811973601518457,
+        0.5150936716444645,
+        0.8383824364562088,
+        0.05940668342670117
+      ]
+    },
+    {
+      "candidate_index": 22,
+      "goal_pose_base_wxyz": [
+        0.7104560422883557,
+        -0.19664790491002687,
+        0.33187860313987694,
+        -0.05940668342670117,
+        0.8383824364562088,
+        -0.5150936716444645,
+        0.16811973601518457
+      ]
+    },
+    {
+      "candidate_index": 23,
+      "goal_pose_base_wxyz": [
+        0.7104560422883557,
+        -0.19664790491002687,
+        0.33187860313987694,
+        0.16811973601518457,
+        0.5150936716444645,
+        0.8383824364562088,
+        0.05940668342670117
+      ]
+    },
+    {
+      "candidate_index": 24,
+      "goal_pose_base_wxyz": [
+        0.7104560422883557,
+        -0.19664790491002687,
+        0.33187860313987694,
+        -0.05940668342670117,
+        0.8383824364562088,
+        -0.5150936716444645,
+        0.16811973601518457
+      ]
+    },
+    {
+      "candidate_index": 25,
+      "goal_pose_base_wxyz": [
+        0.7104560422883557,
+        -0.19664790491002687,
+        0.33187860313987694,
+        0.16811973601518457,
+        0.5150936716444645,
+        0.8383824364562088,
+        0.05940668342670117
+      ]
+    },
+    {
+      "candidate_index": 26,
+      "goal_pose_base_wxyz": [
+        0.7104560422883557,
+        -0.19664790491002687,
+        0.33187860313987694,
+        -0.05940668342670117,
+        0.8383824364562088,
+        -0.5150936716444645,
+        0.16811973601518457
+      ]
+    },
+    {
+      "candidate_index": 27,
+      "goal_pose_base_wxyz": [
+        0.7104560422883557,
+        -0.19664790491002687,
+        0.33187860313987694,
+        0.16811973601518457,
+        0.5150936716444645,
+        0.8383824364562088,
+        0.05940668342670117
+      ]
+    },
+    {
+      "candidate_index": 28,
+      "goal_pose_base_wxyz": [
+        0.7104560422883557,
+        -0.19664790491002687,
+        0.33187860313987694,
+        -0.05940668342670117,
+        0.8383824364562088,
+        -0.5150936716444645,
+        0.16811973601518457
+      ]
+    },
+    {
+      "candidate_index": 29,
+      "goal_pose_base_wxyz": [
+        0.7104560422883557,
+        -0.19664790491002687,
+        0.33187860313987694,
+        0.16811973601518457,
+        0.5150936716444645,
+        0.8383824364562088,
+        0.05940668342670117
+      ]
+    }
+  ],
+  "points_base_npy": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/phase4_3_curobo_allpts_base_batch_object_8.npy",
+  "points_world_count": 8784,
+  "points_base_count": 4392,
+  "downsample_stride": 2,
+  "pointcloud_mesh_name": "world",
+  "base_world_m": [
+    0.0,
+    0.0,
+    0.86
+  ],
+  "batch_tag": "object_8"
+}

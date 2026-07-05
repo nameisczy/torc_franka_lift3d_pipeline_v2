@@ -1,0 +1,49 @@
+<launch>
+  <!-- args -->
+  <arg name="scene" default="tests/ycb.xml" />
+  <arg name="is_sim" default="true" />
+  <arg name="gui_sim" default="true" />
+  <arg name="gui_plan" default="true" />
+  <arg name="pipeline" default="ompl" />
+  <arg name="kinematic_config" default="kinematics.yaml" />
+  <arg name="moveit" default="false" />
+  <arg name="motoman_node_server_address" default="tcp://*:5858" />
+  <arg name="mj_pickle" default="false" />
+
+  <param name="use_sim_time" value="$(arg is_sim)"/>
+
+  <!-- publish necessary tfs -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="world_to_base" args="0 0 0 0 0 0 1 world base" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" if="$(arg is_sim)" />
+
+  <!-- execution node and interface -->
+  <node name="motoman_node" pkg="lab_vbnpm" type="motoman_node.py" args="--scene $(find lab_vbnpm)/$(arg scene) --gui $(arg gui_sim) --server-address $(arg motoman_node_server_address) --mj-pickle $(arg mj_pickle)" if="$(arg is_sim)" />
+  <node name="motoman_interface" pkg="lab_vbnpm" type="motoman_interface.py" args="" />
+
+  <group if="$(arg moveit)">
+    <!-- planning node -->
+    <include file="$(find motoman_sda10f_moveit_config)/launch/demo.launch" >
+      <arg name="moveit_controller_manager" value="simple" />
+      <arg name="use_rviz" value="false" />
+      <arg name="pipeline" value="$(arg pipeline)" />
+      <arg name="kinematic_config" value="$(arg kinematic_config)" />
+    </include>
+    <node name="bio_ik_service" pkg="bio_ik_service" type="bio_ik_service" respawn="true" output="screen" />
+    <include file="$(find motoman_sda10f_moveit_config)/launch/moveit_rviz.launch" if="$(arg gui_plan)">
+      <arg name="rviz_config" value="$(eval dirname()+'/moveit'+((not is_sim) * '_real')+'.rviz')" />
+      <arg name="debug" value="false"/>
+    </include>
+  </group>
+  <group unless="$(arg moveit)">
+    <param name="robot_description" command="xacro '$(find motoman_sda10f_support)/urdf/sda10f.xacro'" />
+    <param name="robot_description_semantic" textfile="$(find motoman_sda10f_moveit_config)/config/motoman_sda10f.srdf" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="world_to_base_link" args="0 0 0 0 0 0 1 base base_link" />
+    <group ns="robot_description_kinematics">
+      <rosparam command="load" file="$(find motoman_sda10f_moveit_config)/config/$(arg kinematic_config)"/>
+    </group>
+    <include file="$(find motoman_sda10f_moveit_config)/launch/moveit_rviz.launch" if="$(arg gui_plan)">
+      <arg name="rviz_config" value="$(eval dirname()+'/'+('sim' if is_sim else 'real')+'.rviz')" />
+      <arg name="debug" value="false"/>
+    </include>
+  </group>
+</launch>

@@ -1,0 +1,7 @@
+import transformations as tf
+
+SENSOR_COLLISION_GEOM_NAME = "octree"
+SENSOR_VISUAL_GEOM_NAME = "bvh"
+
+STATIC_COLLISION_DEFAULT = True
+SENSOR_COLLISION_DEFAULT = True

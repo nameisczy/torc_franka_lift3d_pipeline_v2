@@ -1,0 +1,68 @@
+[torc-cgn-zmq] start 2026-07-04T12:52:24+04:00
+[torc-cgn-zmq] scene=tests/scenes/final/difficult_116.xml target=obj_000070_0 base_dir=/home/ziyaochen/phase1_runs_cgn pick_limit=15 mj_pickle=--mj-pickle
+Error while loading conda entry point: anaconda-auth (The installed pydantic-core version (2.46.4) is incompatible with the current pydantic version, which requires 2.41.5. If you encounter this error, make sure that you haven't upgraded pydantic-core manually.)
+Error while loading conda entry point: conda-anaconda-tos (The installed pydantic-core version (2.46.4) is incompatible with the current pydantic version, which requires 2.41.5. If you encounter this error, make sure that you haven't upgraded pydantic-core manually.)
+🧪 run_experiment:
+  mode             experiment
+  scene            tests/scenes/final/difficult_116.xml
+  target_object    obj_000070_0
+  method           ['dg_only']
+  rosbag           False
+  headless         True
+  dry              False
+  pick_limit       15
+  server           True
+  base_dir         /home/ziyaochen/phase1_runs_cgn
+  real             False
+  docker           False
+  profile_grasping False
+  profiler         line_profiler
+  mj_pickle        True
+
+experiment
+  scene:            tests/scenes/final/difficult_116.xml
+  target_object:    obj_000070_0
+  rosbag:           False
+  method:           dg_only
+  headless:         True
+  exp_info_file:    ../../../../phase1_runs_cgn/exp_2026-07-04_12-52-37__difficult_116_obj_000070_0_dg_only/info_experiment.json
+  real:             False
+  server:           True
+  profile_grasping: False
+  profiler:         line_profiler
+  mj_pickle:        True
+
+  Motoman request:
+  {
+    "cmd": "reset",
+    "args": {
+      "xml_file": "/home/ziyaochen/gc6d_lift3d_traj/ros_workspace/src/lab_vbnpm/tests/scenes/final/difficult_116.xml",
+      "gui": false,
+      "experiment_dir": "/home/ziyaochen/phase1_runs_cgn/exp_2026-07-04_12-52-37__difficult_116_obj_000070_0_dg_only",
+      "mj_pickle": true
+    }
+  }
+  Curobo control request:
+  {
+    "cmd": "run",
+    "args": {
+      "method": "dg_only",
+      "sim": true,
+      "ground_truth": true,
+      "rosbag": false,
+      "vlm": true,
+      "debug_show": false,
+      "out_file": "/home/ziyaochen/phase1_runs_cgn/exp_2026-07-04_12-52-37__difficult_116_obj_000070_0_dg_only/output.csv",
+      "target_object": "obj_000070_0",
+      "pick_limit": 15,
+      "profile_grasping": false,
+      "profiler": "line_profiler",
+      "capture_original_pick1_allpts": false
+    }
+  }
+
+  Sent experiment to motoman node.
+  Sent experiment to curobo control.
+  Received result: retrieve_success
+  Elapsed time: 1148.79434299469s
+[torc-cgn-zmq] exit rc=0 2026-07-04T13:11:46+04:00

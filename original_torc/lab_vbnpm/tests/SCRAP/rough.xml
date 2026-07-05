@@ -1,0 +1,18 @@
+<mujoco model="rough_box_example">
+  <asset>
+    <hfield name="rough_surface" size="0.05 0.05 0.01 0.001" nrow="50" ncol="50" />
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4" />
+    <material name="grid_mat" texture="grid" texrepeat="1 1" texuniform="true" />
+  </asset>
+  <worldbody>
+    <light pos="0 0 1" dir="0 0 -1" />
+    <geom type="plane" size="1 1 0.1" material="grid_mat" />
+    <body name="box_body" pos="0 0 0.1">
+      <geom name="rough_top" type="hfield" hfield="rough_surface" pos="0 0 0.04" rgba="0.7 0.4 0.2 1" />
+    </body>
+    <body name="box_body2" pos="0 0 0.2">
+      <joint type="free" />
+      <geom name="box_base2" type="box" size="0.02 0.02 0.02" rgba="0.8 0.5 0.3 1" />
+    </body>
+  </worldbody>
+</mujoco>

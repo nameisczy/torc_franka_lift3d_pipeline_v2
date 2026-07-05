@@ -1,0 +1,115 @@
+<mujoco model="World">
+  <compiler angle="radian" balanceinertia="true" inertiafromgeom="true"
+    meshdir="../"
+    texturedir="../"
+    autolimits="true"/>
+  <option solver="CG" noslip_iterations="1" integrator="implicitfast" cone="elliptic">
+    <flag warmstart="disable" multiccd="enable"/>
+  </option>
+  <asset>
+    <include file="robot_asset.xml"/>
+    <!-- background -->
+    <texture type="skybox" builtin="flat" rgb1="1 1 1" rgb2="0 0 0" width="512" height="512"/>
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="2 2" texuniform="true" specular="0" shininess="0" reflectance="0" emission="1" />
+    <!-- ceramic table texture and material-->
+    <texture file="models/rs_table/ceramic.png" type="cube" name="tex-ceramic"/>
+    <material name="table_ceramic" reflectance="0.0" shininess="0.0" specular="0.2" texrepeat="1 1" texture="tex-ceramic" />
+    <!-- ycb assets -->
+    <texture type="2d" name="001_chips_can" file="models/objects/ycb_se3tn/001_chips_can/texture_map.png"/>
+    <material name="001_chips_can" texture="001_chips_can"/>
+    <mesh name="001_chips_can_vis" file="models/objects/ycb_se3tn/001_chips_can/textured_simple.obj"/>
+    <!-- <mesh name="001_chips_can_col" file="models/objects/ycb_se3tn/001_chips_can/textured_simple.obj"/> -->
+    <texture type="2d" name="003_cracker_box" file="models/objects/ycb_se3tn/003_cracker_box/texture_map.png"/>
+    <material name="003_cracker_box" texture="003_cracker_box"/>
+    <mesh name="003_cracker_box_vis" file="models/objects/ycb_se3tn/003_cracker_box/textured_simple.obj"/>
+    <!-- <mesh name="003_cracker_box_col" file="models/objects/ycb_se3tn/003_cracker_box/textured_simple.obj"/> -->
+    <texture type="2d" name="004_sugar_box" file="models/objects/ycb_se3tn/004_sugar_box/texture_map.png"/>
+    <material name="004_sugar_box" texture="004_sugar_box"/>
+    <mesh name="004_sugar_box_vis" file="models/objects/ycb_se3tn/004_sugar_box/textured_simple.obj"/>
+    <!-- <mesh name="004_sugar_box_col" file="models/objects/ycb_se3tn/004_sugar_box/textured_simple.obj"/> -->
+    <texture type="2d" name="005_tomato_soup_can" file="models/objects/ycb_se3tn/005_tomato_soup_can/texture_map.png"/>
+    <material name="005_tomato_soup_can" texture="005_tomato_soup_can"/>
+    <mesh name="005_tomato_soup_can_vis" file="models/objects/ycb_se3tn/005_tomato_soup_can/textured_simple.obj"/>
+    <!-- <mesh name="005_tomato_soup_can_col" file="models/objects/ycb_se3tn/005_tomato_soup_can/textured_simple.obj"/> -->
+    <texture type="2d" name="006_mustard_bottle" file="models/objects/ycb_se3tn/006_mustard_bottle/texture_map.png"/>
+    <material name="006_mustard_bottle" texture="006_mustard_bottle"/>
+    <!-- <mesh name="006_mustard_bottle_vis" file="models/objects/ycb_se3tn/006_mustard_bottle/textured.obj"/> -->
+    <mesh name="006_mustard_bottle_vis" file="models/objects/ycb_se3tn/006_mustard_bottle/textured_simple.obj"/>
+    <texture type="2d" name="008_pudding_box" file="models/objects/ycb_se3tn/008_pudding_box/texture_map.png"/>
+    <material name="008_pudding_box" texture="008_pudding_box"/>
+    <mesh name="008_pudding_box_vis" file="models/objects/ycb_se3tn/008_pudding_box/textured_simple.obj"/>
+    <!-- <mesh name="008_pudding_box_col" file="models/objects/ycb_se3tn/008_pudding_box/textured_simple.obj"/> -->
+    <texture type="2d" name="010_potted_meat_can" file="models/objects/ycb_se3tn/010_potted_meat_can/texture_map.png"/>
+    <material name="010_potted_meat_can" texture="010_potted_meat_can"/>
+    <mesh name="010_potted_meat_can_vis" file="models/objects/ycb_se3tn/010_potted_meat_can/textured_simple.obj"/>
+    <!-- <mesh name="010_potted_meat_can_col" file="models/objects/ycb_se3tn/010_potted_meat_can/textured_simple.obj"/> -->
+    <texture type="2d" name="011_banana" file="models/objects/ycb_se3tn/011_banana/texture_map.png"/>
+    <material name="011_banana" texture="011_banana"/>
+    <mesh name="011_banana_vis" file="models/objects/ycb_se3tn/011_banana/textured_simple.obj"/>
+    <!-- <mesh name="011_banana_col" file="models/objects/ycb_se3tn/011_banana/textured_simple.obj"/> -->
+    <texture type="2d" name="013_apple" file="models/objects/ycb_se3tn/013_apple/texture_map.png"/>
+    <material name="013_apple" texture="013_apple"/>
+    <mesh name="013_apple_vis" file="models/objects/ycb_se3tn/013_apple/textured_simple.obj"/>
+    <!-- <mesh name="013_apple_col" file="models/objects/ycb_se3tn/013_apple/textured_simple.obj"/> -->
+    <texture type="2d" name="017_orange" file="models/objects/ycb_se3tn/017_orange/texture_map.png"/>
+    <material name="017_orange" texture="017_orange"/>
+    <mesh name="017_orange_vis" file="models/objects/ycb_se3tn/017_orange/textured_simple.obj"/>
+
+  </asset>
+  <worldbody>
+    <geom name="floor" size="2 2 0.05" type="plane" material="grid" condim="3"/>
+    <light directional="true" pos="-0.5 0.5 3" dir="0 0 -1" castshadow="false" diffuse="1 1 1"/>
+    <body name="workspace" pos="1.15 0 0">
+      <geom name="shelf_bottom" size="0.4 0.68 0.475" pos="0 0 0.475" type="box" material="table_ceramic"/>
+      <geom name="shelf_top" size="0.4 0.68 0.025" pos="0 0 1.525" type="box" material="table_ceramic"/>
+      <geom name="shelf_padding_left" size="0.4 0.025 0.3" pos="0 -0.655 1.25" type="box" material="table_ceramic"/>
+      <geom name="shelf_padding_right" size="0.4 0.025 0.3" pos="0 0.655 1.25" type="box" material="table_ceramic"/>
+      <geom name="shelf_padding_back" size="0.05 0.63 0.3" pos="0.35 0 1.25" type="box" material="table_ceramic"/>
+    </body>
+    <body name="001_chips_can" pos="1.06799 -0.0526204 1.05651" quat="0.0538445 6.24212e-06 -1.51251e-06 -0.998549">
+      <joint type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="001_chips_can" quat="0.581683 0 0 0.813416" type="mesh" contype="0" conaffinity="0" group="1" material="001_chips_can" mesh="001_chips_can_vis"/>
+      <geom type="cylinder" contype="3" conaffinity="3" group="3" pos="0 0 0.014" size=".038 .12"/>
+    </body>
+    <body name="003_cracker_box" pos="0.941343 -0.126581 1.06145" quat="0.167024 0.0027751 -0.00156994 0.985948">
+      <joint type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="003_cracker_box" type="mesh" contype="3" conaffinity="3" group="1" material="003_cracker_box" mesh="003_cracker_box_vis"/>
+    </body>
+    <body name="004_sugar_box" pos="1.06576 -0.260917 1.04213" quat="0.680445 0.00264342 -0.0127886 0.732683">
+      <joint type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="004_sugar_box" quat="0.999938 0.00499973 0.00999971 4.9999e-05" type="mesh" contype="3" conaffinity="3" group="1" material="004_sugar_box" mesh="004_sugar_box_vis"/>
+    </body>
+    <body name="006_mustard_bottle" pos="0.970376 -0.014 1.03371" quat="0.3987491 0 0 0.9170601">
+      <joint type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="006_mustard_bottle" pos="0.002 0 0" quat="0.828148 0 0 -0.560509" type="mesh" contype="3" conaffinity="3" group="1" material="006_mustard_bottle" mesh="006_mustard_bottle_vis"/>
+    </body>
+    <body name="008_pudding_box" pos="1.07256 -0.173371 0.990654" quat="0.669464 -0.247719 0.657068 0.24231">
+      <joint type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="008_pudding_box" quat="0.854956 -0.0171014 0.0103677 0.518314" type="mesh" contype="3" conaffinity="3" group="1" material="008_pudding_box" mesh="008_pudding_box_vis"/>
+    </body>
+    <body name="010_potted_meat_can" pos="1.05279 0.054195 0.999635" quat="0.805421 -0.000525687 -0.00193835 0.5927">
+      <joint type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="010_potted_meat_can" quat="0.999688 0 0 -0.0249974" type="mesh" contype="3" conaffinity="3" group="1" material="010_potted_meat_can" mesh="010_potted_meat_can_vis"/>
+    </body>
+    <body name="017_orange" pos="1.15271 -0.114555 0.983557" quat="0.597745 0.000949094 0.000122401 -0.801686">
+      <joint type="free" limited="false" actuatorfrclimited="false"/>
+      <geom name="017_orange" type="mesh" contype="3" conaffinity="3" group="1" material="017_orange" mesh="017_orange_vis"/>
+    </body>
+  </worldbody>
+  <!-- <actuator>
+    <include file="robot_actuator.xml"/>
+  </actuator>
+  <contact>
+    <include file="robot_contact.xml"/>
+  </contact>
+  <tendon>
+    <include file="robot_tendon.xml"/>
+  </tendon>
+  <equality>
+    <include file="robot_equality.xml"/>
+  </equality>
+  <default>
+    <include file="robot_default.xml"/>
+  </default> -->
+</mujoco>

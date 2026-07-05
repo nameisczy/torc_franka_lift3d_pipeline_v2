@@ -1,0 +1,163 @@
+{
+    "shelf_dimensions": {
+        "width_x": 25,
+        "height_z": 20,
+        "depth_y": 15
+    },
+    "objects": [
+        {
+            "id": 0,
+            "dimensions": {
+                "width_x": 5,
+                "height_z": 12,
+                "depth_y": 6
+            },
+            "bottom_left_pos": {
+                "x": 7,
+                "y": 0,
+                "z": 9
+            }
+        },
+        {
+            "id": 1,
+            "dimensions": {
+                "width_x": 4,
+                "height_z": 12,
+                "depth_y": 4
+            },
+            "bottom_left_pos": {
+                "x": 12,
+                "y": 0,
+                "z": 11
+            }
+        },
+        {
+            "id": 2,
+            "dimensions": {
+                "width_x": 2,
+                "height_z": 10,
+                "depth_y": 10
+            },
+            "bottom_left_pos": {
+                "x": 12,
+                "y": 0,
+                "z": 1
+            }
+        },
+        {
+            "id": 3,
+            "dimensions": {
+                "width_x": 3,
+                "height_z": 8,
+                "depth_y": 5
+            },
+            "bottom_left_pos": {
+                "x": 7,
+                "y": 0,
+                "z": 4
+            }
+        },
+        {
+            "id": 4,
+            "dimensions": {
+                "width_x": 4,
+                "height_z": 11,
+                "depth_y": 5
+            },
+            "bottom_left_pos": {
+                "x": 16,
+                "y": 0,
+                "z": 10
+            }
+        },
+        {
+            "id": 5,
+            "dimensions": {
+                "width_x": 7,
+                "height_z": 13,
+                "depth_y": 9
+            },
+            "bottom_left_pos": {
+                "x": 0,
+                "y": 0,
+                "z": 6
+            }
+        },
+        {
+            "id": 6,
+            "dimensions": {
+                "width_x": 7,
+                "height_z": 10,
+                "depth_y": 8
+            },
+            "bottom_left_pos": {
+                "x": 14,
+                "y": 0,
+                "z": 2
+            }
+        },
+        {
+            "id": 7,
+            "dimensions": {
+                "width_x": 4,
+                "height_z": 7,
+                "depth_y": 5
+            },
+            "bottom_left_pos": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            }
+        },
+        {
+            "id": 8,
+            "dimensions": {
+                "width_x": 4,
+                "height_z": 11,
+                "depth_y": 5
+            },
+            "bottom_left_pos": {
+                "x": 20,
+                "y": 0,
+                "z": 10
+            }
+        },
+        {
+            "id": 9,
+            "dimensions": {
+                "width_x": 3,
+                "height_z": 10,
+                "depth_y": 6
+            },
+            "bottom_left_pos": {
+                "x": 21,
+                "y": 0,
+                "z": 4
+            }
+        }
+    ],
+    "new_placement_order": [
+        5,
+        0,
+        1,
+        4,
+        8,
+        7,
+        3,
+        2,
+        6,
+        9
+    ],
+    "placement_order": [
+        1,
+        8,
+        4,
+        0,
+        5,
+        7,
+        9,
+        3,
+        6,
+        2
+    ]
+}

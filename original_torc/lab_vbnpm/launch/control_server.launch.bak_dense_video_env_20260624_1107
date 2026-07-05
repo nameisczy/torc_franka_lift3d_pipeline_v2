@@ -1,0 +1,22 @@
+<launch>
+  <!-- args -->
+  <arg name="kinematic_config" default="kinematics.yaml" />
+  <arg name="motoman_node_server_address" default="tcp://*:5858" />
+
+  <param name="use_sim_time" value="true"/>
+
+  <!-- publish necessary tfs -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="world_to_base" args="0 0 0 0 0 0 1 world base" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!-- execution node and interface -->
+  <node name="motoman_node" pkg="lab_vbnpm" type="motoman_node.py" args="--server-address $(arg motoman_node_server_address)" output="screen" />
+  <node name="motoman_interface" pkg="lab_vbnpm" type="motoman_interface.py" args="" />
+
+  <param name="robot_description" command="xacro '$(find motoman_sda10f_support)/urdf/sda10f.xacro'" />
+  <param name="robot_description_semantic" textfile="$(find motoman_sda10f_moveit_config)/config/motoman_sda10f.srdf" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="world_to_base_link" args="0 0 0 0 0 0 1 base base_link" />
+  <group ns="robot_description_kinematics">
+    <rosparam command="load" file="$(find motoman_sda10f_moveit_config)/config/$(arg kinematic_config)"/>
+  </group>
+</launch>

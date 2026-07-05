@@ -1,0 +1,198 @@
+{
+  "phase": "2",
+  "date": "2026-07-04",
+  "workspace": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2",
+  "measurement_status": {
+    "torc_motoman": "measured_from_original_torc_mjcf_and_phase_1_5_audit",
+    "franka": "measured_from_phase_0_5_robosuite_panda_assets_and_validation_report",
+    "note": "Reach values labeled kinematic_path_translation_upper_bound_m are asset-derived path-length upper bounds, not sampled reachable-workspace proofs. Final reachability must be verified by Phase 3 IK/planning tests."
+  },
+  "sources": {
+    "torc_motoman_mjcf": "original_torc/lab_vbnpm/robots/motoman/mjmodel.xml",
+    "torc_curobo_config": "original_torc/lab_vbnpm/robots/motoman/curobo/motoman.yml",
+    "torc_audit": "TORC_SYSTEM_AUDIT.md",
+    "franka_robot_mjcf": "assets/franka/mjcf/robosuite/panda_robot.xml",
+    "franka_gripper_mjcf": "assets/franka/mjcf/robosuite/panda_gripper.xml",
+    "franka_compiled_task_mjcf": "assets/franka/mjcf/robosuite/panda_lift_compiled.xml",
+    "franka_validation": "assets/franka/config/phase_0_5_validation_report.json"
+  },
+  "robot_models": {
+    "torc": {
+      "name": "Motoman SDA10F + Robotiq 2F-85",
+      "active_arm": "arm_right",
+      "base_frame": "base_link",
+      "ee_link": "motoman_right_ee",
+      "mujoco_tool_body": "ee_right",
+      "arm_joint_count_active": 7,
+      "torso_joint_count": 1,
+      "right_arm_joint_names": [
+        "arm_right_joint_1_s",
+        "arm_right_joint_2_l",
+        "arm_right_joint_3_e",
+        "arm_right_joint_4_u",
+        "arm_right_joint_5_r",
+        "arm_right_joint_6_b",
+        "arm_right_joint_7_t"
+      ],
+      "joint_ranges_rad": {
+        "arm_right_joint_1_s": [-3.14159, 3.14159],
+        "arm_right_joint_2_l": [-1.91986, 1.91986],
+        "arm_right_joint_3_e": [-2.96706, 2.96706],
+        "arm_right_joint_4_u": [-2.35619, 2.35619],
+        "arm_right_joint_5_r": [-3.14159, 3.14159],
+        "arm_right_joint_6_b": [-1.91986, 1.91986],
+        "arm_right_joint_7_t": [-3.14159, 3.14159],
+        "torso_joint_b1": [-2.96706, 2.96706]
+      },
+      "height_measurements_m": {
+        "model_base_body_z": 0.0,
+        "torso_link_b1_z": 1.2,
+        "arm_right_link_1_s_raw_z": 1.2,
+        "ee_right_raw_z_at_zero_pose_path_sum": 1.347,
+        "base_to_right_shoulder_translation_norm_sum": 1.48324
+      },
+      "reach_measurements_m": {
+        "right_shoulder_to_mujoco_tool_translation_upper_bound_m": 1.022,
+        "base_to_mujoco_tool_translation_upper_bound_m": 2.50524,
+        "note": "Upper bound is sum of nested MJCF body translation norms along base -> ee_right. It includes torso height and lateral shoulder offset."
+      },
+      "gripper": {
+        "type": "Robotiq 2F-85",
+        "command_name": "robotiq",
+        "open_width_command_m": 0.085,
+        "closed_width_command_m": 0.0,
+        "downstream_hand_depth_m": 0.11,
+        "visual_filter_finger_width_m": 0.0065,
+        "visual_filter_outer_diameter_m": 0.098,
+        "visual_filter_hand_depth_m": 0.055,
+        "contact_pad_box_half_size_m": [0.011, 0.004, 0.009375],
+        "success_contact_seed": "all geoms under MJCF ancestor robotiq_2f85"
+      },
+      "tcp_contract": {
+        "planning_ee_link": "motoman_right_ee",
+        "mujoco_tool_body": "ee_right",
+        "robotiq_body_offset_from_arm_right_link_7_t_m": [0.0, 0.0, 0.017],
+        "ee_right_offset_from_robotiq_2f85_m": [0.0, 0.0, 0.13],
+        "approx_arm7_to_tool_offset_z_m": 0.147,
+        "grasp_pose_adjustment_before_ik": "pose.translation += 0.11 * local_approach_axis"
+      }
+    },
+    "franka": {
+      "name": "Franka Panda + PandaGripper",
+      "asset_source": "robosuite Panda Lift task asset",
+      "base_frame_candidate": "robot0_base / panda_link0 equivalent",
+      "ee_body_candidate": "robot0_right_hand",
+      "tcp_site": "gripper0_right_grip_site",
+      "runtime_prefix": "robot0_ for arm, gripper0_right_ for gripper in compiled MJCF",
+      "arm_joint_count": 7,
+      "finger_joint_count": 2,
+      "arm_joint_names_compiled": [
+        "robot0_joint1",
+        "robot0_joint2",
+        "robot0_joint3",
+        "robot0_joint4",
+        "robot0_joint5",
+        "robot0_joint6",
+        "robot0_joint7"
+      ],
+      "finger_joint_names_compiled": [
+        "gripper0_right_finger_joint1",
+        "gripper0_right_finger_joint2"
+      ],
+      "joint_ranges_rad": {
+        "joint1": [-2.8973, 2.8973],
+        "joint2": [-1.7628, 1.7628],
+        "joint3": [-2.8973, 2.8973],
+        "joint4": [-3.0718, -0.0698],
+        "joint5": [-2.8973, 2.8973],
+        "joint6": [-0.0175, 3.7525],
+        "joint7": [-2.8973, 2.8973]
+      },
+      "height_measurements_m": {
+        "source_robot_base_body_z": 0.0,
+        "source_link1_joint_z": 0.333,
+        "source_right_hand_raw_z_path_sum": 0.4395,
+        "compiled_task_table_top_z": 0.8,
+        "compiled_task_robot0_base_z": 0.912,
+        "compiled_task_robot0_joint1_z": 1.245,
+        "compiled_task_robot0_grip_site_nominal_raw_z_path_sum": 1.4485
+      },
+      "reach_measurements_m": {
+        "source_base_to_right_hand_translation_upper_bound_m": 1.318762,
+        "source_right_hand_to_grip_site_offset_m": 0.097,
+        "source_base_to_grip_site_translation_upper_bound_m": 1.415762,
+        "note": "Upper bound is sum of nested MJCF body translation norms along base -> right_hand plus gripper eef offset."
+      },
+      "gripper": {
+        "type": "PandaGripper",
+        "command_name_replacement": "panda",
+        "ideal_total_open_width_from_xml_m": 0.08,
+        "finger_joint1_range_m": [0.0, 0.04],
+        "finger_joint2_range_m": [-0.04, 0.0],
+        "validated_open_total_width_m": 0.07605277226389128,
+        "validated_closed_total_width_m": 0.002366222379438651,
+        "fingerpad_collision_geoms": [
+          "gripper0_right_finger1_pad_collision",
+          "gripper0_right_finger2_pad_collision"
+        ],
+        "fingerpad_box_half_size_m": [0.008, 0.004, 0.008],
+        "tcp_sites": [
+          "gripper0_right_ft_frame",
+          "gripper0_right_grip_site",
+          "gripper0_right_grip_site_cylinder"
+        ]
+      },
+      "tcp_contract": {
+        "arm_hand_body": "robot0_right_hand",
+        "gripper_body": "gripper0_right_right_gripper",
+        "tcp_site": "gripper0_right_grip_site",
+        "right_hand_to_gripper_body_offset_m": [0.0, 0.0, 0.0],
+        "gripper_body_to_eef_offset_m": [0.0, 0.0, 0.097],
+        "approx_right_hand_to_tcp_offset_z_m": 0.097
+      }
+    }
+  },
+  "mismatch_summary": {
+    "base_height_difference_m": {
+      "model_relative_torc_torso_minus_franka_base": 1.2,
+      "model_relative_torc_right_shoulder_minus_franka_joint1": 0.867,
+      "compiled_task_franka_base_minus_table_top": 0.112,
+      "compiled_task_franka_joint1_minus_table_top": 0.445,
+      "interpretation": "TORC Motoman right arm enters the workspace from a high torso/shoulder. Franka must be explicitly placed relative to the TORC table/workspace; copying Motoman base transforms will put the Franka TCP in the wrong vertical envelope."
+    },
+    "arm_reach_envelope_difference_m": {
+      "torc_right_shoulder_to_tool_upper_bound": 1.022,
+      "franka_base_to_grip_site_upper_bound": 1.415762,
+      "franka_minus_torc_upper_bound": 0.393762,
+      "interpretation": "The path-length upper bound is not the limiting factor for Franka; the larger issue is base placement, joint limits, wrist/gripper geometry, and collision clearance. Reachability must be proven by IK/planning samples over the TORC workspace."
+    },
+    "gripper_opening_difference_m": {
+      "torc_robotiq_open_command": 0.085,
+      "franka_ideal_xml_total_open": 0.08,
+      "franka_validated_total_open": 0.07605277226389128,
+      "franka_validated_minus_torc": -0.008947227736108724,
+      "interpretation": "Franka opens about 9 mm less than TORC's Robotiq command in the validated asset, so CGN openings and width filters must be clamped to Franka limits."
+    },
+    "tcp_mismatch_m": {
+      "torc_arm7_to_tool_offset_z": 0.147,
+      "franka_right_hand_to_tcp_offset_z": 0.097,
+      "franka_minus_torc_tool_offset_z": -0.05,
+      "torc_downstream_hand_depth": 0.11,
+      "franka_required_hand_depth": "must be recalibrated from Panda finger pad contact geometry; do not reuse 0.11",
+      "interpretation": "TORC grasp poses target Motoman/Robotiq EE after a 0.11 m local approach shift. Franka must define TCP at gripper0_right_grip_site and build contact/pregrasp from low-level CGN fields or an explicitly adapted pose contract."
+    },
+    "collision_model_difference": {
+      "torc": "Motoman CuRobo spheres plus Robotiq ignored links and extra EE spheres",
+      "franka": "Panda link collision meshes plus Panda finger/pad boxes; new CuRobo collision spheres required",
+      "interpretation": "No Motoman collision link names, ignored links, or Robotiq extra-sphere layout can be reused."
+    }
+  },
+  "replacement_decision": {
+    "perception": "unchanged algorithmically, but robot camera names, workspace pose, and segmentation exclusions must be parameterized",
+    "grasp": "reparameterized around Franka TCP, finger opening, pad geometry, and contact depth",
+    "planning": "reconfigured with Franka CuRobo YAML/URDF/MJCF-derived collision spheres and panda TCP frame",
+    "execution": "replaced with Franka/Panda execution services and gripper command semantics",
+    "simulation": "rewritten around robosuite Panda MJCF bodies, joints, actuators, cameras, and contact geoms",
+    "visualization": "updated for Franka cameras, TCP, and Panda gripper marker geometry"
+  }
+}

@@ -1,0 +1,117 @@
+<mujoco model="World">
+  <compiler angle="radian" balanceinertia="true" inertiafromgeom="true"
+    meshdir="../"
+    texturedir="../"
+    autolimits="true"/>
+  <option solver="CG" noslip_iterations="1" integrator="implicitfast" cone="elliptic">
+    <flag warmstart="disable" multiccd="enable"/>
+  </option>
+  <asset>
+    <include file="robot_asset.xml"/>
+    <!-- background -->
+    <texture type="skybox" builtin="flat" rgb1="1 1 1" rgb2="0 0 0" width="512" height="512"/>
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="2 2" texuniform="true" specular="0" shininess="0" reflectance="0" emission="1" />
+    <!-- ceramic table texture and material-->
+    <texture file="models/rs_table/ceramic.png" type="cube" name="tex-ceramic"/>
+    <material name="table_ceramic" reflectance="0.0" shininess="0.0" specular="0.2" texrepeat="1 1" texture="tex-ceramic" />
+    <!-- ycb assets -->
+    <texture type="2d" name="001_chips_can" file="models/objects/ycb_se3tn/001_chips_can/texture_map.png"/>
+    <material name="001_chips_can" texture="001_chips_can"/>
+    <mesh name="001_chips_can_vis" file="models/objects/ycb_se3tn/001_chips_can/textured_simple.obj"/>
+    <!-- <mesh name="001_chips_can_col" file="models/objects/ycb_se3tn/001_chips_can/textured_simple.obj"/> -->
+    <texture type="2d" name="003_cracker_box" file="models/objects/ycb_se3tn/003_cracker_box/texture_map.png"/>
+    <material name="003_cracker_box" texture="003_cracker_box"/>
+    <mesh name="003_cracker_box_vis" file="models/objects/ycb_se3tn/003_cracker_box/textured_simple.obj"/>
+    <!-- <mesh name="003_cracker_box_col" file="models/objects/ycb_se3tn/003_cracker_box/textured_simple.obj"/> -->
+    <texture type="2d" name="004_sugar_box" file="models/objects/ycb_se3tn/004_sugar_box/texture_map.png"/>
+    <material name="004_sugar_box" texture="004_sugar_box"/>
+    <mesh name="004_sugar_box_vis" file="models/objects/ycb_se3tn/004_sugar_box/textured_simple.obj"/>
+    <!-- <mesh name="004_sugar_box_col" file="models/objects/ycb_se3tn/004_sugar_box/textured_simple.obj"/> -->
+    <texture type="2d" name="005_tomato_soup_can" file="models/objects/ycb_se3tn/005_tomato_soup_can/texture_map.png"/>
+    <material name="005_tomato_soup_can" texture="005_tomato_soup_can"/>
+    <mesh name="005_tomato_soup_can_vis" file="models/objects/ycb_se3tn/005_tomato_soup_can/textured_simple.obj"/>
+    <!-- <mesh name="005_tomato_soup_can_col" file="models/objects/ycb_se3tn/005_tomato_soup_can/textured_simple.obj"/> -->
+    <texture type="2d" name="006_mustard_bottle" file="models/objects/ycb_se3tn/006_mustard_bottle/texture_map.png"/>
+    <material name="006_mustard_bottle" texture="006_mustard_bottle"/>
+    <!-- <mesh name="006_mustard_bottle_vis" file="models/objects/ycb_se3tn/006_mustard_bottle/textured.obj"/> -->
+    <mesh name="006_mustard_bottle_vis" file="models/objects/ycb_se3tn/006_mustard_bottle/textured_simple.obj"/>
+    <texture type="2d" name="008_pudding_box" file="models/objects/ycb_se3tn/008_pudding_box/texture_map.png"/>
+    <material name="008_pudding_box" texture="008_pudding_box"/>
+    <mesh name="008_pudding_box_vis" file="models/objects/ycb_se3tn/008_pudding_box/textured_simple.obj"/>
+    <!-- <mesh name="008_pudding_box_col" file="models/objects/ycb_se3tn/008_pudding_box/textured_simple.obj"/> -->
+    <texture type="2d" name="009_gelatin_box" file="models/objects/ycb_se3tn/009_gelatin_box/texture_map.png"/>
+    <material name="009_gelatin_box" texture="009_gelatin_box"/>
+    <mesh name="009_gelatin_box_vis" file="models/objects/ycb_se3tn/009_gelatin_box/textured_simple.obj"/>
+    <!-- <mesh name="009_gelatin_box_col" file="models/objects/ycb_se3tn/009_gelatin_box/textured_simple.obj"/> -->
+    <texture type="2d" name="010_potted_meat_can" file="models/objects/ycb_se3tn/010_potted_meat_can/texture_map.png"/>
+    <material name="010_potted_meat_can" texture="010_potted_meat_can"/>
+    <mesh name="010_potted_meat_can_vis" file="models/objects/ycb_se3tn/010_potted_meat_can/textured_simple.obj"/>
+    <!-- <mesh name="010_potted_meat_can_col" file="models/objects/ycb_se3tn/010_potted_meat_can/textured_simple.obj"/> -->
+  </asset>
+  <worldbody>
+    <geom name="floor" size="2 2 0.05" type="plane" material="grid" condim="3"/>
+    <light directional="true" pos="-0.5 0.5 3" dir="0 0 -1" castshadow="false" diffuse="1 1 1"/>
+    <body name="workspace" pos="1.15 0 0">
+      <geom name="shelf_bottom" size="0.4 0.68 0.475" pos="0 0 0.475" type="box" material="table_ceramic"/>
+      <geom name="shelf_top" size="0.4 0.68 0.025" pos="0 0 1.525" type="box" material="table_ceramic"/>
+      <geom name="shelf_padding_left" size="0.4 0.025 0.3" pos="0 -0.655 1.25" type="box" material="table_ceramic"/>
+      <geom name="shelf_padding_right" size="0.4 0.025 0.3" pos="0 0.655 1.25" type="box" material="table_ceramic"/>
+      <geom name="shelf_padding_back" size="0.05 0.63 0.3" pos="0.35 0 1.25" type="box" material="table_ceramic"/>
+    </body>
+    <include file="robot_body.xml"/>
+    <body name="001_chips_can" pos="1.07 -0.09 1.05" quat="1 0 0 0">
+      <joint type="free"/>
+      <geom type="mesh" contype="0" conaffinity="0" group="1" material="001_chips_can" mesh="001_chips_can_vis" euler="0.01 .02 0"/>
+      <geom type="cylinder" contype="3" conaffinity="3" group="3" pos="0 0 0.014" size=".038 .12"/>
+    </body>
+    <body name="003_cracker_box" pos="0.93 -0.09 1.05" quat="0.7071068 0.7071068 0 0">
+      <joint type="free"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="003_cracker_box" mesh="003_cracker_box_vis"/>
+    </body>
+    <body name="003_cracker_box_2" pos="0.97 -0.25 1.05" quat="0.7071068 0 0 0.7071068">
+      <joint type="free"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="003_cracker_box" mesh="003_cracker_box_vis"/>
+    </body>
+
+    <!-- <body name="004_sugar_box" pos="0.92 0.25 1.05" quat="0.9659258 0 0 0.258819">
+      <joint type="free"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="004_sugar_box" mesh="004_sugar_box_vis" euler="0.01 .02 0"/>
+    </body> -->
+    <!-- <body name="005_tomato_soup_can" pos="1.06 0.26 1.05" quat="0.5 0 0 0.5">
+      <joint type="free"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="005_tomato_soup_can" mesh="005_tomato_soup_can_vis"/>
+    </body> -->
+    <!-- <body name="006_mustard_bottle" pos="1.0 0.12 1.1" quat="0.7 0 0 0.7">
+      <joint type="free"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="006_mustard_bottle" mesh="006_mustard_bottle_vis" pos="0.002 0 0" euler="0 0 -1.19"/>
+    </body> -->
+    <!-- <body name="008_pudding_box" pos="1.0 0.18 1.00" quat="0 0 0.7 -0.7">
+      <joint type="free"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="008_pudding_box" mesh="008_pudding_box_vis" euler="-.04 0 1.09"/>
+    </body> -->
+    <!-- <body name="009_gelatin_box" pos="1.0 0.22 1.0" quat="0 0 0.7 -0.7">
+      <joint type="free"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="009_gelatin_box" mesh="009_gelatin_box_vis" euler="0 0 -.25"/>
+    </body> -->
+    <!-- <body name="010_potted_meat_can" pos="1.0 0.1 1.0" quat="1 0 0 0">
+      <joint type="free"/>
+      <geom type="mesh" contype="3" conaffinity="3" group="1" material="010_potted_meat_can" mesh="010_potted_meat_can_vis" euler="0 0 -.05"/>
+    </body> -->
+  </worldbody>
+  <actuator>
+    <include file="robot_actuator.xml"/>
+  </actuator>
+  <contact>
+    <include file="robot_contact.xml"/>
+  </contact>
+  <tendon>
+    <include file="robot_tendon.xml"/>
+  </tendon>
+  <equality>
+    <include file="robot_equality.xml"/>
+  </equality>
+  <default>
+    <include file="robot_default.xml"/>
+  </default>
+</mujoco>

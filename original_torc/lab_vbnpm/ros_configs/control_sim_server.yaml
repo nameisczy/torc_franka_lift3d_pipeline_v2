@@ -1,0 +1,50 @@
+session_name: "control_sim_server"
+vars:
+  CUROBO_CONTROL_ADDRESS:
+    type: str
+    default: "tcp://*:5757"
+    help: "Address to host the Curobo Control server on."
+  MOTOMAN_NODE_ADDRESS:
+    type: str
+    default: "tcp://*:5858"
+    help: "Address to host the motoman node server on."
+  RENDER_EXECUTION_VIDEO:
+    type: int
+    default: 0
+    help: "Whether motoman_node should record dense execution videos."
+  RENDER_CAMERAS:
+    type: str
+    default: "back_view"
+    help: "Comma-separated MuJoCo camera names for dense execution videos."
+  RENDER_STRIDE:
+    type: int
+    default: 5
+    help: "Render every Nth MuJoCo execution step."
+  RENDER_FPS:
+    type: int
+    default: 20
+    help: "Frames per second for dense execution videos."
+  RENDER_WIDTH:
+    type: int
+    default: 1280
+    help: "Dense execution video width."
+  RENDER_HEIGHT:
+    type: int
+    default: 720
+    help: "Dense execution video height."
+pre_cmd: "./7kill.sh"
+post_attach: false
+windows:
+  - "Roscore": "roscore"
+
+  - "Control Launch": "if [ \"$TORC_ROBOT\" = \"franka\" ] || [ \"$TORC_ROBOT\" = \"panda\" ]; then DISABLE_ROS1_EOL_WARNINGS=1 roslaunch --wait lab_vbnpm control_server_franka.launch franka_node_server_address:=\"$MOTOMAN_NODE_ADDRESS\" render_execution_video:=\"$RENDER_EXECUTION_VIDEO\" render_cameras:=\"$RENDER_CAMERAS\" render_stride:=\"$RENDER_STRIDE\" render_fps:=\"$RENDER_FPS\" render_width:=\"$RENDER_WIDTH\" render_height:=\"$RENDER_HEIGHT\"; else DISABLE_ROS1_EOL_WARNINGS=1 roslaunch --wait lab_vbnpm control_server.launch motoman_node_server_address:=\"$MOTOMAN_NODE_ADDRESS\" render_execution_video:=\"$RENDER_EXECUTION_VIDEO\" render_cameras:=\"$RENDER_CAMERAS\" render_stride:=\"$RENDER_STRIDE\" render_fps:=\"$RENDER_FPS\" render_width:=\"$RENDER_WIDTH\" render_height:=\"$RENDER_HEIGHT\"; fi"
+  
+  - "Grasp Planner Launch": "roslaunch --wait cgn_ros container.launch"
+    post_delay: 6.0
+  
+  - "Calibration Sim Parameters": "python3 ./launch/calibration/sim_params.py"
+    post_delay: 3.0
+  
+  - "Curobo Control": 
+    - "source API_KEY"
+    - "python3 ./scripts/task_planner/curobo_control.py --vlm --server --server-address \"$CUROBO_CONTROL_ADDRESS\""

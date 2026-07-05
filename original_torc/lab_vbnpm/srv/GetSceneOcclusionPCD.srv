@@ -1,0 +1,3 @@
+---
+float64[] data # this is flattened pcd. shape: -1x3
+               # pcd frame is in the world. (already transformed)

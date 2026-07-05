@@ -1,0 +1,297 @@
+[CUROBO_STAGE 2026-07-05 10:18:09.563 +    0.000s] run(args) entered | method=dg_only sim=True ground_truth=True vlm=True target_object=obj_000070_0 out_file=/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783232256/exp_2026-07-05_10-17-47__difficult_116_obj_000070_0_dg_only/output.csv
+[CUROBO_STAGE 2026-07-05 10:18:09.563 +    0.000s] selected grasp capture env | pid=2293643 cwd=/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm TORC_CAPTURE_SELECTED_GRASP=None TORC_CAPTURE_ORIGINAL_PICK1_ALLPTS=None TORC_USE_CGN_ZMQ='1' TORC_EXPERIMENT_DIR='/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783232256/exp_2026-07-05_10-17-47__difficult_116_obj_000070_0_dg_only' OUT_FILE_DIR='/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783232256/exp_2026-07-05_10-17-47__difficult_116_obj_000070_0_dg_only' target_object='obj_000070_0'
+[CUROBO_STAGE 2026-07-05 10:18:09.564 +    0.001s] selected grasp capture heartbeat skipped | TORC_CAPTURE_SELECTED_GRASP disabled
+[CUROBO_STAGE 2026-07-05 10:18:09.565 +    0.003s] writing info_curobo_control.json | /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783232256/exp_2026-07-05_10-17-47__difficult_116_obj_000070_0_dg_only/info_curobo_control.json
+[CUROBO_STAGE 2026-07-05 10:18:09.566 +    0.003s] wrote info_curobo_control.json | /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783232256/exp_2026-07-05_10-17-47__difficult_116_obj_000070_0_dg_only/info_curobo_control.json
+[CUROBO_STAGE 2026-07-05 10:18:09.566 +    0.004s] pre-init imports begin | signal traceback subprocess pathlib rospkg
+[CUROBO_STAGE 2026-07-05 10:18:09.576 +    0.013s] pre-init imports done
+[CUROBO_STAGE 2026-07-05 10:18:09.576 +    0.014s] RosPack init begin
+[CUROBO_STAGE 2026-07-05 10:18:09.577 +    0.014s] RosPack init done
+[CUROBO_STAGE 2026-07-05 10:18:09.805 +    0.243s] resolved lab_vbnpm root | /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm
+[CUROBO_STAGE 2026-07-05 10:18:09.806 +    0.243s] loading prompt templates begin | /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/scripts/task_planner/prompt_templates
+[CUROBO_STAGE 2026-07-05 10:18:09.806 +    0.243s] loading prompt templates done
+[CUROBO_STAGE 2026-07-05 10:18:09.806 +    0.244s] robot selector initialized | TORC_ROBOT_TYPE=franka reset_joints=['robot0_joint1', 'robot0_joint2', 'robot0_joint3', 'robot0_joint4', 'robot0_joint5', 'robot0_joint6', 'robot0_joint7']
+[CUROBO_STAGE 2026-07-05 10:18:09.807 +    0.244s] opened io files | in_file=stdin out_file=/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783232256/exp_2026-07-05_10-17-47__difficult_116_obj_000070_0_dg_only/output.csv
+[CUROBO_STAGE 2026-07-05 10:18:09.807 +    0.244s] signal handlers installed
+[CUROBO_STAGE 2026-07-05 10:18:09.807 +    0.245s] marked curobo_control unfinished
+[CUROBO_STAGE 2026-07-05 10:18:09.808 +    0.246s] stale helper process cleanup done
+[CUROBO_STAGE 2026-07-05 10:18:09.809 +    0.246s] heavy imports begin | cv2 numpy rospy cv_bridge ROS msgs visual_utils GraspPlanner Prompter open_loop dep_graph
+[CUROBO_STAGE 2026-07-05 10:18:09.809 +    0.246s] heavy import begin: cv2
+[CUROBO_STAGE 2026-07-05 10:18:10.052 +    0.489s] heavy import done: cv2
+[CUROBO_STAGE 2026-07-05 10:18:10.052 +    0.489s] heavy import begin: numpy
+[CUROBO_STAGE 2026-07-05 10:18:10.052 +    0.490s] heavy import done: numpy
+[CUROBO_STAGE 2026-07-05 10:18:10.052 +    0.490s] heavy import begin: rospy and ROS message modules
+[CUROBO_STAGE 2026-07-05 10:18:10.236 +    0.674s] heavy import done: rospy and ROS message modules
+[CUROBO_STAGE 2026-07-05 10:18:10.237 +    0.674s] heavy import begin: task_planner.eutils
+[CUROBO_STAGE 2026-07-05 10:18:10.251 +    0.689s] heavy import done: task_planner.eutils
+[CUROBO_STAGE 2026-07-05 10:18:10.252 +    0.689s] heavy import begin: utils.visual_utils
+[CUROBO_STAGE 2026-07-05 10:18:17.136 +    7.574s] heavy import done: utils.visual_utils
+[CUROBO_STAGE 2026-07-05 10:18:17.137 +    7.574s] heavy import begin: grasp_planner.curobo_grasp_planner
+[CUROBO_STAGE 2026-07-05 10:18:22.789 +   13.226s] heavy import done: grasp_planner.curobo_grasp_planner
+[CUROBO_STAGE 2026-07-05 10:18:22.789 +   13.227s] heavy import begin: task_planner.prompt
+[CUROBO_STAGE 2026-07-05 10:18:23.116 +   13.554s] heavy import done: task_planner.prompt
+[CUROBO_STAGE 2026-07-05 10:18:23.117 +   13.554s] heavy import begin: task_planner.curobo_open_loop
+[CUROBO_STAGE 2026-07-05 10:18:23.706 +   14.143s] heavy import done: task_planner.curobo_open_loop
+[CUROBO_STAGE 2026-07-05 10:18:23.706 +   14.143s] heavy import begin: task_planner.dep_graph
+[CUROBO_STAGE 2026-07-05 10:18:23.706 +   14.143s] heavy import done: task_planner.dep_graph
+[CUROBO_STAGE 2026-07-05 10:18:23.706 +   14.143s] heavy imports done
+[CUROBO_STAGE 2026-07-05 10:18:23.706 +   14.143s] installed ROS wait instrumentation
+[CUROBO_STAGE 2026-07-05 10:18:23.706 +   14.144s] rospy.init_node begin | node=curobo_control
+[CUROBO_STAGE 2026-07-05 10:18:23.942 +   14.379s] rospy.init_node done | node=curobo_control
+[CUROBO_STAGE 2026-07-05 10:18:23.942 +   14.380s] CvBridge init begin
+[CUROBO_STAGE 2026-07-05 10:18:23.943 +   14.380s] CvBridge init done
+[CUROBO_STAGE 2026-07-05 10:18:23.943 +   14.380s] init_robot dispatch begin | robot is None
+[CUROBO_STAGE 2026-07-05 10:18:23.943 +   14.381s] robot init begin | robot_type=franka sim=True ground_truth=True
+[CUROBO_STAGE 2026-07-05 10:18:23.997 +   14.435s] robot init done | class=FrankaTORCRobot
+[CUROBO_STAGE 2026-07-05 10:18:23.998 +   14.435s] perception init begin | robot.init_perception_interface; may set RGB-D/GT segmentation subscribers
+[CUROBO_STAGE 2026-07-05 10:18:24.759 +   15.196s] perception init done
+[CUROBO_STAGE 2026-07-05 10:18:24.760 +   15.197s] CuRobo init begin | robot.init_motion_planner(planner='curobo'); may initialize CUDA/warmup
+[CUROBO_STAGE 2026-07-05 10:18:36.210 +   26.647s] CuRobo init done
+[CUROBO_STAGE 2026-07-05 10:18:36.210 +   26.647s] GraspPlanner init begin | may initialize RobotWorld/world collision and discover Contact-GraspNet services
+[CUROBO_STAGE 2026-07-05 10:18:36.312 +   26.749s] GraspPlanner init done
+[CUROBO_STAGE 2026-07-05 10:18:36.312 +   26.749s] init_robot dispatch done
+[CUROBO_STAGE 2026-07-05 10:18:36.312 +   26.749s] init_vlm dispatch begin | args.vlm=True
+[CUROBO_STAGE 2026-07-05 10:18:36.312 +   26.750s] VLM client init skipped | method=dg_only does not use VLM client
+[CUROBO_STAGE 2026-07-05 10:18:36.312 +   26.750s] init_vlm dispatch done
+[CUROBO_STAGE 2026-07-05 10:18:36.313 +   26.750s] marker publisher init begin | topic=/plot_grasps
+[CUROBO_STAGE 2026-07-05 10:18:36.313 +   26.750s] marker publisher init done | topic=/plot_grasps
+[CUROBO_STAGE 2026-07-05 10:18:36.313 +   26.750s] post-init begin | robot.is_sim=True
+[CUROBO_STAGE 2026-07-05 10:18:36.313 +   26.750s] Motoman/GT topic wait expected | waiting for /ground_truth/object_ids_to_names
+[CUROBO_STAGE 2026-07-05 10:18:36.313 +   26.750s] WAIT ROS topic begin | topic=/ground_truth/object_ids_to_names type=ObjectIdsToNames timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:36.389 +   26.827s] WAIT ROS topic done | topic=/ground_truth/object_ids_to_names elapsed=0.076s
+[CUROBO_STAGE 2026-07-05 10:18:36.391 +   26.828s] Motoman/GT topic received | /ground_truth/object_ids_to_names count=38
+[CUROBO_STAGE 2026-07-05 10:18:36.391 +   26.828s] target object lookup begin | obj_000070_0
+[CUROBO_STAGE 2026-07-05 10:18:36.391 +   26.829s] target object lookup done | obj_000070_0 -> 36
+[CUROBO_STAGE 2026-07-05 10:18:36.391 +   26.829s] post-init target resolved | target_object_id=36 target_object_name=obj_000070_0
+[CUROBO_STAGE 2026-07-05 10:18:36.392 +   26.829s] post-init done | target_object_id=36
+[CUROBO_STAGE 2026-07-05 10:18:36.392 +   26.829s] control loop setup begin
+[CUROBO_STAGE 2026-07-05 10:18:36.392 +   26.829s] control loop setup done | total_init=26.829s
+[CUROBO_STAGE 2026-07-05 10:18:36.392 +   26.829s] pick iteration begin | pick_count=1
+[CUROBO_STAGE 2026-07-05 10:18:36.392 +   26.829s] Motoman/execution topic settle wait begin | looping on /joint_states_all until reset pose is stable
+[CUROBO_STAGE 2026-07-05 10:18:36.392 +   26.830s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:36.476 +   26.913s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.083s
+[CUROBO_STAGE 2026-07-05 10:18:36.498 +   26.935s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:36.523 +   26.960s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.025s
+[CUROBO_STAGE 2026-07-05 10:18:36.546 +   26.983s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:36.622 +   27.059s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.076s
+[CUROBO_STAGE 2026-07-05 10:18:36.719 +   27.156s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:36.835 +   27.272s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.115s
+[CUROBO_STAGE 2026-07-05 10:18:36.858 +   27.295s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:36.892 +   27.329s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:36.914 +   27.351s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:36.950 +   27.387s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.035s
+[CUROBO_STAGE 2026-07-05 10:18:37.022 +   27.459s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:37.146 +   27.583s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.043s
+[CUROBO_STAGE 2026-07-05 10:18:37.196 +   27.634s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:37.250 +   27.688s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.053s
+[CUROBO_STAGE 2026-07-05 10:18:37.304 +   27.742s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:37.347 +   27.785s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.043s
+[CUROBO_STAGE 2026-07-05 10:18:37.394 +   27.831s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:37.447 +   27.884s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.053s
+[CUROBO_STAGE 2026-07-05 10:18:37.478 +   27.916s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:37.511 +   27.949s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:37.562 +   27.999s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:37.596 +   28.033s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:37.632 +   28.069s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:37.666 +   28.103s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.034s
+[CUROBO_STAGE 2026-07-05 10:18:37.697 +   28.134s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:37.772 +   28.209s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.075s
+[CUROBO_STAGE 2026-07-05 10:18:37.800 +   28.237s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:37.864 +   28.301s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.063s
+[CUROBO_STAGE 2026-07-05 10:18:37.909 +   28.346s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:37.953 +   28.390s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.044s
+[CUROBO_STAGE 2026-07-05 10:18:37.982 +   28.419s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:38.025 +   28.463s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.043s
+[CUROBO_STAGE 2026-07-05 10:18:38.062 +   28.499s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:38.144 +   28.581s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.080s
+[CUROBO_STAGE 2026-07-05 10:18:38.179 +   28.616s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:38.267 +   28.705s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.088s
+[CUROBO_STAGE 2026-07-05 10:18:38.321 +   28.758s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:38.367 +   28.804s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.046s
+[CUROBO_STAGE 2026-07-05 10:18:38.488 +   28.925s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:38.532 +   28.970s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.043s
+[CUROBO_STAGE 2026-07-05 10:18:38.551 +   28.989s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:38.587 +   29.024s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.035s
+[CUROBO_STAGE 2026-07-05 10:18:38.626 +   29.063s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:38.671 +   29.108s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.044s
+[CUROBO_STAGE 2026-07-05 10:18:38.724 +   29.161s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:38.790 +   29.227s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.063s
+[CUROBO_STAGE 2026-07-05 10:18:38.816 +   29.254s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:38.880 +   29.317s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.063s
+[CUROBO_STAGE 2026-07-05 10:18:38.919 +   29.357s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:38.964 +   29.401s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.044s
+[CUROBO_STAGE 2026-07-05 10:18:39.000 +   29.437s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:39.033 +   29.470s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:39.072 +   29.510s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:39.116 +   29.553s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.043s
+[CUROBO_STAGE 2026-07-05 10:18:39.157 +   29.594s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:39.210 +   29.647s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.053s
+[CUROBO_STAGE 2026-07-05 10:18:39.247 +   29.684s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:39.280 +   29.717s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:39.300 +   29.737s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:39.324 +   29.761s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.024s
+[CUROBO_STAGE 2026-07-05 10:18:39.380 +   29.817s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:39.460 +   29.897s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.080s
+[CUROBO_STAGE 2026-07-05 10:18:39.506 +   29.943s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:39.549 +   29.986s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.043s
+[CUROBO_STAGE 2026-07-05 10:18:39.626 +   30.063s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:39.660 +   30.097s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:39.731 +   30.168s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:39.775 +   30.213s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.043s
+[CUROBO_STAGE 2026-07-05 10:18:39.818 +   30.255s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:39.977 +   30.414s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.159s
+[CUROBO_STAGE 2026-07-05 10:18:40.021 +   30.459s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:40.065 +   30.502s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.043s
+[CUROBO_STAGE 2026-07-05 10:18:40.085 +   30.523s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:40.109 +   30.546s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.023s
+[CUROBO_STAGE 2026-07-05 10:18:40.144 +   30.581s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:40.210 +   30.647s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.053s
+[CUROBO_STAGE 2026-07-05 10:18:40.267 +   30.704s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:40.351 +   30.788s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.084s
+[CUROBO_STAGE 2026-07-05 10:18:40.390 +   30.827s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:40.434 +   30.872s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.044s
+[CUROBO_STAGE 2026-07-05 10:18:40.458 +   30.895s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:40.491 +   30.928s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:40.528 +   30.965s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:40.571 +   31.009s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.043s
+[CUROBO_STAGE 2026-07-05 10:18:40.603 +   31.041s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:40.636 +   31.074s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:40.668 +   31.105s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:40.721 +   31.158s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.053s
+[CUROBO_STAGE 2026-07-05 10:18:40.781 +   31.219s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:40.815 +   31.252s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:40.905 +   31.342s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:40.938 +   31.375s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:40.982 +   31.419s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:41.036 +   31.473s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.053s
+[CUROBO_STAGE 2026-07-05 10:18:41.077 +   31.515s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:41.195 +   31.632s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.116s
+[CUROBO_STAGE 2026-07-05 10:18:41.248 +   31.686s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:41.287 +   31.725s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.034s
+[CUROBO_STAGE 2026-07-05 10:18:41.310 +   31.747s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:41.431 +   31.869s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.121s
+[CUROBO_STAGE 2026-07-05 10:18:41.473 +   31.910s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:41.516 +   31.954s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.043s
+[CUROBO_STAGE 2026-07-05 10:18:41.542 +   31.980s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:41.629 +   32.066s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.086s
+[CUROBO_STAGE 2026-07-05 10:18:41.675 +   32.112s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:41.756 +   32.194s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.081s
+[CUROBO_STAGE 2026-07-05 10:18:41.808 +   32.245s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:41.861 +   32.299s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.053s
+[CUROBO_STAGE 2026-07-05 10:18:41.903 +   32.340s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:41.978 +   32.415s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.074s
+[CUROBO_STAGE 2026-07-05 10:18:42.009 +   32.446s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:42.072 +   32.510s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.063s
+[CUROBO_STAGE 2026-07-05 10:18:42.169 +   32.606s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:42.213 +   32.650s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.043s
+[CUROBO_STAGE 2026-07-05 10:18:42.237 +   32.675s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:42.260 +   32.697s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.022s
+[CUROBO_STAGE 2026-07-05 10:18:42.279 +   32.716s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:42.313 +   32.750s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:42.330 +   32.767s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:42.352 +   32.790s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.023s
+[CUROBO_STAGE 2026-07-05 10:18:42.370 +   32.808s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:42.394 +   32.831s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.023s
+[CUROBO_STAGE 2026-07-05 10:18:42.429 +   32.866s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:42.493 +   32.930s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.063s
+[CUROBO_STAGE 2026-07-05 10:18:42.517 +   32.955s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:42.612 +   33.049s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.094s
+[CUROBO_STAGE 2026-07-05 10:18:42.656 +   33.093s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:42.714 +   33.151s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.057s
+[CUROBO_STAGE 2026-07-05 10:18:42.748 +   33.185s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:42.770 +   33.208s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.022s
+[CUROBO_STAGE 2026-07-05 10:18:42.822 +   33.259s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:42.893 +   33.331s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.071s
+[CUROBO_STAGE 2026-07-05 10:18:42.948 +   33.386s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:42.971 +   33.409s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.023s
+[CUROBO_STAGE 2026-07-05 10:18:43.022 +   33.459s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:43.045 +   33.482s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.022s
+[CUROBO_STAGE 2026-07-05 10:18:43.068 +   33.505s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:43.090 +   33.528s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.023s
+[CUROBO_STAGE 2026-07-05 10:18:43.117 +   33.555s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:43.315 +   33.752s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.197s
+[CUROBO_STAGE 2026-07-05 10:18:43.368 +   33.805s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:43.421 +   33.858s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.053s
+[CUROBO_STAGE 2026-07-05 10:18:43.468 +   33.905s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:43.501 +   33.939s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:43.536 +   33.974s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:43.580 +   34.018s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.043s
+[CUROBO_STAGE 2026-07-05 10:18:43.650 +   34.087s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:43.723 +   34.161s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.073s
+[CUROBO_STAGE 2026-07-05 10:18:43.751 +   34.189s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:43.825 +   34.263s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.073s
+[CUROBO_STAGE 2026-07-05 10:18:43.847 +   34.284s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:43.879 +   34.317s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:43.896 +   34.333s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:43.919 +   34.356s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.023s
+[CUROBO_STAGE 2026-07-05 10:18:43.954 +   34.392s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:44.018 +   34.456s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.064s
+[CUROBO_STAGE 2026-07-05 10:18:44.063 +   34.501s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:44.208 +   34.645s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.144s
+[CUROBO_STAGE 2026-07-05 10:18:44.275 +   34.712s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:44.308 +   34.746s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:44.352 +   34.789s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:44.416 +   34.853s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.064s
+[CUROBO_STAGE 2026-07-05 10:18:44.482 +   34.919s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:44.545 +   34.983s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.063s
+[CUROBO_STAGE 2026-07-05 10:18:44.622 +   35.059s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:44.655 +   35.092s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:44.700 +   35.137s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:44.777 +   35.214s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.073s
+[CUROBO_STAGE 2026-07-05 10:18:44.909 +   35.346s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:45.021 +   35.458s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.112s
+[CUROBO_STAGE 2026-07-05 10:18:45.071 +   35.508s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:45.114 +   35.551s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.043s
+[CUROBO_STAGE 2026-07-05 10:18:45.143 +   35.580s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:45.206 +   35.644s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.063s
+[CUROBO_STAGE 2026-07-05 10:18:45.233 +   35.670s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:45.266 +   35.703s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:45.290 +   35.727s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:45.345 +   35.782s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.054s
+[CUROBO_STAGE 2026-07-05 10:18:45.384 +   35.822s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:45.432 +   35.869s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.047s
+[CUROBO_STAGE 2026-07-05 10:18:45.495 +   35.932s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:45.569 +   36.006s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.074s
+[CUROBO_STAGE 2026-07-05 10:18:45.598 +   36.036s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:45.651 +   36.089s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.053s
+[CUROBO_STAGE 2026-07-05 10:18:45.699 +   36.136s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:45.722 +   36.159s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.022s
+[CUROBO_STAGE 2026-07-05 10:18:45.743 +   36.181s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:45.776 +   36.214s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:45.797 +   36.234s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:45.820 +   36.257s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.023s
+[CUROBO_STAGE 2026-07-05 10:18:45.838 +   36.275s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:45.901 +   36.339s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.063s
+[CUROBO_STAGE 2026-07-05 10:18:45.950 +   36.387s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:46.003 +   36.440s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.053s
+[CUROBO_STAGE 2026-07-05 10:18:46.025 +   36.462s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:46.058 +   36.495s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:46.082 +   36.519s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:46.111 +   36.548s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.028s
+[CUROBO_STAGE 2026-07-05 10:18:46.131 +   36.568s] Motoman/execution topic settle wait done | stable_count=0 total_steps=100
+[CUROBO_STAGE 2026-07-05 10:18:46.131 +   36.569s] perception TSDF reset_visible begin
+[CUROBO_STAGE 2026-07-05 10:18:46.269 +   36.706s] perception TSDF reset_visible done
+[CUROBO_STAGE 2026-07-05 10:18:46.269 +   36.707s] open_loop_pick_or_place begin | may wait on RGB-D/segmentation/object poses, Contact-GraspNet, world/collision setup, CuRobo planning, and dependency graph callback
+[CUROBO_STAGE 2026-07-05 10:18:46.272 +   36.709s] WAIT ROS topic begin | topic=/ground_truth/object_ids_to_names type=ObjectIdsToNames timeout=None
+[CUROBO_STAGE 2026-07-05 10:18:46.305 +   36.742s] WAIT ROS topic done | topic=/ground_truth/object_ids_to_names elapsed=0.033s
+[CUROBO_STAGE 2026-07-05 10:18:57.594 +   48.032s] WAIT ROS topic begin | topic=/joint_states_all type=JointState timeout=5
+[CUROBO_STAGE 2026-07-05 10:18:57.732 +   48.169s] WAIT ROS topic done | topic=/joint_states_all elapsed=0.129s
+[CUROBO_STAGE 2026-07-05 10:19:35.469 +   85.906s] grasp_choice callback entered | obj_ids=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] pick_limit=1 method=dg_only
+[CUROBO_STAGE 2026-07-05 10:19:35.469 +   85.907s] grasp_choice attempt begin | attempt=1/3
+[CUROBO_STAGE 2026-07-05 10:19:35.470 +   85.907s] try_choose_grasp begin | method=dg_only
+[CUROBO_STAGE 2026-07-05 10:19:35.470 +   85.907s] grasp choice preparation begin | pick_count=1
+[CUROBO_STAGE 2026-07-05 10:19:35.827 +   86.264s] labeled image created | object_depth_count=11 cur_color_shape=(1080, 1920, 3)
+[CUROBO_STAGE 2026-07-05 10:19:35.828 +   86.265s] saving perception debug artifacts begin | /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783232256/exp_2026-07-05_10-17-47__difficult_116_obj_000070_0_dg_only
+[CUROBO_STAGE 2026-07-05 10:19:35.917 +   86.354s] saving perception debug artifacts done | /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783232256/exp_2026-07-05_10-17-47__difficult_116_obj_000070_0_dg_only
+[CUROBO_STAGE 2026-07-05 10:19:35.917 +   86.354s] grasp choice preparation done | pick_count=1
+[CUROBO_STAGE 2026-07-05 10:19:35.917 +   86.354s] DG_ONLY choice branch begin
+[CUROBO_STAGE 2026-07-05 10:19:35.917 +   86.354s] dependency graph construction begin | method=dg_only object_depth_count=11
+[CUROBO_STAGE 2026-07-05 10:19:39.781 +   90.218s] dependency graph geometry edges done | edge_source_count=22
+[CUROBO_STAGE 2026-07-05 10:19:43.682 +   94.120s] dependency graph construction done | dg_grasp_choice
+[CUROBO_STAGE 2026-07-05 10:19:43.683 +   94.120s] dependency graph choice begin | dep_graph_is_none=False
+[CUROBO_STAGE 2026-07-05 10:19:43.684 +   94.122s] dependency graph choice done | chosen=1
+[CUROBO_STAGE 2026-07-05 10:19:43.685 +   94.122s] DG_ONLY choice branch done | dg_choice=1
+[CUROBO_STAGE 2026-07-05 10:19:43.685 +   94.122s] try_choose_grasp chose id | chosen_id=1
+[CUROBO_STAGE 2026-07-05 10:19:43.685 +   94.122s] try_choose_grasp done | chosen_id=1
+[CUROBO_STAGE 2026-07-05 10:19:43.685 +   94.123s] grasp_choice attempt done | attempt=1/3 chosen_id=1 elapsed=8.216s
+[CUROBO_STAGE 2026-07-05 10:19:43.688 +   94.125s] grasp_choice callback exiting | chosen_id=1

@@ -1,0 +1,35 @@
+{
+  "type": "phase4_3_torc_equivalent_anonymous_allpts_pregrasp_planning",
+  "policy": "torc_equivalent_anonymous_allpts_pointcloud_motiongen_world",
+  "current_project_franka_yaml": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/config/curobo/franka_panda.yml",
+  "current_project_franka_urdf": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/urdf/franka_panda_phase4.urdf",
+  "start_qpos": [
+    0.0,
+    -1.25,
+    0.0,
+    -2.35,
+    0.0,
+    1.1,
+    0.0
+  ],
+  "goal_pose_base_wxyz": [
+    0.6940638653021851,
+    -0.0036546255335560655,
+    0.3568801629288093,
+    -0.2842490115038217,
+    0.6087367034003862,
+    0.5257915071680418,
+    -0.5217139219747634
+  ],
+  "points_base_npy": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/phase4_3_curobo_allpts_base_candidate_033.npy",
+  "points_world_count": 3096,
+  "points_base_count": 3096,
+  "downsample_stride": 1,
+  "pointcloud_mesh_name": "world",
+  "candidate_index": 33,
+  "base_world_m": [
+    0.0,
+    0.0,
+    0.912
+  ]
+}

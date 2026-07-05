@@ -1,0 +1,29 @@
+[CUROBO_STAGE 2026-07-05 09:36:44.144 +    0.000s] run(args) entered | method=dg_only sim=True ground_truth=True vlm=True target_object=obj_000070_0 out_file=/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783228970/exp_2026-07-05_09-23-00__difficult_116_obj_000070_0_dg_only/output.csv
+[CUROBO_STAGE 2026-07-05 09:36:44.145 +    0.001s] selected grasp capture env | pid=1258468 cwd=/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm TORC_CAPTURE_SELECTED_GRASP=None TORC_CAPTURE_ORIGINAL_PICK1_ALLPTS=None TORC_USE_CGN_ZMQ='1' TORC_EXPERIMENT_DIR='/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783228970/exp_2026-07-05_09-23-00__difficult_116_obj_000070_0_dg_only' OUT_FILE_DIR='/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783228970/exp_2026-07-05_09-23-00__difficult_116_obj_000070_0_dg_only' target_object='obj_000070_0'
+[CUROBO_STAGE 2026-07-05 09:36:44.145 +    0.001s] selected grasp capture heartbeat skipped | TORC_CAPTURE_SELECTED_GRASP disabled
+[CUROBO_STAGE 2026-07-05 09:36:44.146 +    0.001s] writing info_curobo_control.json | /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783228970/exp_2026-07-05_09-23-00__difficult_116_obj_000070_0_dg_only/info_curobo_control.json
+[CUROBO_STAGE 2026-07-05 09:36:44.146 +    0.002s] wrote info_curobo_control.json | /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783228970/exp_2026-07-05_09-23-00__difficult_116_obj_000070_0_dg_only/info_curobo_control.json
+[CUROBO_STAGE 2026-07-05 09:36:44.146 +    0.002s] pre-init imports begin | signal traceback subprocess pathlib rospkg
+[CUROBO_STAGE 2026-07-05 09:36:44.155 +    0.011s] pre-init imports done
+[CUROBO_STAGE 2026-07-05 09:36:44.155 +    0.011s] RosPack init begin
+[CUROBO_STAGE 2026-07-05 09:36:44.155 +    0.011s] RosPack init done
+[CUROBO_STAGE 2026-07-05 09:36:44.253 +    0.109s] resolved lab_vbnpm root | /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm
+[CUROBO_STAGE 2026-07-05 09:36:44.254 +    0.109s] loading prompt templates begin | /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/scripts/task_planner/prompt_templates
+[CUROBO_STAGE 2026-07-05 09:36:44.254 +    0.110s] loading prompt templates done
+[CUROBO_STAGE 2026-07-05 09:36:44.255 +    0.111s] robot selector initialized | TORC_ROBOT_TYPE=franka reset_joints=['robot0_joint1', 'robot0_joint2', 'robot0_joint3', 'robot0_joint4', 'robot0_joint5', 'robot0_joint6', 'robot0_joint7']
+[CUROBO_STAGE 2026-07-05 09:36:44.256 +    0.111s] opened io files | in_file=stdin out_file=/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783228970/exp_2026-07-05_09-23-00__difficult_116_obj_000070_0_dg_only/output.csv
+[CUROBO_STAGE 2026-07-05 09:36:44.256 +    0.112s] signal handlers installed
+[CUROBO_STAGE 2026-07-05 09:36:44.256 +    0.112s] marked curobo_control unfinished
+[CUROBO_STAGE 2026-07-05 09:36:44.259 +    0.114s] stale helper process cleanup done
+[CUROBO_STAGE 2026-07-05 09:36:44.259 +    0.114s] heavy imports begin | cv2 numpy rospy cv_bridge ROS msgs visual_utils GraspPlanner Prompter open_loop dep_graph
+[CUROBO_STAGE 2026-07-05 09:36:44.259 +    0.114s] heavy import begin: cv2
+[CUROBO_STAGE 2026-07-05 09:36:44.531 +    0.387s] heavy import done: cv2
+[CUROBO_STAGE 2026-07-05 09:36:44.532 +    0.388s] heavy import begin: numpy
+[CUROBO_STAGE 2026-07-05 09:36:44.532 +    0.388s] heavy import done: numpy
+[CUROBO_STAGE 2026-07-05 09:36:44.532 +    0.388s] heavy import begin: rospy and ROS message modules
+[CUROBO_STAGE 2026-07-05 09:36:44.685 +    0.540s] heavy import done: rospy and ROS message modules
+[CUROBO_STAGE 2026-07-05 09:36:44.685 +    0.541s] heavy import begin: task_planner.eutils
+[CUROBO_STAGE 2026-07-05 09:36:44.701 +    0.557s] heavy import done: task_planner.eutils
+[CUROBO_STAGE 2026-07-05 09:36:44.701 +    0.557s] heavy import begin: utils.visual_utils
+[CUROBO_STAGE 2026-07-05 09:36:49.290 +    5.146s] heavy import done: utils.visual_utils
+[CUROBO_STAGE 2026-07-05 09:36:49.291 +    5.146s] heavy import begin: grasp_planner.curobo_grasp_planner

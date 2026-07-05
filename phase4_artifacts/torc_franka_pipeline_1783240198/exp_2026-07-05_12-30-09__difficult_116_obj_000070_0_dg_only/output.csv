@@ -1,0 +1,11 @@
+Init Import Duration,14.203843593597412
+Init Perception Planning Duration,11.851357460021973
+Init Functions Duration,0.0003142356872558594
+Init Post Duration,0.05634498596191406
+Total Init Duration,26.11348271369934
+Target Object,obj_000070_0
+Pick Count,1
+Grasp Choice (Seg ID),1
+Grasp Choice Duration,8.572965860366821
+Grasp Result,no_valid_motion_plan_found
+Retrieved Target Object,False

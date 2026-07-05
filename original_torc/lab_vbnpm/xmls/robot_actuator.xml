@@ -1,0 +1,46 @@
+<actuator>
+  <!--
+    The general actuator below is a customized position actuator (with some damping) where
+    gainprm[0] != kp (see http://mujoco.org/book/modeling.html#position).
+    The reason why gainprm[0] != kp is because the control input range has to be re-scaled to
+    [0, 255]. The joint range is currently set at [0, 0.8], the control range is [0, 255] and
+    kp = 100. Tau = Kp * scale * control_input - Kp * error, max(Kp * scale * control_input) = 0.8,
+    hence scale = 0.8 * 100 / 255
+  -->
+  <general class="2f85" name="left_driver" tendon="split" forcerange="-5 5"
+    ctrlrange="0 255" gainprm="0.3137255 0 0" biasprm="0 -100 -10"/>
+
+
+  <position name="torso_b1" joint="torso_joint_b1" ctrlrange="-2.96 2.96" class="p_general"/>
+  <position name="arm_left_1_s" joint="arm_left_joint_1_s" ctrlrange="-3.13 3.13" class="p_general"/>
+  <position name="arm_left_2_l" joint="arm_left_joint_2_l" ctrlrange="-1.9 1.9" class="p_general"/>
+  <position name="arm_left_3_e" joint="arm_left_joint_3_e" ctrlrange="-2.95 2.95" class="p_general"/>
+  <position name="arm_left_4_u" joint="arm_left_joint_4_u" ctrlrange="-2.36 2.36" class="p_general"/>
+  <position name="arm_left_5_r" joint="arm_left_joint_5_r" ctrlrange="-3.13 3.13" class="p_RB"/>
+  <position name="arm_left_6_b" joint="arm_left_joint_6_b" ctrlrange="-1.9 1.9" class="p_RB"/>
+  <position name="arm_left_7_t" joint="arm_left_joint_7_t" ctrlrange="-3.13 3.13" class="p_T"/>
+  <position name="arm_right_1_s" joint="arm_right_joint_1_s" ctrlrange="-3.13 3.13" class="p_general"/>
+  <position name="arm_right_2_l" joint="arm_right_joint_2_l" ctrlrange="-1.9 1.9" class="p_general"/>
+  <position name="arm_right_3_e" joint="arm_right_joint_3_e" ctrlrange="-2.95 2.95" class="p_general"/>
+  <position name="arm_right_4_u" joint="arm_right_joint_4_u" ctrlrange="-2.36 2.36" class="p_general"/>
+  <position name="arm_right_5_r" joint="arm_right_joint_5_r" ctrlrange="-3.13 3.13" class="p_RB"/>
+  <position name="arm_right_6_b" joint="arm_right_joint_6_b" ctrlrange="-1.9 1.9" class="p_RB"/>
+  <position name="arm_right_7_t" joint="arm_right_joint_7_t" ctrlrange="-3.13 3.13" class="p_T"/>
+
+  <intvelocity name="torso_intv_b1" joint="torso_joint_b1" actrange="-2.96 2.96" class="intvel_general"/>
+  <intvelocity name="arm_left_intv_1_s" joint="arm_left_joint_1_s" actrange="-3.13 3.13" class="intvel_general"/>
+  <intvelocity name="arm_left_intv_2_l" joint="arm_left_joint_2_l" actrange="-1.9 1.9" class="intvel_general"/>
+  <intvelocity name="arm_left_intv_3_e" joint="arm_left_joint_3_e" actrange="-2.95 2.95" class="intvel_general"/>
+  <intvelocity name="arm_left_intv_4_u" joint="arm_left_joint_4_u" actrange="-2.36 2.36" class="intvel_general"/>
+  <intvelocity name="arm_left_intv_5_r" joint="arm_left_joint_5_r" actrange="-3.13 3.13" class="intvel_RB"/>
+  <intvelocity name="arm_left_intv_6_b" joint="arm_left_joint_6_b" actrange="-1.9 1.9" class="intvel_RB"/>
+  <intvelocity name="arm_left_intv_7_t" joint="arm_left_joint_7_t" actrange="-3.13 3.13" class="intvel_T"/>
+  <intvelocity name="arm_right_intv_1_s" joint="arm_right_joint_1_s" actrange="-3.13 3.13" class="intvel_general"/>
+  <intvelocity name="arm_right_intv_2_l" joint="arm_right_joint_2_l" actrange="-1.9 1.9" class="intvel_general"/>
+  <intvelocity name="arm_right_intv_3_e" joint="arm_right_joint_3_e" actrange="-2.95 2.95" class="intvel_general"/>
+  <intvelocity name="arm_right_intv_4_u" joint="arm_right_joint_4_u" actrange="-2.36 2.36" class="intvel_general"/>
+  <intvelocity name="arm_right_intv_5_r" joint="arm_right_joint_5_r" actrange="-3.13 3.13" class="intvel_RB"/>
+  <intvelocity name="arm_right_intv_6_b" joint="arm_right_joint_6_b" actrange="-1.9 1.9" class="intvel_RB"/>
+  <intvelocity name="arm_right_intv_7_t" joint="arm_right_joint_7_t" actrange="-3.13 3.13" class="intvel_T"/>
+
+</actuator>

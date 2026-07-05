@@ -1,0 +1,34 @@
+name: grasp_planning
+
+services:
+  vbnpm_ros:
+    image: lab_vbnpm
+    environment:
+     - DISPLAY=${DISPLAY}
+    volumes:
+      - ..:/home/user/lab_ws/src/lab_vbnpm
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    tty: true
+    stdin_open: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0']
+              capabilities: [gpu]
+  cgn_ros:
+    image: contact-graspnet
+    tty: true
+    stdin_open: true
+    environment:
+     - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0']
+              capabilities: [gpu]
