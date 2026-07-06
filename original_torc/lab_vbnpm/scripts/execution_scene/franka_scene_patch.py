@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import os
 from pathlib import Path
 import re
 import xml.etree.ElementTree as ET
@@ -103,7 +104,7 @@ def _replace_arm_torque_actuators_with_position(root: ET.Element) -> None:
             {
                 "name": f"robot0_pos_j{idx}",
                 "joint": joint,
-                "kp": "650",
+                "kp": os.environ.get("TORC_FRANKA_ARM_POSITION_KP", "650"),
                 "ctrllimited": "true",
                 "ctrlrange": joint_ranges[joint],
                 "forcelimited": "true",
@@ -158,6 +159,16 @@ def _add_franka_robot_body(worldbody: ET.Element) -> None:
     worldbody.insert(2, robot_base)
 
 
+def _stabilize_franka_arm_joints(root: ET.Element) -> None:
+    damping = os.environ.get("TORC_FRANKA_ARM_JOINT_DAMPING", "2.0")
+    armature = os.environ.get("TORC_FRANKA_ARM_JOINT_ARMATURE", "1.0")
+    for joint in root.findall(".//joint"):
+        name = joint.attrib.get("name", "")
+        if re.fullmatch(r"robot0_joint[1-7]", name):
+            joint.set("damping", damping)
+            joint.set("armature", armature)
+
+
 def build_franka_runtime_scene(scene_xml: str, experiment_dir: str | None = None) -> str:
     source = Path(scene_xml).resolve()
     out_dir = Path(experiment_dir).resolve() / "runtime_scene" if experiment_dir else PATCH_DIR
@@ -182,6 +193,7 @@ def build_franka_runtime_scene(scene_xml: str, experiment_dir: str | None = None
             root.remove(node)
     _copy_franka_assets_and_actuators(root)
     _add_franka_robot_body(worldbody)
+    _stabilize_franka_arm_joints(root)
 
     visual = root.find("visual")
     if visual is None:

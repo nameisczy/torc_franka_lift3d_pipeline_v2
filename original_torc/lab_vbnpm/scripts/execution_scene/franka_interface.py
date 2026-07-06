@@ -11,7 +11,7 @@ from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryG
 from lab_vbnpm.srv import EEControlResponse, ExecuteTrajectoryResponse
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64
-from trajectory_msgs.msg import JointTrajectory
+from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
 from execution_scene.execution_interface import ExecutionInterface
 
@@ -34,6 +34,51 @@ class FrankaInterface(ExecutionInterface):
             FollowJointTrajectoryAction,
         )
         self.gripper_pub = rospy.Publisher("/franka/gripper_width", Float64, queue_size=3)
+
+    def _get_param(self, name, default):
+        try:
+            return rospy.get_param(name, default)
+        except Exception:
+            return default
+
+    def _segment_duration(self, q0, q1):
+        vel_lim = float(self._get_param("/robot/vel_ang_lim", 20.0)) * np.pi / 180.0
+        acc_lim = float(self._get_param("/robot/acc_ang_lim", 850.0)) * np.pi / 180.0
+        vel_lim = max(vel_lim, 1e-3)
+        acc_lim = max(acc_lim, 1e-3)
+        dq = float(np.max(np.abs(np.asarray(q1, dtype=float) - np.asarray(q0, dtype=float))))
+        if dq <= 1e-8:
+            return 0.02
+        # Trapezoid lower bound, padded slightly so MuJoCo position actuators settle.
+        by_vel = dq / vel_lim
+        by_acc = 2.0 * np.sqrt(dq / acc_lim)
+        return max(0.08, 1.35 * max(by_vel, by_acc))
+
+    def _retime_points(self, joint_names, points):
+        if len(points) <= 1:
+            return points
+        retimed = []
+        elapsed = 0.0
+        prev = np.asarray(points[0].positions, dtype=float)
+        retimed.append(
+            JointTrajectoryPoint(
+                positions=tuple(prev),
+                velocities=tuple([0.0] * len(joint_names)),
+                time_from_start=rospy.Duration(0.0),
+            )
+        )
+        for point in points[1:]:
+            target = np.asarray(point.positions, dtype=float)
+            elapsed += self._segment_duration(prev, target)
+            retimed.append(
+                JointTrajectoryPoint(
+                    positions=tuple(target),
+                    velocities=tuple([0.0] * len(joint_names)),
+                    time_from_start=rospy.Duration.from_sec(elapsed),
+                )
+            )
+            prev = target
+        return retimed
 
     def execute_trajectory(self, req):
         points = copy.deepcopy(req.trajectory.points)
@@ -58,6 +103,13 @@ class FrankaInterface(ExecutionInterface):
                 points[0].velocities = tuple([0.0] * len(indices))
         except Exception:
             pass
+        if req.retime and len(points) > 1:
+            points = self._retime_points(joint_names, points)
+            rospy.loginfo(
+                "FrankaInterface retimed trajectory: points=%d duration=%.6f",
+                len(points),
+                float(points[-1].time_from_start.to_sec()),
+            )
 
         traj = JointTrajectory()
         traj.header.stamp = rospy.Time.now()

@@ -28,6 +28,7 @@ DEFAULT_CONDA_PREFIX = Path("/home/ziyaochen/miniconda3/envs/ros_env")
 DEFAULT_CUROBO_SRC = Path("/home/ziyaochen/curobo_v0_7_8_torc/src")
 OUT_MP4 = PROJECT_ROOT / "franka_planning_full.mp4"
 MANIFEST = PROJECT_ROOT / "phase4_artifacts/phase4_3_planning_replacement_manifest.json"
+SERVER_SESSION = "control_sim_server"
 
 
 def encode_frames_to_mp4(frame_dir: Path, output_path: Path, fps: str) -> dict:
@@ -75,6 +76,55 @@ def encode_frames_to_mp4(frame_dir: Path, output_path: Path, fps: str) -> dict:
     return result
 
 
+def capture_tmux_panes(session: str) -> dict:
+    result = {}
+    tmux = shutil.which("tmux")
+    if tmux is None:
+        return {"error": "tmux_not_found"}
+    windows = subprocess.run(
+        [tmux, "list-windows", "-t", session],
+        text=True,
+        capture_output=True,
+    )
+    result["list_windows_returncode"] = windows.returncode
+    result["list_windows"] = windows.stdout[-4000:]
+    if windows.returncode != 0:
+        result["list_windows_stderr"] = windows.stderr[-4000:]
+        return result
+    for line in windows.stdout.splitlines():
+        if not line.strip():
+            continue
+        idx = line.split(":", 1)[0].strip()
+        pane = subprocess.run(
+            [tmux, "capture-pane", "-t", f"{session}:{idx}", "-p", "-S", "-180"],
+            text=True,
+            capture_output=True,
+        )
+        result[f"window_{idx}"] = {
+            "returncode": pane.returncode,
+            "tail": pane.stdout[-12000:],
+            "stderr": pane.stderr[-4000:],
+        }
+    return result
+
+
+def restart_server_session() -> dict:
+    result = {"session": SERVER_SESSION, "attempted": True}
+    tmux = shutil.which("tmux")
+    if tmux is None:
+        result["error"] = "tmux_not_found"
+        return result
+    kill = subprocess.run(
+        [tmux, "kill-session", "-t", SERVER_SESSION],
+        text=True,
+        capture_output=True,
+    )
+    result["kill_returncode"] = kill.returncode
+    result["kill_stderr_tail"] = kill.stderr[-2000:]
+    time.sleep(1.0)
+    return result
+
+
 def main() -> int:
     scene = os.environ.get("TORC_SCENE_REL", DEFAULT_SCENE)
     target = os.environ.get("TORC_TARGET_OBJECT", DEFAULT_TARGET)
@@ -82,6 +132,7 @@ def main() -> int:
     pick_limit = os.environ.get("TORC_PICK_LIMIT", "1")
     run_dir = PROJECT_ROOT / "phase4_artifacts" / f"torc_franka_pipeline_{int(time.time())}"
     run_dir.mkdir(parents=True, exist_ok=True)
+    restart_result = restart_server_session()
 
     env = dict(os.environ)
     env.update(
@@ -109,6 +160,7 @@ def main() -> int:
             "TORC_RENDER_HEIGHT": env.get("TORC_RENDER_HEIGHT", "720"),
             "TORC_RENDER_EXECUTION_FRAMES": env.get("TORC_RENDER_EXECUTION_FRAMES", "1"),
             "TORC_RENDER_JPEG_QUALITY": env.get("TORC_RENDER_JPEG_QUALITY", "92"),
+            "TORC_SERVER_REQUEST_TIMEOUT_MS": env.get("TORC_SERVER_REQUEST_TIMEOUT_MS", "600000"),
         }
     )
     env["PATH"] = f"{env['TORC_CONDA_PREFIX']}/bin:" + env.get("PATH", "")
@@ -150,6 +202,7 @@ def main() -> int:
         "method": method,
         "pick_limit": int(pick_limit),
         "run_dir": str(run_dir),
+        "server_restart": restart_result,
         "cmd": cmd,
         "returncode": proc.returncode,
         "stdout_tail": proc.stdout[-4000:],
@@ -165,9 +218,11 @@ def main() -> int:
             "PYTHONPATH_prefix": [str(TORC_ROOT / "scripts"), str(TORC_ROOT)],
             "render_execution_video": env["TORC_RENDER_EXECUTION_VIDEO"],
             "render_execution_frames": env["TORC_RENDER_EXECUTION_FRAMES"],
+            "server_request_timeout_ms": env["TORC_SERVER_REQUEST_TIMEOUT_MS"],
             "grasp_reconstruction": "CGN infer_lowlevel -> CanonicalGrasp -> RobotAdapter -> TORC Pose",
             "forbidden": "no local object-selection or DepGraph reimplementation in phase4 script",
         },
+        "tmux_panes_tail": capture_tmux_panes(SERVER_SESSION),
     }
     frame_dirs = sorted(
         [p for p in run_dir.rglob("frames_*") if p.is_dir()],

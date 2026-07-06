@@ -486,6 +486,25 @@ def run_experiment(
 
         out_file = f"{data_dir}/output.csv"
         if server:
+            def server_request(socket: zmq.Socket, request: dict, label: str):
+                timeout_ms = int(os.environ.get("TORC_SERVER_REQUEST_TIMEOUT_MS", "600000"))
+                socket.setsockopt(zmq.RCVTIMEO, timeout_ms)
+                socket.setsockopt(zmq.SNDTIMEO, timeout_ms)
+                socket.setsockopt(zmq.LINGER, 0)
+                try:
+                    socket.send_json(request)
+                    dprint(f"  Sent experiment to {label}.")
+                    return socket.recv_json()
+                except zmq.error.Again:
+                    printerr(
+                        f"{label} timed out after {timeout_ms} ms while handling "
+                        f"{request.get('cmd', '')}"
+                    )
+                    return {
+                        "type": "error",
+                        "msg": f"{label} timeout after {timeout_ms} ms",
+                    }
+
             if not real:
                 motoman_node_req = {
                     "cmd": "reset",
@@ -529,18 +548,22 @@ def run_experiment(
             if not dry:
                 dprint()
                 if not real:
-                    motoman_node_socket.send_json(motoman_node_req)
-                    dprint(f"  Sent experiment to motoman node.")
-                    res = motoman_node_socket.recv_json()
+                    res = server_request(
+                        motoman_node_socket,
+                        motoman_node_req,
+                        "motoman/franka node",
+                    )
                     if res.get("type") != "success":
                         printerr(
                             f"Reset motoman_node failed:\n{json.dumps(res, indent=2)}"
                         )
                         return
 
-                curobo_control_socket.send_json(curobo_control_req)
-                dprint(f"  Sent experiment to curobo control.")
-                res = curobo_control_socket.recv_json()
+                res = server_request(
+                    curobo_control_socket,
+                    curobo_control_req,
+                    "curobo control",
+                )
                 if res.get("type") != "result":
                     printerr(f"Curobo control failed:\n{json.dumps(res, indent=2)}")
                     return

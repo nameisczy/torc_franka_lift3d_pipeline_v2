@@ -438,7 +438,7 @@ class GraspPlanner:
         world_config,
         urdf_file,
         resolution=0.005,
-        ignore_collision_ee_links=[],
+        ignore_collision_ee_links=None,
     ):
         self.grasp_srvs = sorted(
             filter(lambda x: x.find("get_grasps") >= 0, rosservice.get_service_list())
@@ -468,7 +468,7 @@ class GraspPlanner:
         self.curobo_config = curobo_config
         self.world_config = world_config
         self.tensor_args = TensorDeviceType()
-        self.disable_ee_links = ignore_collision_ee_links
+        self.disable_ee_links = list(ignore_collision_ee_links or [])
 
         robot_config = RobotWorldConfig.load_from_config(
             self.curobo_config,
@@ -478,7 +478,8 @@ class GraspPlanner:
         base_link = robot_config.kinematics.base_link
         ee_link = robot_config.kinematics.ee_link
         self.ee_link = ee_link
-        self.disable_ee_links.append(ee_link)
+        if ee_link not in self.disable_ee_links:
+            self.disable_ee_links.append(ee_link)
         self.ik_base_pose_world = np.eye(4, dtype=np.float64)
         if os.environ.get("TORC_ROBOT", "motoman").strip().lower() in ("franka", "panda"):
             raw_base = os.environ.get("TORC_FRANKA_MUJOCO_BASE_POSE_WORLD", "0,0,0.86")
@@ -576,16 +577,22 @@ class GraspPlanner:
 
         collides_with = []
         half_span = float(os.environ.get("TORC_FRANKA_PROXY_HALF_SPAN_M", "0.040"))
-        radius = float(os.environ.get("TORC_FRANKA_PROXY_RADIUS_M", "0.006"))
-        contact_depth = float(os.environ.get("TORC_FRANKA_PROXY_CONTACT_DEPTH_M", "-0.0036"))
+        radius = float(os.environ.get("TORC_FRANKA_PROXY_RADIUS_M", "0.008"))
+        default_contact_depth = "0.0044"
+        if RobotAdapter is not None:
+            try:
+                default_contact_depth = str(RobotAdapter.derive_tcp_pad_front_m())
+            except Exception:
+                default_contact_depth = "0.0044"
+        contact_depth = float(os.environ.get("TORC_FRANKA_PROXY_CONTACT_DEPTH_M", default_contact_depth))
         sphere_count = int(os.environ.get("TORC_FRANKA_PROXY_SPHERE_COUNT", "5"))
         min_points = int(os.environ.get("TORC_FRANKA_PROXY_MIN_POINTS", "1"))
-        sphere_ys = np.linspace(-half_span, half_span, max(1, sphere_count))
+        sphere_xs = np.linspace(-half_span, half_span, max(1, sphere_count))
         sphere_centers = np.stack(
             [
-                np.zeros_like(sphere_ys),
-                sphere_ys,
-                np.full_like(sphere_ys, contact_depth),
+                sphere_xs,
+                np.zeros_like(sphere_xs),
+                np.full_like(sphere_xs, contact_depth),
             ],
             axis=1,
         )
@@ -603,6 +610,67 @@ class GraspPlanner:
                     hit.add(obj_idx)
             collides_with.append(hit)
         return collides_with
+
+    def _franka_pad_penetrates_object(self, poses_world, visible_points, mask, object_ids):
+        """Reject Franka candidates whose real pad boxes already contain target points.
+
+        TORC's original singularity test uses a Robotiq-specific proxy.  The
+        Franka branch keeps that target-selection rule, but its Panda pads are
+        thicker and must be checked with the current gripper box geometry so a
+        candidate cannot pass simply because the proxy touched exactly one
+        object while one finger pad is already inside that object.
+        """
+        points = np.asarray(visible_points, dtype=np.float64).reshape(-1, 3)
+        labels = np.asarray(mask, dtype=np.uint32).reshape(-1)
+        object_ids = np.asarray(object_ids, dtype=np.int32).reshape(-1)
+        if len(points) == 0 or len(labels) != len(points):
+            return np.zeros(len(poses_world), dtype=bool)
+
+        default_pad_front = "0.0044"
+        if RobotAdapter is not None:
+            try:
+                default_pad_front = str(RobotAdapter.derive_tcp_pad_front_m())
+            except Exception:
+                default_pad_front = "0.0044"
+
+        opening_half = float(os.environ.get("TORC_FRANKA_PAD_OPENING_HALF_M", "0.040"))
+        center_extra_x = float(os.environ.get("TORC_FRANKA_PAD_CENTER_EXTRA_X_M", "0.0035"))
+        half_x = float(os.environ.get("TORC_FRANKA_PAD_HALF_X_M", "0.0040"))
+        half_y = float(os.environ.get("TORC_FRANKA_PAD_HALF_Y_M", "0.0080"))
+        half_z = float(os.environ.get("TORC_FRANKA_PAD_HALF_Z_M", "0.0080"))
+        z_front = float(os.environ.get("TORC_FRANKA_PAD_FRONT_Z_M", default_pad_front))
+        margin = float(os.environ.get("TORC_FRANKA_PAD_PENETRATION_MARGIN_M", "0.0010"))
+        z_center = z_front - half_z
+        centers = np.array(
+            [
+                [-(opening_half + center_extra_x), 0.0, z_center],
+                [opening_half + center_extra_x, 0.0, z_center],
+            ],
+            dtype=np.float64,
+        )
+        half_extents = np.array([half_x, half_y, half_z], dtype=np.float64) + margin
+
+        penetrates = []
+        for pose, obj_id in zip(poses_world, object_ids):
+            if obj_id < 0:
+                penetrates.append(False)
+                continue
+            obj_mask = (labels & (1 << int(obj_id))).astype(bool)
+            pts = points[obj_mask]
+            if len(pts) == 0:
+                penetrates.append(False)
+                continue
+
+            T = pose_to_matrix(pose) if hasattr(pose, "position") else np.asarray(pose, dtype=np.float64)
+            R = T[:3, :3]
+            t = T[:3, 3]
+            local = (pts - t) @ R
+            in_any_pad = np.zeros(len(local), dtype=bool)
+            for center in centers:
+                in_box = np.all(np.abs(local - center) <= half_extents, axis=1)
+                in_any_pad |= in_box
+            penetrates.append(bool(np.any(in_any_pad)))
+        return np.asarray(penetrates, dtype=bool)
 
     def attach_extra_spheres(self):
         # add sphere to end-effector link for pre-grasp collision checking
@@ -1255,6 +1323,8 @@ class GraspPlanner:
         visible_points,
         collision_points,
         mask=None,
+        singularity_points=None,
+        singularity_mask=None,
     ):
         backup_poses = ik_v_pose_t
         scores = ik_v_scores
@@ -1311,8 +1381,13 @@ class GraspPlanner:
             q = c_joints
             if self.is_franka_robot:
                 t0 = time.time()
+                proxy_points = visible_points
+                proxy_mask = mask
+                if singularity_points is not None and singularity_mask is not None:
+                    proxy_points = singularity_points
+                    proxy_mask = singularity_mask
                 collides_with = self._franka_single_object_collides_with(
-                    c_v_pose_t, visible_points, mask
+                    c_v_pose_t, proxy_points, proxy_mask
                 )
                 t1 = time.time()
                 print("Franka capture-window singularity time:", t1 - t0, flush=True)
@@ -1360,6 +1435,17 @@ class GraspPlanner:
                     ),
                 )
             valid = np.array([len(s) == 1 for s in collides_with])
+            if self.is_franka_robot:
+                penetrates_target = self._franka_pad_penetrates_object(
+                    c_v_pose_t, proxy_points, proxy_mask, c_v_obj_ids
+                )
+                if np.any(penetrates_target):
+                    _stage_probe(
+                        "franka pad penetration rejection",
+                        f"rejected={int(np.count_nonzero(penetrates_target))} "
+                        f"remaining_before={len(valid)}",
+                    )
+                valid = valid & (~penetrates_target)
             c_v_pose_t = np.array(c_v_pose_t)[valid]
             c_v_scores = np.array(c_v_scores)[valid]
             c_v_samples = np.array(c_v_samples)[valid]

@@ -1,0 +1,24 @@
+# Python/runtime cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Local logs and rerun scratch files
+*.log
+phase4_rerun_latest.log
+
+# Large/generated Phase 4 run directories
+phase4_artifacts/torc_franka_pipeline_*/
+phase4_artifacts/video_keyframes_latest/
+
+# Generated temporary MuJoCo scenes/manifests that can be recreated
+phase4_artifacts/*_scene.xml
+phase4_artifacts/*_manifest.json
+
+# Local environment/editor files
+.env
+.venv/
+venv/
+.idea/
+.vscode/

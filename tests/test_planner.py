@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 import re
+import yaml
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -65,6 +66,36 @@ def test_collision_feasibility_uses_franka_collision_model_only():
     assert "franka_panda" in combined or "panda" in combined
     for token in ["robotiq_arg2f", "motoman_right_ee", "left_outer_finger", "right_outer_finger"]:
         assert token not in combined, f"Franka collision feasibility must not use TORC link {token}"
+
+
+def test_franka_gripper_collision_links_are_not_disabled_as_a_group():
+    robot_path = SCRIPTS_ROOT / "task_planner" / "franka.py"
+    text = _read(robot_path)
+
+    match = re.search(r"ignore_collision_ee_links\s*=\s*\[(.*?)\]", text, flags=re.DOTALL)
+    assert match, "Franka wrapper must explicitly declare the grasp collision exception boundary"
+    ignore_literal = match.group(1)
+    for link in ["panda_hand", "panda_leftfinger", "panda_rightfinger"]:
+        assert link not in ignore_literal, f"{link} must remain active in CuRobo world collision"
+    assert "panda_tcp" in ignore_literal, "only the zero-volume TCP marker should be ignored"
+
+
+def test_franka_curobo_finger_spheres_cover_current_mujoco_pad_thickness():
+    config = PROJECT_ROOT / "assets/franka/config/curobo/franka_panda.yml"
+    data = yaml.safe_load(config.read_text())
+    kin = data["robot_cfg"]["kinematics"]
+    spheres = kin["collision_spheres"]
+
+    assert kin["collision_sphere_buffer"] >= 0.004
+    for link, sign in [("panda_leftfinger", 1.0), ("panda_rightfinger", -1.0)]:
+        link_spheres = spheres[link]
+        assert len(link_spheres) >= 6
+        xs = [s["center"][0] for s in link_spheres]
+        zs = [s["center"][2] for s in link_spheres]
+        ys = [s["center"][1] for s in link_spheres]
+        assert min(xs) <= -0.004 and max(xs) >= 0.004
+        assert min(zs) <= 0.035 and max(zs) >= 0.047
+        assert any(sign * y > 0 for y in ys)
 
 
 def test_planner_joint_order_matches_geometry_diff_contract():

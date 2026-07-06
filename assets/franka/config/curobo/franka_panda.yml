@@ -170,20 +170,41 @@ robot_cfg:
         - center: [0.0, 0.08, 0.045]
           radius: 0.022
       panda_leftfinger:
-        - center: [0.0, 0.01, 0.043]
-          radius: 0.011
-        - center: [0.0, 0.02, 0.015]
-          radius: 0.011
+        # Robosuite pad box, in finger link frame:
+        # tip body [0, 0.0085, 0.056] + pad geom [0, -0.005, -0.015],
+        # size [0.008, 0.004, 0.008].  These spheres deliberately preserve
+        # the pad's 8 mm half-thickness so CuRobo cannot slide through gaps
+        # that MuJoCo will treat as solid contact geometry.
+        - center: [-0.004, 0.0035, 0.035]
+          radius: 0.0065
+        - center: [0.004, 0.0035, 0.035]
+          radius: 0.0065
+        - center: [-0.004, 0.0035, 0.047]
+          radius: 0.0065
+        - center: [0.004, 0.0035, 0.047]
+          radius: 0.0065
+        - center: [0.0, 0.012, 0.021]
+          radius: 0.010
+        - center: [0.0, 0.018, 0.012]
+          radius: 0.010
       panda_rightfinger:
-        - center: [0.0, -0.01, 0.043]
-          radius: 0.011
-        - center: [0.0, -0.02, 0.015]
-          radius: 0.011
+        - center: [-0.004, -0.0035, 0.035]
+          radius: 0.0065
+        - center: [0.004, -0.0035, 0.035]
+          radius: 0.0065
+        - center: [-0.004, -0.0035, 0.047]
+          radius: 0.0065
+        - center: [0.004, -0.0035, 0.047]
+          radius: 0.0065
+        - center: [0.0, -0.012, 0.021]
+          radius: 0.010
+        - center: [0.0, -0.018, 0.012]
+          radius: 0.010
       panda_tcp:
         - center: [0.0, 0.0, 0.0]
           radius: 0.01
 
-    collision_sphere_buffer: 0.002
+    collision_sphere_buffer: 0.004
     extra_collision_spheres: null
     self_collision_ignore:
       panda_link0: ["panda_link1", "panda_link2"]

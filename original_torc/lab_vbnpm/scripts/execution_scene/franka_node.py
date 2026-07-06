@@ -87,6 +87,8 @@ class FrankaNode(ExecutionNode):
         self.last_arm_qpos = np.asarray(list(self.init_joints.values()), dtype=float)
         self.last_status_time = time.time()
         self.gripper_geom_ids = set()
+        self.arm_goal = None
+        self.arm_goal_start_time = None
 
     def reset(self, xml_file, gui=True, save_image_dir=None, experiment_dir=None, mj_pickle: bool = False):
         franka_xml = build_franka_runtime_scene(xml_file, experiment_dir)
@@ -96,6 +98,8 @@ class FrankaNode(ExecutionNode):
         self.vel_deque.clear()
         self.last_arm_qpos = np.asarray(list(self.init_joints.values()), dtype=float)
         self.last_status_time = time.time()
+        self.arm_goal = None
+        self.arm_goal_start_time = None
 
     def _joint_to_actuator(self):
         mapping = {}
@@ -189,6 +193,12 @@ class FrankaNode(ExecutionNode):
         else:
             rospy.loginfo("Franka goal received with zero points")
         self.arm_trajectory = self._interpolate_points(joint_names, points)
+        self.arm_goal = (
+            dict(zip(joint_names, np.asarray(points[-1].positions, dtype=float)))
+            if points
+            else None
+        )
+        self.arm_goal_start_time = time.time() if self.arm_goal is not None else None
         rospy.loginfo(
             "Franka interpolated trajectory points=%d",
             len(self.arm_trajectory),
@@ -200,15 +210,46 @@ class FrankaNode(ExecutionNode):
             result.error_code = 0
             self.follow_trajectory_as.set_succeeded(result)
 
+    def _arm_goal_settled(self):
+        if self.arm_goal is None:
+            return True
+        names = list(self.arm_goal.keys())
+        target = np.asarray([self.arm_goal[name] for name in names], dtype=float)
+        qpos, qvel = self.get_joint_state(names)
+        pos_err = float(np.max(np.abs(np.asarray(qpos, dtype=float) - target)))
+        vel_err = float(np.max(np.abs(np.asarray(qvel, dtype=float))))
+        if pos_err <= 0.012 and vel_err <= 0.12:
+            rospy.loginfo(
+                "Franka trajectory settled: max_pos_err=%.6f max_vel=%.6f",
+                pos_err,
+                vel_err,
+            )
+            return True
+        if self.arm_goal_start_time is not None and time.time() - self.arm_goal_start_time > 8.0:
+            rospy.logwarn(
+                "Franka trajectory settle timeout: max_pos_err=%.6f max_vel=%.6f",
+                pos_err,
+                vel_err,
+            )
+            return True
+        return False
+
+    def _finish_arm_goal_if_ready(self):
+        if self.follow_trajectory_as.is_active() and self._arm_goal_settled():
+            rospy.loginfo("Franka trajectory done")
+            result = FollowJointTrajectoryResult()
+            result.error_code = 0
+            self.follow_trajectory_as.set_succeeded(result)
+            self.arm_goal = None
+            self.arm_goal_start_time = None
+
     def do_traj(self):
         if self.arm_trajectory:
             joint_names, q = self.arm_trajectory.pop(0)
             self._set_joint_positions(dict(zip(joint_names, q)), set_qpos=False, set_ctrl=True)
-            if not self.arm_trajectory and self.follow_trajectory_as.is_active():
-                rospy.loginfo("Franka trajectory done")
-                result = FollowJointTrajectoryResult()
-                result.error_code = 0
-                self.follow_trajectory_as.set_succeeded(result)
+        elif self.arm_goal is not None:
+            self._set_joint_positions(self.arm_goal, set_qpos=False, set_ctrl=True)
+            self._finish_arm_goal_if_ready()
         if self.ee_trajectory:
             cmd = self.ee_trajectory.pop(0)
             self._set_joint_positions(cmd, set_qpos=False, set_ctrl=True)

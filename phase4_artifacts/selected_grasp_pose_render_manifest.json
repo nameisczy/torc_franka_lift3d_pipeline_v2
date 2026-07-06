@@ -1,7 +1,7 @@
 {
   "output_png": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose.png",
-  "source_debug_json": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783322287/exp_2026-07-06_11-18-20__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.json",
-  "source_debug_npz": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783322287/exp_2026-07-06_11-18-20__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.npz",
+  "source_debug_json": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783346249/exp_2026-07-06_17-57-41__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.json",
+  "source_debug_npz": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783346249/exp_2026-07-06_17-57-41__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.npz",
   "source_pipeline": "scripts/phase4/render_franka_planning_full.py with TORC_CAPTURE_SELECTED_GRASP=1",
   "selected_metadata": {
     "capture_version": "f2_6_selected_grasp_capture_v1",
@@ -11,16 +11,16 @@
     "target_object": "obj_000070_0",
     "method": "dg_only",
     "pick_count": 1,
-    "selected_object_segment_id": 2,
-    "dg_chosen_segment_id": 2,
-    "selected_index_in_sorted_validated_candidates": 133,
-    "selected_raw_cgn_index": 364,
-    "selected_score": 0.58302903175354,
-    "num_raw_cgn_grasps": 3736,
-    "num_ik_candidates": 3342,
-    "num_validated_candidates_before_score_sort": 541,
-    "num_validated_candidates_after_score_filter": 541,
-    "num_candidates_for_chosen_segment": 64,
+    "selected_object_segment_id": 10,
+    "dg_chosen_segment_id": 10,
+    "selected_index_in_sorted_validated_candidates": 0,
+    "selected_raw_cgn_index": 1908,
+    "selected_score": 0.5622674226760864,
+    "num_raw_cgn_grasps": 3762,
+    "num_ik_candidates": 3379,
+    "num_validated_candidates_before_score_sort": 50,
+    "num_validated_candidates_after_score_filter": 50,
+    "num_candidates_for_chosen_segment": 50,
     "frame_labels": {
       "raw_cgn_grasp_matrices": "T_world_cgn_raw",
       "ik_candidate_matrices": "T_world_motoman_ee_goal_after_plus_hand_depth_local_z",
@@ -36,7 +36,13 @@
       "place_requested": true,
       "plan_count": 4
     },
-    "execution_result": null,
+    "execution_result": {
+      "retract_success": false,
+      "grasped": [],
+      "dropped": [
+        "obj_000020_0"
+      ]
+    },
     "missing_fields": {
       "selected_postgrasp_lift_pose_matrix": "not directly represented as a single pose before execution; lift is encoded as plan3 trajectory",
       "raw_cgn_index": null
@@ -50,39 +56,39 @@
       "planning_skipped": false,
       "franka_used": true
     },
-    "intended_object_id": 24,
-    "intended_object_name": "obj_000010_0",
-    "json_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783322287/exp_2026-07-06_11-18-20__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.json",
-    "npz_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783322287/exp_2026-07-06_11-18-20__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.npz",
-    "written_unix_time": 1783322588.93714
+    "intended_object_id": 32,
+    "intended_object_name": "obj_000068_0",
+    "json_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783346249/exp_2026-07-06_17-57-41__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.json",
+    "npz_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783346249/exp_2026-07-06_17-57-41__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.npz",
+    "written_unix_time": 1783346494.662611
   },
   "selected_grasp_joint_values": [
-    -2.3141584396362305,
-    -0.5001917481422424,
-    2.1797068119049072,
-    -1.648992657661438,
-    0.5682053565979004,
-    2.0531702041625977,
-    -2.8973000049591064
+    1.9897403717041016,
+    -1.1568833589553833,
+    -1.5151053667068481,
+    -1.1730260848999023,
+    -0.9347356557846069,
+    1.4006621837615967,
+    -2.896345615386963
   ],
   "selected_transformed_grasp_matrix": [
     [
-      0.2591545000001955,
-      -0.9525868047441365,
-      0.15942811720962347,
-      0.680684817171525
+      0.6150650121491571,
+      -0.7884340309190572,
+      0.008173721226248196,
+      0.6557528550092383
     ],
     [
-      -0.9648846412401672,
-      -0.24802351401340292,
-      0.08649835602644579,
-      0.03493707718368204
+      -0.761709409900925,
+      -0.5914748752044824,
+      0.26449243253867766,
+      -0.21591921007142884
     ],
     [
-      -0.042855270719981256,
-      -0.17624617988427532,
-      -0.9834127871080982,
-      1.1979389196459382
+      -0.20370028399180506,
+      -0.16890604160470207,
+      -0.9643531217407288,
+      1.2383465440179107
     ],
     [
       0.0,
@@ -92,10 +98,10 @@
     ]
   ],
   "achieved_tcp_world": [
-    0.6806847963933317,
-    0.0349371782705987,
-    1.1979388991135487
+    0.6557472367865511,
+    -0.21591750349792485,
+    1.238351648478561
   ],
-  "tcp_position_error_m": 1.0522298730667271e-07,
+  "tcp_position_error_m": 7.780253069062156e-06,
   "planning_executed_for_pose_selection": true
 }

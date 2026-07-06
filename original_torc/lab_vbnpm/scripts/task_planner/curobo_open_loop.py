@@ -645,6 +645,8 @@ def open_loop_pick_or_place(
             aug_pts,
             all_pts,
             aug_mask,
+            singularity_points=all_pts,
+            singularity_mask=all_mask,
         )
         if len(gres) != 7:
             continue

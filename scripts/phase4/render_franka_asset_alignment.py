@@ -163,7 +163,7 @@ def replace_arm_torque_actuators_with_position(root: ET.Element) -> None:
             {
                 "name": f"robot0_pos_j{idx}",
                 "joint": joint,
-                "kp": "650",
+                "kp": os.environ.get("TORC_FRANKA_ARM_POSITION_KP", "650"),
                 "ctrllimited": "true",
                 "ctrlrange": joint_ranges[joint],
                 "forcelimited": "true",

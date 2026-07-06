@@ -2,6 +2,8 @@ from pathlib import Path
 import json
 import re
 import xml.etree.ElementTree as ET
+import importlib.util
+import sys
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -17,6 +19,17 @@ def _load_geometry_diff() -> dict:
     path = PROJECT_ROOT / "geometry_diff.json"
     assert path.exists(), "Phase 2 geometry_diff.json is required before Phase 3 tests"
     return json.loads(path.read_text())
+
+
+def _load_module(path: Path, module_name: str):
+    scripts_root = str(SCRIPTS_ROOT)
+    if scripts_root not in sys.path:
+        sys.path.insert(0, scripts_root)
+    spec = importlib.util.spec_from_file_location(module_name, path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module
 
 
 def _find_body(root, name):
@@ -73,6 +86,95 @@ def test_tcp_correctness_contract_is_canonical_to_adapter_only():
     forbidden = ["hand_depth", "0.11", "motoman_right_ee", "robotiq"]
     for token in forbidden:
         assert token not in text.lower(), f"TCP adapter must not contain old TORC token {token}"
+
+
+def test_franka_tcp_contact_depth_is_derived_from_current_pad_geometry():
+    adapter_path = SCRIPTS_ROOT / "robot_interface" / "franka_adapter.py"
+    module = _load_module(adapter_path, "franka_adapter_contract")
+    retreat = float(module.RobotAdapter._derive_tcp_contact_retreat_m())
+
+    gripper = ET.parse(PROJECT_ROOT / "assets/franka/mjcf/robosuite/panda_gripper.xml").getroot()
+    eef = _find_body(gripper, "eef")
+    leftfinger = _find_body(gripper, "leftfinger")
+    tip = _find_body(gripper, "finger_joint1_tip")
+    pad = None
+    for geom in gripper.findall(".//geom"):
+        if geom.get("name") == "finger1_pad_collision":
+            pad = geom
+            break
+    assert eef is not None and leftfinger is not None and tip is not None and pad is not None
+
+    tcp_z = _vec(eef.get("pos"))[2]
+    pad_front_z = (
+        _vec(leftfinger.get("pos"))[2]
+        + _vec(tip.get("pos"))[2]
+        + _vec(pad.get("pos"))[2]
+        + _vec(pad.get("size"))[2]
+    )
+    expected_retreat = (pad_front_z - tcp_z) + 0.5 * _vec(pad.get("size"))[2]
+    assert abs(retreat - expected_retreat) < 1e-6
+    assert abs(module.RobotAdapter.derive_tcp_pad_front_m() - (pad_front_z - tcp_z)) < 1e-6
+
+
+def test_franka_adapter_maps_canonical_closing_axis_to_current_mujoco_local_x():
+    adapter_path = SCRIPTS_ROOT / "robot_interface" / "franka_adapter.py"
+    module = _load_module(adapter_path, "franka_adapter_axis_contract")
+    adapter = module.RobotAdapter()
+    frame = adapter._frame_from([0.0, 0.0, 1.0], [1.0, 0.0, 0.0])
+    assert frame[:, 0].tolist() == [1.0, 0.0, 0.0]
+    assert frame[:, 2].tolist() == [0.0, 0.0, 1.0]
+
+
+def test_franka_adapter_centers_cgn_contact_using_negative_local_x():
+    adapter_path = SCRIPTS_ROOT / "robot_interface" / "franka_adapter.py"
+    grasp_path = SCRIPTS_ROOT / "grasp_representation" / "canonical_grasp.py"
+    adapter_module = _load_module(adapter_path, "franka_adapter_centering_contract")
+    grasp_module = _load_module(grasp_path, "canonical_grasp_centering_contract")
+
+    grasp = grasp_module.CanonicalGrasp(
+        contact_pose=[
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ],
+        approach_direction=[0.0, 0.0, 1.0],
+        grasp_axis=[1.0, 0.0, 0.0],
+        opening_width=0.08,
+        score=1.0,
+        object_id=1,
+    )
+    command = adapter_module.RobotAdapter().adapt(grasp)
+    retreat = adapter_module.RobotAdapter._derive_tcp_contact_retreat_m()
+    assert abs(command.tcp_contact_pose_world[0, 3] + 0.04) < 1e-9
+    assert abs(command.tcp_contact_pose_world[2, 3] + retreat) < 1e-9
+
+
+def test_franka_adapter_scan_offsets_move_tcp_in_local_x_and_z(monkeypatch):
+    adapter_path = SCRIPTS_ROOT / "robot_interface" / "franka_adapter.py"
+    grasp_path = SCRIPTS_ROOT / "grasp_representation" / "canonical_grasp.py"
+    adapter_module = _load_module(adapter_path, "franka_adapter_scan_offset_contract")
+    grasp_module = _load_module(grasp_path, "canonical_grasp_scan_offset_contract")
+
+    monkeypatch.setenv("TORC_FRANKA_TCP_LATERAL_OFFSET_M", "0.008")
+    monkeypatch.setenv("TORC_FRANKA_TCP_APPROACH_OFFSET_M", "0.006")
+    grasp = grasp_module.CanonicalGrasp(
+        contact_pose=[
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ],
+        approach_direction=[0.0, 0.0, 1.0],
+        grasp_axis=[1.0, 0.0, 0.0],
+        opening_width=0.08,
+        score=1.0,
+        object_id=1,
+    )
+    command = adapter_module.RobotAdapter().adapt(grasp)
+    retreat = adapter_module.RobotAdapter._derive_tcp_contact_retreat_m()
+    assert abs(command.tcp_contact_pose_world[0, 3] - (-0.04 + 0.008)) < 1e-9
+    assert abs(command.tcp_contact_pose_world[2, 3] - (-retreat + 0.006)) < 1e-9
 
 
 def test_no_pre_ik_translation_hack_remains_in_grasp_code():

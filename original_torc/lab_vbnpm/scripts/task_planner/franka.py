@@ -32,12 +32,7 @@ class FrankaTORCRobot(FrankaRobot):
             os.environ["TORC_FRANKA_MUJOCO_BASE_POSE_WORLD"] = base_pose_env
             os.environ["TORC_FRANKA_PLANNER_BASE_POSE_WORLD"] = base_pose_env
         self.curobo_config.pop("planning", None)
-        self.ignore_collision_ee_links = [
-            "panda_hand",
-            "panda_leftfinger",
-            "panda_rightfinger",
-            "panda_tcp",
-        ]
+        self.ignore_collision_ee_links = ["panda_tcp"]
 
     def init_perception_interface(self) -> Any:
         import rospy
