@@ -23,7 +23,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 
-PROJECT_ROOT = Path("/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2")
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TORC_SCENE_XML = Path(
     os.environ.get(
         "TORC_SCENE_XML",
@@ -191,6 +191,8 @@ def add_franka_robot_body(worldbody: ET.Element) -> None:
         raise RuntimeError("compiled Franka XML has no robot0_base body")
     robot_base = copy.deepcopy(robot_base)
     robot_base.set("pos", fmt(FRANKA_BASE_XYZ))
+    for body in robot_base.iter("body"):
+        body.set("gravcomp", "1")
     worldbody.insert(2, robot_base)
 
 

@@ -36,15 +36,18 @@ def wait_till(stop, steps=8, max_steps=500):
 
 
 def wait_till_gripper(steps=8, max_steps=500):
-    joint_name = "finger_joint"
+    robot_type = os.environ.get("TORC_ROBOT", "motoman").strip().lower()
+    joint_names = ["panda_gripper_width", "finger_joint"] if robot_type in ("franka", "panda") else ["finger_joint"]
 
     c = 0
     total_steps = 0
     prev_pos = 0
     while c < steps and total_steps < max_steps:
         msg = rospy.wait_for_message("/joint_states", JointState)
-        while joint_name not in msg.name:
+        joint_name = next((name for name in joint_names if name in msg.name), None)
+        while joint_name is None:
             msg = rospy.wait_for_message("/joint_states", JointState)
+            joint_name = next((name for name in joint_names if name in msg.name), None)
         idx = msg.name.index(joint_name)
         position = msg.position[idx]
 

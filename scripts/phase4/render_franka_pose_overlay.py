@@ -31,7 +31,7 @@ sys.path.insert(0, str(SCRIPT_DIR))
 import render_franka_asset_alignment as phase41
 
 
-PROJECT_ROOT = Path("/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2")
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TORC_SCRIPTS = PROJECT_ROOT / "original_torc/lab_vbnpm/scripts"
 if str(TORC_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(TORC_SCRIPTS))

@@ -607,6 +607,8 @@ def init_sockets(real: bool = False, docker: bool = False):
         "TORC_RENDER_FPS": "--render-fps",
         "TORC_RENDER_WIDTH": "--render-width",
         "TORC_RENDER_HEIGHT": "--render-height",
+        "TORC_RENDER_EXECUTION_FRAMES": "--render-execution-frames",
+        "TORC_RENDER_JPEG_QUALITY": "--render-jpeg-quality",
     }
     render_args = []
     for env_name, cli_arg in render_env_to_arg.items():

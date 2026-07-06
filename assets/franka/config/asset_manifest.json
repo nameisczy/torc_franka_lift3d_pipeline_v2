@@ -1,7 +1,7 @@
 {
   "phase": "0.5",
   "status": "task_validated_candidate_selected",
-  "asset_root": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka",
+  "asset_root": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka",
   "selected_source": {
     "name": "robosuite",
     "repository": "https://github.com/ARISE-Initiative/robosuite",

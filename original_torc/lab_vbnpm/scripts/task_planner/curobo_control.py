@@ -360,6 +360,27 @@ def run(args: Args) -> str:
 
     ROOT_DIR = os.path.abspath(rp.get_path("lab_vbnpm"))
     stage_log("resolved lab_vbnpm root", ROOT_DIR)
+    project_paths = (ROOT_DIR, os.path.join(ROOT_DIR, "scripts"))
+    for path in project_paths:
+        if path in sys.path:
+            sys.path.remove(path)
+        sys.path.insert(0, path)
+    for module_name in list(sys.modules):
+        if not (
+            module_name == "motion_planner"
+            or module_name.startswith("motion_planner.")
+        ):
+            continue
+        module = sys.modules.get(module_name)
+        module_file = getattr(module, "__file__", "") if module is not None else ""
+        if module is not None and (
+            not module_file or not module_file.startswith(ROOT_DIR)
+        ):
+            del sys.modules[module_name]
+    stage_log(
+        "python path project override installed",
+        f"sys_path_head={sys.path[:4]}",
+    )
 
     DEBUG_SHOW_DIR = f"/tmp/{USER_PREFIX}curobo_runner_debug"
     DEBUG_SHOW_SH = os.path.join(ROOT_DIR, "debug_show.sh")
@@ -1295,6 +1316,10 @@ def run(args: Args) -> str:
             joint_state = rospy.wait_for_message(
                 "/joint_states_all", JointState, timeout=5
             )
+            if TORC_ROBOT_TYPE == "franka":
+                stage_log("reset clear franka planning scene begin")
+                planner.set_planning_scene(None)
+                stage_log("reset clear franka planning scene done")
             stage_log("reset joint_motion_plan begin")
             plan_reset = planner.joint_motion_plan(joint_state, ROBOT_RESET_JOINTS)
             stage_log(

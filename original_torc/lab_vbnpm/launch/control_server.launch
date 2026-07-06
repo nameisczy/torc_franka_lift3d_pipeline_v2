@@ -8,6 +8,8 @@
   <arg name="render_fps" default="20" />
   <arg name="render_width" default="1280" />
   <arg name="render_height" default="720" />
+  <arg name="render_execution_frames" default="0" />
+  <arg name="render_jpeg_quality" default="92" />
 
   <param name="use_sim_time" value="true"/>
 
@@ -23,6 +25,8 @@
     <env name="TORC_RENDER_FPS" value="$(arg render_fps)" />
     <env name="TORC_RENDER_WIDTH" value="$(arg render_width)" />
     <env name="TORC_RENDER_HEIGHT" value="$(arg render_height)" />
+    <env name="TORC_RENDER_EXECUTION_FRAMES" value="$(arg render_execution_frames)" />
+    <env name="TORC_RENDER_JPEG_QUALITY" value="$(arg render_jpeg_quality)" />
   </node>
   <node name="motoman_interface" pkg="lab_vbnpm" type="motoman_interface.py" args="" />
 

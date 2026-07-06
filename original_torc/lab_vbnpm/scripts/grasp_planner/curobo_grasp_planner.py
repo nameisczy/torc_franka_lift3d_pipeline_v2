@@ -276,12 +276,16 @@ def _call_cgn_zmq(visible_points, mask):
             "contact_point_world": np.asarray(response.get("contact_point_world", []), dtype=np.float64),
             "approach_dir_world": np.asarray(response.get("approach_dir_world", []), dtype=np.float64),
             "base_dir_world": np.asarray(response.get("base_dir_world", []), dtype=np.float64),
+            "offset_bin_value": np.asarray(response.get("offset_bin_value", response.get("gripper_opening", [])), dtype=np.float64),
+            "offset_bin_index": np.asarray(response.get("offset_bin_index", []), dtype=np.int32),
             "gripper_opening": np.asarray(response.get("gripper_opening", []), dtype=np.float64),
             "score": np.asarray(response.get("score", []), dtype=np.float64),
             "object_id": np.asarray(response.get("object_id", []), dtype=np.int32),
             "source_index": np.asarray(response.get("source_index", []), dtype=np.int32),
             "selection_index": np.asarray(response.get("selection_index", []), dtype=np.int32),
         }
+        if len(arrays["offset_bin_index"]) == 0:
+            arrays["offset_bin_index"] = np.full(len(arrays["contact_point_world"]), -1, dtype=np.int32)
         arrays["object_id"] = _assign_lowlevel_object_ids_from_mask(
             arrays["contact_point_world"],
             points_np,
@@ -477,7 +481,7 @@ class GraspPlanner:
         self.disable_ee_links.append(ee_link)
         self.ik_base_pose_world = np.eye(4, dtype=np.float64)
         if os.environ.get("TORC_ROBOT", "motoman").strip().lower() in ("franka", "panda"):
-            raw_base = os.environ.get("TORC_FRANKA_BASE_POSE_WORLD", "0,0,0.86")
+            raw_base = os.environ.get("TORC_FRANKA_MUJOCO_BASE_POSE_WORLD", "0,0,0.86")
             values = [float(v) for v in raw_base.replace(";", ",").split(",") if v.strip()]
             if len(values) >= 3:
                 self.ik_base_pose_world[:3, 3] = values[:3]
@@ -522,6 +526,21 @@ class GraspPlanner:
     def _pose_for_tracik(self, pose_world):
         return self.ik_world_to_base @ pose_world
 
+    def _points_for_collision_world(self, points):
+        if points is None or not self.is_franka_robot:
+            return points
+        pts = np.asarray(points, dtype=np.float64)
+        original_shape = pts.shape
+        if pts.size == 0:
+            return pts.reshape(original_shape)
+        pts = pts.reshape(-1, 3)
+        pts_h = np.concatenate(
+            [pts, np.ones((pts.shape[0], 1), dtype=pts.dtype)],
+            axis=1,
+        )
+        pts = (pts_h @ self.ik_world_to_base.T)[:, :3]
+        return pts.reshape(original_shape)
+
     def _franka_single_object_collides_with(self, poses_world, visible_points, mask):
         """Franka equivalent of TORC's Robotiq proxy-sphere singularity gate.
 
@@ -557,7 +576,7 @@ class GraspPlanner:
 
         collides_with = []
         half_span = float(os.environ.get("TORC_FRANKA_PROXY_HALF_SPAN_M", "0.040"))
-        radius = float(os.environ.get("TORC_FRANKA_PROXY_RADIUS_M", "0.012"))
+        radius = float(os.environ.get("TORC_FRANKA_PROXY_RADIUS_M", "0.006"))
         contact_depth = float(os.environ.get("TORC_FRANKA_PROXY_CONTACT_DEPTH_M", "-0.0036"))
         sphere_count = int(os.environ.get("TORC_FRANKA_PROXY_SPHERE_COUNT", "5"))
         min_points = int(os.environ.get("TORC_FRANKA_PROXY_MIN_POINTS", "1"))
@@ -630,6 +649,7 @@ class GraspPlanner:
             kdtree = KDTree(surface)
             dist, ind = kdtree.query(points)
             points = points[dist > 0.05]
+        points = self._points_for_collision_world(points)
 
         # convert point cloud to mesh
         scene_mesh = Mesh.from_pointcloud(points, self.resolution, "world")
@@ -649,6 +669,15 @@ class GraspPlanner:
         joint_state_tensor = self.robot_world.get_active_js(joint_state_tensor)
         q = joint_state_tensor.position
         return q
+
+    def get_active_joint_list_from_tracik(self, joints):
+        return (
+            self.get_joint_tensor_from_list(joints)
+            .detach()
+            .cpu()
+            .numpy()
+            .tolist()
+        )
 
     @staticmethod
     def normalize_score(scores):
@@ -1245,7 +1274,10 @@ class GraspPlanner:
 
         ## collision filter against target ##
         t0 = time.time()
-        self.toggle_link_collision(self.disable_ee_links, True)
+        if self.is_franka_robot:
+            self.toggle_link_collision(self.disable_ee_links, False)
+        else:
+            self.toggle_link_collision(self.disable_ee_links, True)
         # order joints
         q = self.get_joint_tensor_from_list(ik_joints)
         # collision check
@@ -1536,7 +1568,9 @@ class GraspPlanner:
         if np.any(valid):
             pre_grasps = pre_grasps[valid].tolist()
             pre_grasp_scores = np.stack(pre_grasp_scores[valid]).tolist()
-            pre_grasp_joints = np.stack(pre_grasp_joints[valid]).tolist()
+            pre_grasp_joints = self.get_active_joint_list_from_tracik(
+                np.stack(pre_grasp_joints[valid])
+            )
         else:
             pre_grasps = []
             pre_grasp_scores = []

@@ -18,7 +18,7 @@ import subprocess
 import time
 
 
-PROJECT_ROOT = Path("/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2")
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TORC_ROOT = PROJECT_ROOT / "original_torc/lab_vbnpm"
 RUN_EXPERIMENT = TORC_ROOT / "experiments/run_experiment.py"
 DEFAULT_SCENE = "tests/scenes/final/difficult_116.xml"
@@ -28,6 +28,51 @@ DEFAULT_CONDA_PREFIX = Path("/home/ziyaochen/miniconda3/envs/ros_env")
 DEFAULT_CUROBO_SRC = Path("/home/ziyaochen/curobo_v0_7_8_torc/src")
 OUT_MP4 = PROJECT_ROOT / "franka_planning_full.mp4"
 MANIFEST = PROJECT_ROOT / "phase4_artifacts/phase4_3_planning_replacement_manifest.json"
+
+
+def encode_frames_to_mp4(frame_dir: Path, output_path: Path, fps: str) -> dict:
+    frame_count = len(list(frame_dir.glob("frame_*.jpg")))
+    result = {
+        "frame_dir": str(frame_dir),
+        "frame_count": frame_count,
+        "encoded_video": str(output_path),
+        "used_for_output": False,
+    }
+    ffmpeg = shutil.which("ffmpeg")
+    if ffmpeg is None:
+        result["error"] = "ffmpeg_not_found"
+        return result
+    if frame_count == 0:
+        result["error"] = "no_frames_found"
+        return result
+
+    cmd = [
+        ffmpeg,
+        "-y",
+        "-framerate",
+        str(fps),
+        "-i",
+        str(frame_dir / "frame_%06d.jpg"),
+        "-c:v",
+        "libx264",
+        "-pix_fmt",
+        "yuv420p",
+        "-movflags",
+        "+faststart",
+        str(output_path),
+    ]
+    proc = subprocess.run(cmd, text=True, capture_output=True)
+    result.update(
+        {
+            "cmd": cmd,
+            "returncode": proc.returncode,
+            "stdout_tail": proc.stdout[-2000:],
+            "stderr_tail": proc.stderr[-4000:],
+        }
+    )
+    if proc.returncode == 0 and output_path.exists() and output_path.stat().st_size > 0:
+        result["used_for_output"] = True
+    return result
 
 
 def main() -> int:
@@ -62,9 +107,19 @@ def main() -> int:
             "TORC_RENDER_FPS": env.get("TORC_RENDER_FPS", "20"),
             "TORC_RENDER_WIDTH": env.get("TORC_RENDER_WIDTH", "1280"),
             "TORC_RENDER_HEIGHT": env.get("TORC_RENDER_HEIGHT", "720"),
+            "TORC_RENDER_EXECUTION_FRAMES": env.get("TORC_RENDER_EXECUTION_FRAMES", "1"),
+            "TORC_RENDER_JPEG_QUALITY": env.get("TORC_RENDER_JPEG_QUALITY", "92"),
         }
     )
     env["PATH"] = f"{env['TORC_CONDA_PREFIX']}/bin:" + env.get("PATH", "")
+    cuda_home = env.get("CUDA_HOME") or env.get("CUDA_PATH") or "/usr/local/cuda-12.8"
+    env["CUDA_HOME"] = cuda_home
+    env["CUDA_PATH"] = cuda_home
+    env["CPATH"] = f"{cuda_home}/include:" + env.get("CPATH", "")
+    env["CPLUS_INCLUDE_PATH"] = f"{cuda_home}/include:" + env.get("CPLUS_INCLUDE_PATH", "")
+    env["C_INCLUDE_PATH"] = f"{cuda_home}/include:" + env.get("C_INCLUDE_PATH", "")
+    env["LIBRARY_PATH"] = f"{cuda_home}/lib64:" + env.get("LIBRARY_PATH", "")
+    env["LD_LIBRARY_PATH"] = f"{cuda_home}/lib64:" + env.get("LD_LIBRARY_PATH", "")
     env["PYTHONPATH"] = f"{env['TORC_CUROBO_SRC']}:{TORC_ROOT / 'scripts'}:{TORC_ROOT}:" + env.get("PYTHONPATH", "")
     env["ROS_PACKAGE_PATH"] = f"{TORC_ROOT.parent}:" + env.get("ROS_PACKAGE_PATH", "")
     torc_python = os.environ.get("TORC_PYTHON", str(DEFAULT_TORC_PYTHON))
@@ -109,12 +164,24 @@ def main() -> int:
             "ROS_PACKAGE_PATH_prefix": str(TORC_ROOT.parent),
             "PYTHONPATH_prefix": [str(TORC_ROOT / "scripts"), str(TORC_ROOT)],
             "render_execution_video": env["TORC_RENDER_EXECUTION_VIDEO"],
+            "render_execution_frames": env["TORC_RENDER_EXECUTION_FRAMES"],
             "grasp_reconstruction": "CGN infer_lowlevel -> CanonicalGrasp -> RobotAdapter -> TORC Pose",
             "forbidden": "no local object-selection or DepGraph reimplementation in phase4 script",
         },
     }
+    frame_dirs = sorted(
+        [p for p in run_dir.rglob("frames_*") if p.is_dir()],
+        key=lambda p: p.stat().st_mtime,
+    )
+    if frame_dirs:
+        encode_result = encode_frames_to_mp4(frame_dirs[-1], OUT_MP4, env["TORC_RENDER_FPS"])
+        manifest["frame_encoding"] = encode_result
+        if encode_result.get("used_for_output"):
+            manifest["output_video"] = str(OUT_MP4)
+            manifest["source_frames"] = str(frame_dirs[-1])
+
     videos = sorted(run_dir.rglob("*.mp4"), key=lambda p: p.stat().st_mtime)
-    if videos:
+    if "output_video" not in manifest and videos:
         shutil.copy2(videos[-1], OUT_MP4)
         manifest["output_video"] = str(OUT_MP4)
         manifest["source_video"] = str(videos[-1])

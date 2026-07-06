@@ -29,8 +29,8 @@ USE_MUJOCO_PY_VIEWER = True
 
 import os
 import pprint
-import traceback
 import atexit
+import signal
 
 os.environ["XLA_FLAGS"] = (
     "--xla_gpu_triton_gemm_any=True " "--xla_gpu_enable_latency_hiding_scheduler=true "
@@ -77,6 +77,21 @@ from control_msgs.msg import (
 from lab_vbnpm.msg import ObjectPoses, ObjectIdsToNames
 from lab_vbnpm.srv import FakeObjectControl, FakeObjectControlResponse
 
+
+def _is_torc_object_body_name(name):
+    return name[:7] == "object_" or name[:4] == "obj_" or (len(name) > 0 and name[0] == "0")
+
+
+def _is_robot_or_workspace_body_name(name):
+    if name in ["base", "motoman_base", "robot0_base", "world", "workspace"]:
+        return True
+    return (
+        name.startswith("robot0_")
+        or name.startswith("panda_")
+        or name.startswith("gripper0_")
+        or name.startswith("fixed_mount0_")
+    )
+
 from utils.visual_utils import encode_seg_img_rgb
 from utils.conversions import joint_state_to_dict, float_to_ros_duration
 
@@ -93,6 +108,7 @@ class DenseExecutionVideoRecorder:
         self.step_count = 0
         self.renderers = {}
         self.writers = {}
+        self.frame_dirs = {}
         self.camera_ids = {}
         self.failed_cameras = set()
 
@@ -100,6 +116,15 @@ class DenseExecutionVideoRecorder:
         self.fps = float(os.environ.get("TORC_RENDER_FPS", "20"))
         self.width = int(os.environ.get("TORC_RENDER_WIDTH", "1280"))
         self.height = int(os.environ.get("TORC_RENDER_HEIGHT", "720"))
+        self.write_frames = os.environ.get("TORC_RENDER_EXECUTION_FRAMES", "0") == "1"
+        self.jpeg_quality = int(os.environ.get("TORC_RENDER_JPEG_QUALITY", "92"))
+        self.start_on_command = os.environ.get("TORC_RENDER_START_ON_COMMAND", "1").lower() in (
+            "1",
+            "true",
+            "yes",
+            "on",
+        )
+        self.recording = not self.start_on_command
 
         cameras = os.environ.get("TORC_RENDER_CAMERAS")
         if cameras:
@@ -157,6 +182,10 @@ class DenseExecutionVideoRecorder:
                 model, height=self.height, width=self.width
             )
             self.writers[camera_name] = (writer, video_path)
+            if self.write_frames:
+                frame_dir = os.path.join(self.video_dir, f"frames_{safe_name}")
+                os.makedirs(frame_dir, exist_ok=True)
+                self.frame_dirs[camera_name] = frame_dir
             self.frame_counts[camera_name] = 0
 
         self.initialized = True
@@ -166,13 +195,19 @@ class DenseExecutionVideoRecorder:
             f"stride={self.stride}",
             f"fps={self.fps}",
             f"size={self.width}x{self.height}",
+            f"write_frames={self.write_frames}",
+            f"start_on_command={self.start_on_command}",
             f"video_dir={self.video_dir}",
         )
         for camera_name, (_, video_path) in self.writers.items():
             self._log(f"output {camera_name}: {video_path}")
+            if camera_name in self.frame_dirs:
+                self._log(f"frames {camera_name}: {self.frame_dirs[camera_name]}")
 
     def capture(self, data):
         if not self.enabled or not self.initialized:
+            return
+        if not self.recording:
             return
         self.step_count += 1
         if self.step_count % self.stride != 0:
@@ -189,6 +224,16 @@ class DenseExecutionVideoRecorder:
                 frame = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
                 writer.write(frame)
                 self.frame_counts[camera_name] += 1
+                if camera_name in self.frame_dirs:
+                    frame_path = os.path.join(
+                        self.frame_dirs[camera_name],
+                        f"frame_{self.frame_counts[camera_name]:06d}.jpg",
+                    )
+                    cv2.imwrite(
+                        frame_path,
+                        frame,
+                        [int(cv2.IMWRITE_JPEG_QUALITY), self.jpeg_quality],
+                    )
             except Exception as exc:
                 self.failed_cameras.add(camera_name)
                 self._log(f"camera failed during capture: {camera_name}: {repr(exc)}")
@@ -215,7 +260,17 @@ class DenseExecutionVideoRecorder:
         self.initialized = False
         self.renderers = {}
         self.writers = {}
+        self.frame_dirs = {}
         self.camera_ids = {}
+
+    def start_recording(self):
+        if not self.enabled or not self.initialized:
+            return
+        if self.recording:
+            return
+        self.recording = True
+        self.step_count = 0
+        self._log("recording started")
 
 
 class ExecutionNode:
@@ -285,6 +340,18 @@ class ExecutionNode:
         self.address = address
 
         self.tick_count = 0
+        atexit.register(self.close_dense_video_recorder)
+        signal.signal(signal.SIGTERM, self._handle_shutdown_signal)
+        signal.signal(signal.SIGINT, self._handle_shutdown_signal)
+
+    def close_dense_video_recorder(self):
+        recorder = getattr(self, "dense_video_recorder", None)
+        if recorder is not None:
+            recorder.close()
+
+    def _handle_shutdown_signal(self, signum, _frame):
+        self.close_dense_video_recorder()
+        raise SystemExit(128 + int(signum))
 
     def reset(
         self,
@@ -715,9 +782,10 @@ class ExecutionNode:
                 # print('segmented object: ', self.model.body(body_id).name, gid, body_id)
 
                 # if the object is workspace or robot, change the segid to -1
-                if self.model.body(body_id).name in ["base", "motoman_base"]:
+                body_name = self.model.body(body_id).name
+                if _is_robot_or_workspace_body_name(body_name) and body_name not in ["world", "workspace"]:
                     new_geom_ids[geom_ids == gid] = -1
-                elif self.model.body(body_id).name in ["world", "workspace"]:
+                elif body_name in ["world", "workspace"]:
                     new_geom_ids[geom_ids == gid] = -2
                 else:
                     # unify for each object
@@ -788,7 +856,7 @@ class ExecutionNode:
             body = self.model.body(i)
             dbody = self.data.body(i)
             name = body.name
-            if name[:7] == "object_" or name[0] == "0" or name[:4] == "obj_":
+            if _is_torc_object_body_name(name):
                 # get qpos indices for joint
                 # iqpos = self.get_objq_indices(name)
                 # pos_quat = self.data.qpos[iqpos]
@@ -874,8 +942,13 @@ class ExecutionNode:
                 self.gt_pub_selected_name.publish(String(data=name))
         # publish id to name mapping
         msg = ObjectIdsToNames()
-        obj_ids = list(range(self.model.nbody))
-        obj_names = [self.model.body(i).name for i in obj_ids]
+        obj_ids = []
+        obj_names = []
+        for i in range(self.model.nbody):
+            name = self.model.body(i).name
+            if _is_torc_object_body_name(name):
+                obj_ids.append(i)
+                obj_names.append(name)
         msg.obj_ids = obj_ids
         msg.names = obj_names
         self.obj_ids_to_names_pub.publish(msg)
@@ -1063,14 +1136,17 @@ class ExecutionNode:
         keep spinning and publishing to the ROS topics
         """
 
-        context = zmq.Context()
-        self.socket = context.socket(zmq.REP)
-        self.socket.bind(self.address)
+        try:
+            context = zmq.Context()
+            self.socket = context.socket(zmq.REP)
+            self.socket.bind(self.address)
 
-        # Must step mujoco in main thread b/c seg faults otherwise??
-        while not rospy.is_shutdown():
-            self.poll_socket()
-            self.step_loop()
+            # Must step mujoco in main thread b/c seg faults otherwise??
+            while not rospy.is_shutdown():
+                self.poll_socket()
+                self.step_loop()
+        finally:
+            self.close_dense_video_recorder()
 
 
 if __name__ == "__main__":

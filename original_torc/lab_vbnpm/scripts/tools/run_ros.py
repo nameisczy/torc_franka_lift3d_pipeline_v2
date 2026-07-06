@@ -336,6 +336,8 @@ done
                     "TORC_RENDER_FPS",
                     "TORC_RENDER_WIDTH",
                     "TORC_RENDER_HEIGHT",
+                    "TORC_RENDER_EXECUTION_FRAMES",
+                    "TORC_RENDER_JPEG_QUALITY",
                     "TORC_CUROBO_SRC",
                     "TORC_CONDA_PREFIX",
                     "CUDA_HOME",

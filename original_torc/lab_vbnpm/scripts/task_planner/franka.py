@@ -13,7 +13,7 @@ if str(SCRIPTS_ROOT) not in sys.path:
 from robot_interface.franka_robot import FrankaRobot  # noqa: E402
 
 
-PROJECT_ROOT = Path("/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2")
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
 FRANKA_URDF = PROJECT_ROOT / "assets/franka/urdf/franka_panda_phase4.urdf"
 FRANKA_CUROBO_YAML = PROJECT_ROOT / "assets/franka/config/curobo/franka_panda.yml"
 
@@ -28,7 +28,9 @@ class FrankaTORCRobot(FrankaRobot):
             self.curobo_config = yaml.safe_load(f)["robot_cfg"]
         base_pose = self.curobo_config.get("planning", {}).get("base_pose_world_m")
         if base_pose is not None:
-            os.environ["TORC_FRANKA_BASE_POSE_WORLD"] = ",".join(str(float(v)) for v in base_pose[:3])
+            base_pose_env = ",".join(str(float(v)) for v in base_pose[:3])
+            os.environ["TORC_FRANKA_MUJOCO_BASE_POSE_WORLD"] = base_pose_env
+            os.environ["TORC_FRANKA_PLANNER_BASE_POSE_WORLD"] = base_pose_env
         self.curobo_config.pop("planning", None)
         self.ignore_collision_ee_links = [
             "panda_hand",
@@ -82,9 +84,26 @@ class FrankaTORCRobot(FrankaRobot):
 
             return MotionPlanner(self.urdf, ["panda_tcp"])
 
+        for path in (str(SCRIPTS_ROOT), str(SCRIPTS_ROOT.parent)):
+            if path in sys.path:
+                sys.path.remove(path)
+            sys.path.insert(0, path)
+        for module_name in list(sys.modules):
+            if not (
+                module_name == "motion_planner"
+                or module_name.startswith("motion_planner.")
+            ):
+                continue
+            module = sys.modules.get(module_name)
+            module_file = getattr(module, "__file__", "") if module is not None else ""
+            if module is not None and (
+                not module_file or not module_file.startswith(str(SCRIPTS_ROOT))
+            ):
+                del sys.modules[module_name]
+
         from motion_planner.curobo_planner import CuroboPlanner
 
-        return CuroboPlanner(
+        motion_planner = CuroboPlanner(
             self.urdf,
             ["panda_tcp"],
             self.curobo_config,
@@ -92,6 +111,7 @@ class FrankaTORCRobot(FrankaRobot):
             is_sim=self.is_sim,
             warmup=warmup,
         )
+        return motion_planner
 
     def init_adapter_node(self, scene_xml: str):
         from execution_scene.franka_node import FrankaNode

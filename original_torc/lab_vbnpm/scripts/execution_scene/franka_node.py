@@ -34,6 +34,7 @@ from execution_scene.franka_scene_patch import build_franka_runtime_scene
 
 
 class FrankaNode(ExecutionNode):
+    tcp_site_name = "gripper0_right_grip_site"
     arm_joint_names = [
         "robot0_joint1",
         "robot0_joint2",
@@ -46,6 +47,10 @@ class FrankaNode(ExecutionNode):
     finger_joint_names = [
         "gripper0_right_finger_joint1",
         "gripper0_right_finger_joint2",
+    ]
+    finger_actuator_joint_names = [
+        "gripper0_right_gripper_finger_joint1",
+        "gripper0_right_gripper_finger_joint2",
     ]
 
     def __init__(self, address: str = "tcp://*:5858"):
@@ -86,7 +91,7 @@ class FrankaNode(ExecutionNode):
     def reset(self, xml_file, gui=True, save_image_dir=None, experiment_dir=None, mj_pickle: bool = False):
         franka_xml = build_franka_runtime_scene(xml_file, experiment_dir)
         super().reset(franka_xml, gui, save_image_dir, experiment_dir, mj_pickle)
-        self._set_joint_positions(self.open_finger_qpos, set_qpos=True, set_ctrl=True)
+        self._set_joint_positions(self.open_finger_qpos, set_qpos=True, set_ctrl=True, zero_qvel=True)
         self.gripper_geom_ids = self._find_gripper_geom_ids()
         self.vel_deque.clear()
         self.last_arm_qpos = np.asarray(list(self.init_joints.values()), dtype=float)
@@ -102,13 +107,15 @@ class FrankaNode(ExecutionNode):
                     mapping[name] = aid
         return mapping
 
-    def _set_joint_positions(self, joints, set_qpos=False, set_ctrl=True):
+    def _set_joint_positions(self, joints, set_qpos=False, set_ctrl=True, zero_qvel=False):
         amap = self._joint_to_actuator() if set_ctrl else {}
         for name, value in joints.items():
             value = float(value)
             if set_qpos:
                 jid = self.model.joint(name).id
                 self.data.qpos[self.model.jnt_qposadr[jid]] = value
+                if zero_qvel:
+                    self.data.qvel[self.model.jnt_dofadr[jid]] = 0.0
             if set_ctrl and name in amap:
                 lo, hi = self.model.actuator_ctrlrange[amap[name]]
                 self.data.ctrl[amap[name]] = float(np.clip(value, lo, hi))
@@ -116,7 +123,7 @@ class FrankaNode(ExecutionNode):
     def set_joint_angle(self, joints):
         if not isinstance(joints, dict):
             joints = dict(zip(self.joint_names, joints))
-        self._set_joint_positions(joints, set_qpos=True, set_ctrl=True)
+        self._set_joint_positions(joints, set_qpos=True, set_ctrl=True, zero_qvel=True)
         import mujoco
 
         mujoco.mj_forward(self.model, self.data)
@@ -126,6 +133,8 @@ class FrankaNode(ExecutionNode):
         return np.asarray([amap[j] for j in joints], dtype=int)
 
     def gripper_width_cb(self, msg):
+        if self.dense_video_recorder is not None:
+            self.dense_video_recorder.start_recording()
         width = float(np.clip(msg.data, 0.0, 0.04))
         start = {
             name: self.get_joint_state([name])[0][0]
@@ -167,7 +176,25 @@ class FrankaNode(ExecutionNode):
         traj = goal_command.trajectory
         joint_names = list(traj.joint_names)
         points = copy.deepcopy(traj.points)
+        if points:
+            first = np.asarray(points[0].positions, dtype=float)
+            last = np.asarray(points[-1].positions, dtype=float)
+            rospy.loginfo(
+                "Franka goal received: joints=%s points=%d first_last_delta=%.6f duration=%.6f",
+                joint_names,
+                len(points),
+                float(np.linalg.norm(last - first)),
+                float(points[-1].time_from_start.to_sec()),
+            )
+        else:
+            rospy.loginfo("Franka goal received with zero points")
         self.arm_trajectory = self._interpolate_points(joint_names, points)
+        rospy.loginfo(
+            "Franka interpolated trajectory points=%d",
+            len(self.arm_trajectory),
+        )
+        if self.arm_trajectory and self.dense_video_recorder is not None:
+            self.dense_video_recorder.start_recording()
         if not self.arm_trajectory:
             result = FollowJointTrajectoryResult()
             result.error_code = 0
@@ -176,8 +203,9 @@ class FrankaNode(ExecutionNode):
     def do_traj(self):
         if self.arm_trajectory:
             joint_names, q = self.arm_trajectory.pop(0)
-            self._set_joint_positions(dict(zip(joint_names, q)), set_qpos=True, set_ctrl=True)
+            self._set_joint_positions(dict(zip(joint_names, q)), set_qpos=False, set_ctrl=True)
             if not self.arm_trajectory and self.follow_trajectory_as.is_active():
+                rospy.loginfo("Franka trajectory done")
                 result = FollowJointTrajectoryResult()
                 result.error_code = 0
                 self.follow_trajectory_as.set_succeeded(result)
@@ -238,7 +266,7 @@ class FrankaNode(ExecutionNode):
 
         alias = JointState()
         alias.header.stamp = now
-        alias.name = self.arm_joint_names + ["finger_joint"]
+        alias.name = self.arm_joint_names + ["panda_gripper_width"]
         alias.position = list(arm_position) + [float(abs(finger_position[0] - finger_position[1]))]
         alias.velocity = list(arm_velocity) + [float(abs(finger_velocity[0] - finger_velocity[1]))]
         self.all_pub.publish(alias)

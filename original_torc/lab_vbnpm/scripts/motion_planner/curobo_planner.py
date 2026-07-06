@@ -36,6 +36,7 @@ from task_planner.curobo_visibility_planner import VisibilityPlanner
 from execution_scene.motoman_interface import MotomanInterface as MI
 from perception.perception_fast import PerceptionInterface
 from task_planner.curobo_closed_loop import find_ik_solutions
+from utils.conversions import pose_to_matrix
 from tracikpy import TracIKSolver
 
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -192,7 +193,10 @@ class CuroboPlanner(MotionPlanner):
         )
         self.base_pose_world = np.eye(4, dtype=np.float64)
         if self.is_franka_robot:
-            raw_base = os.environ.get("TORC_FRANKA_BASE_POSE_WORLD", "0,0,0.86")
+            raw_base = os.environ.get(
+                "TORC_FRANKA_PLANNER_BASE_POSE_WORLD",
+                os.environ.get("TORC_FRANKA_MUJOCO_BASE_POSE_WORLD", "0,0,0.86"),
+            )
             values = [float(v) for v in raw_base.replace(";", ",").split(",") if v.strip()]
             if len(values) >= 3:
                 self.base_pose_world[:3, 3] = values[:3]
@@ -1082,6 +1086,53 @@ class CuroboPlanner(MotionPlanner):
         joint_state = self.motion_gen.get_active_js(joint_state)
         return joint_state
 
+    def franka_pose_joint_target(self, pose_world, qinit=None):
+        if not self.is_franka_robot:
+            raise RuntimeError("franka_pose_joint_target is only valid for Franka")
+        if not hasattr(self, "_franka_lift_ik_solver"):
+            self._franka_lift_ik_solver = TracIKSolver(
+                self.urdf,
+                self.torc_frames.get("base_link", "panda_link0"),
+                self.torc_frames.get("ee_link", "panda_tcp"),
+            )
+            self._franka_lift_world_to_base = np.eye(4, dtype=np.float64)
+            raw_base = os.environ.get("TORC_FRANKA_MUJOCO_BASE_POSE_WORLD", "0,0,0.86")
+            values = [float(v) for v in raw_base.replace(";", ",").split(",") if v.strip()]
+            if len(values) >= 3:
+                base = np.eye(4, dtype=np.float64)
+                base[:3, 3] = values[:3]
+                self._franka_lift_world_to_base = np.linalg.inv(base)
+
+        pose_matrix_world = (
+            pose_to_matrix(pose_world)
+            if hasattr(pose_world, "position")
+            else np.asarray(pose_world, dtype=np.float64)
+        )
+        pose_base = self._franka_lift_world_to_base @ pose_matrix_world
+
+        qseed = None if qinit is None else np.asarray(qinit, dtype=np.float64).reshape(-1)
+        js = self._franka_lift_ik_solver.ik(pose_base, qinit=qseed)
+        if js is None:
+            js = self._franka_lift_ik_solver.ik(pose_base)
+        if js is None:
+            return None
+        joint_state_tensor = JointState.from_position(
+            torch.tensor(np.array(js)[np.newaxis, :], dtype=torch.float32).cuda(),
+            joint_names=list(self._franka_lift_ik_solver.joint_names),
+        )
+        active = self.motion_gen.get_active_js(joint_state_tensor).position
+        return active.detach().cpu().numpy()[0].tolist()
+
+    def franka_lift_joint_target(self, contact_pose_world, lift_height, qinit=None):
+        pose_world = (
+            pose_to_matrix(contact_pose_world)
+            if hasattr(contact_pose_world, "position")
+            else np.asarray(contact_pose_world, dtype=np.float64)
+        )
+        lift_pose_world = np.array(pose_world, dtype=np.float64, copy=True)
+        lift_pose_world[2, 3] += float(lift_height)
+        return self.franka_pose_joint_target(lift_pose_world, qinit=qinit)
+
     def joint_motion_plan(
         self,
         start,
@@ -1763,8 +1814,10 @@ class CuroboPlanner(MotionPlanner):
         solvers += ['scs']
         # solvers = list(reversed(qpsolvers.available_solvers))
         # solvers = list(qpsolvers.available_solvers)
+        final_solver = None
         while solvers:
             solver = solvers.pop(0)
+            final_solver = solver
             print("Trying solver:", solver)
             for i in range(max_iters):
                 pos = np.array(start.position)
@@ -1827,6 +1880,11 @@ class CuroboPlanner(MotionPlanner):
                     solvers = False
 
         print("Iterations:", i, error, threshold)
+        stage_probe(
+            "pink_cartesian_motion done",
+            f"arrived={bool(arrived)} error={float(error)} threshold={float(threshold)} "
+            f"waypoints={int(N)} solver={final_solver}",
+        )
 
         assert len(traj.points) > 0, "No trajectory found!"
 

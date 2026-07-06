@@ -27,6 +27,12 @@ import trimesh  # must import after perception to avoid conflict
 
 from lab_vbnpm.msg import ObjectIdsToNames
 
+FRANKA_GRASP_CONTRACT = (
+    "CanonicalGrasp",
+    "RobotAdapter",
+    "RobotGraspCommand",
+)
+
 def _env_flag(name):
     return os.environ.get(name, "").lower() in ("1", "true", "yes", "on")
 
@@ -848,10 +854,15 @@ def open_loop_pick_or_place(
         g_color[ind] = -1.0
         selected_canonical_command = p_grasp[ind]
         grasp_planner.plotter.draw_grasps(p_grasp, g_color)
+        is_franka_robot = os.environ.get("TORC_ROBOT", "").strip().lower() in (
+            "franka",
+            "panda",
+        )
         _stage_probe("plan1 pose_motion_plan begin", f"ind={int(ind)}")
-        plan1 = planner.pose_motion_plan(
+        plan1, plan1_result = planner.pose_motion_plan(
             joint_state,
             selected_canonical_command,
+            return_all=True,
             # custom_bias_state=JointState.from_numpy(
             #     planner.motion_gen.joint_names,
             #     # np.zeros(len(motion_gen.joint_names)),
@@ -861,8 +872,10 @@ def open_loop_pick_or_place(
             # )
         )
         _stage_probe(
-            "plan1 pose_motion_plan done",
-            f"ind={int(ind)} success={plan1 is not None}",
+            "plan1 motion_plan done",
+            f"ind={int(ind)} success={plan1 is not None} "
+            f"status={getattr(plan1_result, 'status', None)} "
+            f"valid_query={getattr(plan1_result, 'valid_query', None)}",
         )
         plan_t2 = time.time()
         print("Plan1 Time:", plan_t2 - plan_t1)
@@ -949,8 +962,8 @@ def open_loop_pick_or_place(
             return_all=True,
         )
         _stage_probe(
-            "plan2 pink_cartesian_motion done",
-            f"ind={int(ind)} plan_is_none={plan2 is None} success={bool(success)}",
+            "plan2 motion_plan done",
+            f"ind={int(ind)} plan_is_none={plan2 is None} success={bool(success)}"
         )
         plan2_success = success
         # planner.visualize_traj_rviz(plan2)
@@ -997,7 +1010,7 @@ def open_loop_pick_or_place(
             return_all=True,
         )
         _stage_probe(
-            "plan3 pink_cartesian_motion done",
+            "plan3 motion_plan done",
             f"ind={int(ind)} plan_is_none={plan3 is None} success={bool(success)}",
         )
         plan3_success = success
@@ -1102,7 +1115,10 @@ def open_loop_pick_or_place(
                     )
 
                 loop &= plan4 is None
-                if res.status == MotionGenStatus.INVALID_START_STATE_JOINT_LIMITS:
+                if (
+                    res is not None
+                    and res.status == MotionGenStatus.INVALID_START_STATE_JOINT_LIMITS
+                ):
                     break
 
             plan_t2 = time.time()
@@ -1112,7 +1128,8 @@ def open_loop_pick_or_place(
                     print(grasp[ind], file=f)
                 with open("/tmp/pre_grasp_fail.txt", "w") as f:
                     print(p_grasp[ind], file=f)
-                print("Error", res.status, sep=",", file=out_file)
+                status = getattr(res, "status", "FRANKA_PLACE_IK_FAIL")
+                print("Error", status, sep=",", file=out_file)
                 plan_t3 = time.time()
                 mplan_time += plan_t3 - plan_t0
                 continue

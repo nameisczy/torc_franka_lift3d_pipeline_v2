@@ -32,12 +32,20 @@ vars:
     type: int
     default: 720
     help: "Dense execution video height."
+  RENDER_EXECUTION_FRAMES:
+    type: int
+    default: 0
+    help: "Whether dense execution rendering should also save per-frame JPEGs."
+  RENDER_JPEG_QUALITY:
+    type: int
+    default: 92
+    help: "JPEG quality for dense execution frame export."
 pre_cmd: "./7kill.sh"
 post_attach: false
 windows:
   - "Roscore": "roscore"
 
-  - "Control Launch": "if [ \"$TORC_ROBOT\" = \"franka\" ] || [ \"$TORC_ROBOT\" = \"panda\" ]; then DISABLE_ROS1_EOL_WARNINGS=1 roslaunch --wait lab_vbnpm control_server_franka.launch franka_node_server_address:=\"$MOTOMAN_NODE_ADDRESS\" render_execution_video:=\"$RENDER_EXECUTION_VIDEO\" render_cameras:=\"$RENDER_CAMERAS\" render_stride:=\"$RENDER_STRIDE\" render_fps:=\"$RENDER_FPS\" render_width:=\"$RENDER_WIDTH\" render_height:=\"$RENDER_HEIGHT\"; else DISABLE_ROS1_EOL_WARNINGS=1 roslaunch --wait lab_vbnpm control_server.launch motoman_node_server_address:=\"$MOTOMAN_NODE_ADDRESS\" render_execution_video:=\"$RENDER_EXECUTION_VIDEO\" render_cameras:=\"$RENDER_CAMERAS\" render_stride:=\"$RENDER_STRIDE\" render_fps:=\"$RENDER_FPS\" render_width:=\"$RENDER_WIDTH\" render_height:=\"$RENDER_HEIGHT\"; fi"
+  - "Control Launch": "if [ \"$TORC_ROBOT\" = \"franka\" ] || [ \"$TORC_ROBOT\" = \"panda\" ]; then DISABLE_ROS1_EOL_WARNINGS=1 roslaunch --wait lab_vbnpm control_server_franka.launch franka_node_server_address:=\"$MOTOMAN_NODE_ADDRESS\" render_execution_video:=\"$RENDER_EXECUTION_VIDEO\" render_cameras:=\"$RENDER_CAMERAS\" render_stride:=\"$RENDER_STRIDE\" render_fps:=\"$RENDER_FPS\" render_width:=\"$RENDER_WIDTH\" render_height:=\"$RENDER_HEIGHT\" render_execution_frames:=\"$RENDER_EXECUTION_FRAMES\" render_jpeg_quality:=\"$RENDER_JPEG_QUALITY\"; else DISABLE_ROS1_EOL_WARNINGS=1 roslaunch --wait lab_vbnpm control_server.launch motoman_node_server_address:=\"$MOTOMAN_NODE_ADDRESS\" render_execution_video:=\"$RENDER_EXECUTION_VIDEO\" render_cameras:=\"$RENDER_CAMERAS\" render_stride:=\"$RENDER_STRIDE\" render_fps:=\"$RENDER_FPS\" render_width:=\"$RENDER_WIDTH\" render_height:=\"$RENDER_HEIGHT\" render_execution_frames:=\"$RENDER_EXECUTION_FRAMES\" render_jpeg_quality:=\"$RENDER_JPEG_QUALITY\"; fi"
   
   - "Grasp Planner Launch": "roslaunch --wait cgn_ros container.launch"
     post_delay: 6.0

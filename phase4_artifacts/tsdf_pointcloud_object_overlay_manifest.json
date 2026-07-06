@@ -1,0 +1,142 @@
+{
+  "output_png": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/tsdf_pointcloud_object_overlay.png",
+  "points_txt": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783268501/exp_2026-07-05_20-21-53__difficult_116_obj_000070_0_dg_only/output_target_points.txt",
+  "point_count": 13443,
+  "point_min_world": [
+    0.5555504360650066,
+    -0.056430357140924946,
+    1.0504543304522784
+  ],
+  "point_max_world": [
+    1.0000427548037365,
+    0.09237718409739087,
+    1.2144594295284983
+  ],
+  "point_centroid_world": [
+    0.6120835511008712,
+    -0.00146224161851467,
+    1.1504636143871116
+  ],
+  "selected_object": "obj_000010_0",
+  "selected_object_center_world": [
+    0.663509,
+    0.00697205,
+    1.1317
+  ],
+  "selected_tcp_world": [
+    0.6674649719595909,
+    0.045554462665139364,
+    1.193808793517947
+  ],
+  "distance_centroid_to_selected_object_center_m": 0.055387609575168355,
+  "nearest_object_centers_to_point_centroid": [
+    {
+      "object": "obj_000010_0",
+      "distance_m": 0.055387609575168355,
+      "center_world": [
+        0.663509,
+        0.00697205,
+        1.1317
+      ]
+    },
+    {
+      "object": "obj_000012_0",
+      "distance_m": 0.10133397891266435,
+      "center_world": [
+        0.644284,
+        -0.0974667,
+        1.14661
+      ]
+    },
+    {
+      "object": "obj_000016_0",
+      "distance_m": 0.1133477657563615,
+      "center_world": [
+        0.613205,
+        -0.0656482,
+        1.24388
+      ]
+    },
+    {
+      "object": "obj_000058_0",
+      "distance_m": 0.1720772047747997,
+      "center_world": [
+        0.700328,
+        -0.149121,
+        1.14595
+      ]
+    },
+    {
+      "object": "obj_000051_0",
+      "distance_m": 0.17559219615359073,
+      "center_world": [
+        0.728825,
+        0.115832,
+        1.09176
+      ]
+    },
+    {
+      "object": "obj_000065_0",
+      "distance_m": 0.19174247723898485,
+      "center_world": [
+        0.786457,
+        -0.0731909,
+        1.11562
+      ]
+    },
+    {
+      "object": "obj_000015_0",
+      "distance_m": 0.19400854929802622,
+      "center_world": [
+        0.798105,
+        -0.00128503,
+        1.09537
+      ]
+    },
+    {
+      "object": "obj_000079_0",
+      "distance_m": 0.20931771585842732,
+      "center_world": [
+        0.717132,
+        0.177367,
+        1.1222
+      ]
+    },
+    {
+      "object": "obj_000068_0",
+      "distance_m": 0.22891207648403442,
+      "center_world": [
+        0.660235,
+        -0.225028,
+        1.16049
+      ]
+    },
+    {
+      "object": "obj_000070_0",
+      "distance_m": 0.23208070651727955,
+      "center_world": [
+        0.788307,
+        -0.129804,
+        1.07087
+      ]
+    },
+    {
+      "object": "obj_000053_0",
+      "distance_m": 0.23250369931818235,
+      "center_world": [
+        0.785607,
+        0.127594,
+        1.06507
+      ]
+    },
+    {
+      "object": "obj_000021_0",
+      "distance_m": 0.238297720849671,
+      "center_world": [
+        0.748882,
+        0.180171,
+        1.07918
+      ]
+    }
+  ]
+}

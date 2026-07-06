@@ -1374,12 +1374,14 @@ class PerceptionInterface(object):
 
         # Get segmentation mask
         t0 = time.time()
+        robot_exclusion_mask = None
         if self.mode == "gt":
             # print("GT")
             # color = self.bridge.imgmsg_to_cv2(s_color_img, 'rgb8')
             # depth = self.bridge.imgmsg_to_cv2(s_depth_img, '32FC1')
             seg_raw = self.bridge.imgmsg_to_cv2(s_seg_img, "rgb8")
             seg = decode_seg_img_rgb(seg_raw)
+            robot_exclusion_mask = seg == -1
 
             # scene_pcd = self.create_pcd(depth, K_rgb, color)
             # points = np.asarray(scene_pcd.points)
@@ -1512,6 +1514,9 @@ class PerceptionInterface(object):
             T = T_rgb
             depth = self.bridge.imgmsg_to_cv2(s_depth_img, "32FC1")
             depth /= 1000.0
+            if robot_exclusion_mask is not None:
+                depth = np.array(depth, copy=True)
+                depth[robot_exclusion_mask] = 0
             # depth[depth == 0] = np.nan
         color = self.bridge.imgmsg_to_cv2(s_color_img, "bgr8")
 

@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 
 
-PROJECT_ROOT = Path("/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2")
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
 TORC_LAB_ROOT = PROJECT_ROOT / "original_torc/lab_vbnpm"
 FRANKA_COMPILED_XML = PROJECT_ROOT / "assets/franka/mjcf/robosuite/panda_lift_compiled.xml"
 FRANKA_MESH_ROOT = PROJECT_ROOT / "assets/franka/meshes"
@@ -153,6 +153,8 @@ def _add_franka_robot_body(worldbody: ET.Element) -> None:
         raise RuntimeError("compiled Franka XML has no robot0_base body")
     robot_base = copy.deepcopy(robot_base)
     robot_base.set("pos", _fmt(_load_franka_base_xyz()))
+    for body in robot_base.iter("body"):
+        body.set("gravcomp", "1")
     worldbody.insert(2, robot_base)
 
 

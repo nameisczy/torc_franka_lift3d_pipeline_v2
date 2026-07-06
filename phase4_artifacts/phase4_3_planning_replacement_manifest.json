@@ -5,10 +5,10 @@
   "target_object": "obj_000070_0",
   "method": "dg_only",
   "pick_limit": 1,
-  "run_dir": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783238466",
+  "run_dir": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783320072",
   "cmd": [
     "/home/ziyaochen/miniconda3/envs/ros_env/bin/python",
-    "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/experiments/run_experiment.py",
+    "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/experiments/run_experiment.py",
     "experiment",
     "--scene",
     "tests/scenes/final/difficult_116.xml",
@@ -21,11 +21,11 @@
     "--pick-limit",
     "1",
     "--base-dir",
-    "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783238466",
+    "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783320072",
     "--mj-pickle"
   ],
   "returncode": 0,
-  "stdout_tail": "\ud83e\uddea run_experiment:\n  mode             experiment\n  scene            tests/scenes/final/difficult_116.xml\n  target_object    obj_000070_0\n  method           ['dg_only']\n  rosbag           False\n  headless         True\n  dry              False\n  pick_limit       1\n  server           True\n  base_dir         /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783238466\n  real             False\n  docker           False\n  profile_grasping False\n  profiler         line_profiler\n  mj_pickle        True\n\nError executing git command: Command '['git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.\nexperiment\n  scene:            tests/scenes/final/difficult_116.xml\n  target_object:    obj_000070_0\n  rosbag:           False\n  method:           dg_only\n  headless:         True\n  exp_info_file:    ../../phase4_artifacts/torc_franka_pipeline_1783238466/exp_2026-07-05_12-01-16__difficult_116_obj_000070_0_dg_only/info_experiment.json\n  real:             False\n  server:           True\n  profile_grasping: False\n  profiler:         line_profiler\n  mj_pickle:        True\n\n  Motoman request:\n  {\n    \"cmd\": \"reset\",\n    \"args\": {\n      \"xml_file\": \"/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/tests/scenes/final/difficult_116.xml\",\n      \"gui\": false,\n      \"experiment_dir\": \"/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783238466/exp_2026-07-05_12-01-16__difficult_116_obj_000070_0_dg_only\",\n      \"mj_pickle\": true\n    }\n  }\n  Curobo control request:\n  {\n    \"cmd\": \"run\",\n    \"args\": {\n      \"method\": \"dg_only\",\n      \"sim\": true,\n      \"ground_truth\": true,\n      \"rosbag\": false,\n      \"vlm\": true,\n      \"debug_show\": false,\n      \"out_file\": \"/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783238466/exp_2026-07-05_12-01-16__difficult_116_obj_000070_0_dg_only/output.csv\",\n      \"target_object\": \"obj_000070_0\",\n      \"pick_limit\": 1,\n      \"profile_grasping\": false,\n      \"profiler\": \"line_profiler\",\n      \"capture_original_pick1_allpts\": false\n    }\n  }\n\n  Sent experiment to motoman node.\n  Sent experiment to curobo control.\n  Received result: retrieve_failed\n  Elapsed time: 93.00826168060303s\n",
+  "stdout_tail": "\ud83e\uddea run_experiment:\n  mode             experiment\n  scene            tests/scenes/final/difficult_116.xml\n  target_object    obj_000070_0\n  method           ['dg_only']\n  rosbag           False\n  headless         True\n  dry              False\n  pick_limit       1\n  server           True\n  base_dir         /home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783320072\n  real             False\n  docker           False\n  profile_grasping False\n  profiler         line_profiler\n  mj_pickle        True\n\nexperiment\n  scene:            tests/scenes/final/difficult_116.xml\n  target_object:    obj_000070_0\n  rosbag:           False\n  method:           dg_only\n  headless:         True\n  exp_info_file:    ../../phase4_artifacts/torc_franka_pipeline_1783320072/exp_2026-07-06_10-41-24__difficult_116_obj_000070_0_dg_only/info_experiment.json\n  real:             False\n  server:           True\n  profile_grasping: False\n  profiler:         line_profiler\n  mj_pickle:        True\n\n  Motoman request:\n  {\n    \"cmd\": \"reset\",\n    \"args\": {\n      \"xml_file\": \"/home/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/tests/scenes/final/difficult_116.xml\",\n      \"gui\": false,\n      \"experiment_dir\": \"/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783320072/exp_2026-07-06_10-41-24__difficult_116_obj_000070_0_dg_only\",\n      \"mj_pickle\": true\n    }\n  }\n  Curobo control request:\n  {\n    \"cmd\": \"run\",\n    \"args\": {\n      \"method\": \"dg_only\",\n      \"sim\": true,\n      \"ground_truth\": true,\n      \"rosbag\": false,\n      \"vlm\": true,\n      \"debug_show\": false,\n      \"out_file\": \"/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783320072/exp_2026-07-06_10-41-24__difficult_116_obj_000070_0_dg_only/output.csv\",\n      \"target_object\": \"obj_000070_0\",\n      \"pick_limit\": 1,\n      \"profile_grasping\": false,\n      \"profiler\": \"line_profiler\",\n      \"capture_original_pick1_allpts\": false\n    }\n  }\n\n  Sent experiment to motoman node.\n  Sent experiment to curobo control.\n  Received result: retrieve_failed\n  Elapsed time: 925.3820967674255s\n",
   "stderr_tail": "",
   "robot_boundary": {
     "TORC_ROBOT": "franka",
@@ -34,13 +34,40 @@
     "TORC_ROS_SETUP": "/home/ziyaochen/gc6d_lift3d_traj/ros_workspace/devel/setup.bash",
     "TORC_CONDA_PREFIX": "/home/ziyaochen/miniconda3/envs/ros_env",
     "TORC_CUROBO_SRC": "/home/ziyaochen/curobo_v0_7_8_torc/src",
-    "ROS_PACKAGE_PATH_prefix": "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc",
+    "ROS_PACKAGE_PATH_prefix": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc",
     "PYTHONPATH_prefix": [
-      "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/scripts",
-      "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm"
+      "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm/scripts",
+      "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/original_torc/lab_vbnpm"
     ],
-    "render_execution_video": "0",
+    "render_execution_video": "1",
+    "render_execution_frames": "1",
     "grasp_reconstruction": "CGN infer_lowlevel -> CanonicalGrasp -> RobotAdapter -> TORC Pose",
     "forbidden": "no local object-selection or DepGraph reimplementation in phase4 script"
-  }
+  },
+  "frame_encoding": {
+    "frame_dir": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783320072/exp_2026-07-06_10-41-24__difficult_116_obj_000070_0_dg_only/videos/frames_back_view",
+    "frame_count": 14714,
+    "encoded_video": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_planning_full.mp4",
+    "used_for_output": true,
+    "cmd": [
+      "/usr/bin/ffmpeg",
+      "-y",
+      "-framerate",
+      "20",
+      "-i",
+      "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783320072/exp_2026-07-06_10-41-24__difficult_116_obj_000070_0_dg_only/videos/frames_back_view/frame_%06d.jpg",
+      "-c:v",
+      "libx264",
+      "-pix_fmt",
+      "yuv420p",
+      "-movflags",
+      "+faststart",
+      "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_planning_full.mp4"
+    ],
+    "returncode": 0,
+    "stdout_tail": "",
+    "stderr_tail": "15.30 bitrate= 403.7kbits/s speed=4.59x    \nframe=13614 fps= 92 q=28.0 size=   33280kB time=00:11:17.25 bitrate= 402.6kbits/s speed=4.58x    \nframe=13655 fps= 92 q=28.0 size=   33536kB time=00:11:19.30 bitrate= 404.4kbits/s speed=4.58x    \nframe=13693 fps= 92 q=28.0 size=   33536kB time=00:11:21.20 bitrate= 403.3kbits/s speed=4.58x    \nframe=13725 fps= 92 q=28.0 size=   33536kB time=00:11:22.80 bitrate= 402.4kbits/s speed=4.57x    \nframe=13783 fps= 92 q=28.0 size=   33792kB time=00:11:25.70 bitrate= 403.7kbits/s speed=4.58x    \nframe=13824 fps= 92 q=28.0 size=   33792kB time=00:11:27.75 bitrate= 402.5kbits/s speed=4.57x    \nframe=13891 fps= 92 q=28.0 size=   34048kB time=00:11:31.10 bitrate= 403.6kbits/s speed=4.58x    \nframe=13935 fps= 92 q=28.0 size=   34048kB time=00:11:33.30 bitrate= 402.3kbits/s speed=4.58x    \nframe=13987 fps= 92 q=28.0 size=   34304kB time=00:11:35.90 bitrate= 403.8kbits/s speed=4.58x    \nframe=14043 fps= 92 q=28.0 size=   34304kB time=00:11:38.70 bitrate= 402.2kbits/s speed=4.59x    \nframe=14105 fps= 92 q=28.0 size=   34560kB time=00:11:41.80 bitrate= 403.4kbits/s speed=4.59x    \nframe=14168 fps= 92 q=28.0 size=   34816kB time=00:11:44.95 bitrate= 404.6kbits/s speed= 4.6x    \nframe=14204 fps= 92 q=28.0 size=   34816kB time=00:11:46.75 bitrate= 403.6kbits/s speed=4.59x    \nframe=14270 fps= 92 q=28.0 size=   35072kB time=00:11:50.05 bitrate= 404.6kbits/s speed= 4.6x    \nframe=14326 fps= 92 q=28.0 size=   35072kB time=00:11:52.85 bitrate= 403.0kbits/s speed= 4.6x    \nframe=14375 fps= 93 q=28.0 size=   35328kB time=00:11:55.30 bitrate= 404.6kbits/s speed= 4.6x    \nframe=14420 fps= 92 q=28.0 size=   35328kB time=00:11:57.55 bitrate= 403.3kbits/s speed= 4.6x    \nframe=14466 fps= 92 q=28.0 size=   35584kB time=00:11:59.85 bitrate= 405.0kbits/s speed= 4.6x    \nframe=14507 fps= 92 q=28.0 size=   35584kB time=00:12:01.90 bitrate= 403.8kbits/s speed= 4.6x    \nframe=14571 fps= 93 q=28.0 size=   35840kB time=00:12:05.10 bitrate= 404.9kbits/s speed= 4.6x    \nframe=14613 fps= 93 q=28.0 size=   35840kB time=00:12:07.20 bitrate= 403.7kbits/s speed= 4.6x    \nframe=14651 fps= 92 q=28.0 size=   35840kB time=00:12:09.10 bitrate= 402.7kbits/s speed= 4.6x    \nframe=14695 fps= 92 q=28.0 size=   36096kB time=00:12:11.30 bitrate= 404.3kbits/s speed= 4.6x    \nframe=14752 fps= 92 q=28.0 size=   36096kB time=00:12:14.15 bitrate= 402.8kbits/s speed= 4.6x    \n[mp4 @ 0x55e7103206c0] Starting second pass: moving the moov atom to the beginning of the file\nframe=14753 fps= 92 q=-1.0 Lsize=   36672kB time=00:12:17.50 bitrate= 407.3kbits/s speed=4.62x    \nvideo:36498kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.476868%\n[libx264 @ 0x55e710399500] frame I:60    Avg QP: 9.08  size: 55449\n[libx264 @ 0x55e710399500] frame P:3718  Avg QP:21.97  size:  5670\n[libx264 @ 0x55e710399500] frame B:10975 Avg QP:28.82  size:  1181\n[libx264 @ 0x55e710399500] consecutive B-frames:  0.8%  0.1%  0.1% 99.0%\n[libx264 @ 0x55e710399500] mb I  I16..4: 55.6% 32.8% 11.5%\n[libx264 @ 0x55e710399500] mb P  I16..4:  0.1%  0.4%  0.1%  P16..4:  4.4%  2.0%  1.6%  0.0%  0.0%    skip:91.5%\n[libx264 @ 0x55e710399500] mb B  I16..4:  0.0%  0.1%  0.0%  B16..8:  3.4%  0.7%  0.2%  direct: 0.5%  skip:95.1%  L0:44.6% L1:44.1% BI:11.3%\n[libx264 @ 0x55e710399500] 8x8 transform intra:44.7% inter:32.3%\n[libx264 @ 0x55e710399500] coded y,uvDC,uvAC intra: 25.1% 26.5% 17.8% inter: 1.4% 1.1% 0.7%\n[libx264 @ 0x55e710399500] i16 v,h,dc,p: 73% 20%  5%  2%\n[libx264 @ 0x55e710399500] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 16% 17% 59%  1%  1%  1%  2%  1%  3%\n[libx264 @ 0x55e710399500] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 22% 24% 22%  6%  6%  5%  6%  3%  6%\n[libx264 @ 0x55e710399500] i8c dc,h,v,p: 67% 19% 11%  3%\n[libx264 @ 0x55e710399500] Weighted P-Frames: Y:0.0% UV:0.0%\n[libx264 @ 0x55e710399500] ref P L0: 56.8%  8.4% 19.9% 14.9%\n[libx264 @ 0x55e710399500] ref B L0: 72.5% 20.7%  6.8%\n[libx264 @ 0x55e710399500] ref B L1: 89.2% 10.8%\n[libx264 @ 0x55e710399500] kb/s:405.32\n"
+  },
+  "output_video": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_planning_full.mp4",
+  "source_frames": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783320072/exp_2026-07-06_10-41-24__difficult_116_obj_000070_0_dg_only/videos/frames_back_view"
 }

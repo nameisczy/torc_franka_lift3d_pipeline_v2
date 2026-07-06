@@ -5,8 +5,8 @@
   <node pkg="tf2_ros" type="static_transform_publisher" name="world_to_panda_link0" args="0 0 0 0 0 0 1 world panda_link0" />
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
-  <node name="franka_node" pkg="lab_vbnpm" type="franka_node.py" args="--server-address $(arg franka_node_server_address)" output="screen" />
+  <node name="franka_node" pkg="lab_vbnpm" type="franka_node.py" launch-prefix="/home/ziyaochen/miniconda3/envs/ros_env/bin/python" args="--server-address $(arg franka_node_server_address)" output="screen" />
   <node name="franka_interface" pkg="lab_vbnpm" type="franka_interface.py" args="" />
 
-  <param name="robot_description" textfile="/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/urdf/franka_panda_phase4.urdf" />
+  <param name="robot_description" textfile="/home/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/urdf/franka_panda_phase4.urdf" />
 </launch>

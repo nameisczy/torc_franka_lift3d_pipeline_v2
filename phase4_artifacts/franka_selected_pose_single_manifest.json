@@ -1,0 +1,11 @@
+{
+  "output_png": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_pose_single.png",
+  "source": "actual execution frame from the dense Phase 4.3 rerun",
+  "source_frame": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783320072/exp_2026-07-06_10-41-24__difficult_116_obj_000070_0_dg_only/videos/frames_back_view/frame_005500.jpg",
+  "run_dir": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783320072",
+  "experiment_dir": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783320072/exp_2026-07-06_10-41-24__difficult_116_obj_000070_0_dg_only",
+  "selected_object_segment_id": 2,
+  "selected_candidate_index": 600,
+  "selected_score": 0.5204429030418396,
+  "note": "This image is not a regenerated pose dump render. The dense run had TORC_CAPTURE_SELECTED_GRASP disabled, so the exact selected_grasp_debug npz/json was not written; this image is copied from the actual video frame at the selected grasp pose."
+}

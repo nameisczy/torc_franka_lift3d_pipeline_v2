@@ -41,6 +41,15 @@ class FrankaInterface(ExecutionInterface):
             return ExecuteTrajectoryResponse(None, -1)
 
         joint_names = list(req.trajectory.joint_names)
+        first = np.asarray(points[0].positions, dtype=float)
+        last = np.asarray(points[-1].positions, dtype=float)
+        rospy.loginfo(
+            "FrankaInterface execute request: joints=%s points=%d first_last_delta=%.6f duration=%.6f",
+            joint_names,
+            len(points),
+            float(np.linalg.norm(last - first)),
+            float(points[-1].time_from_start.to_sec()),
+        )
         try:
             joint_state = rospy.wait_for_message("/joint_states_all", JointState, timeout=5)
             if points:
@@ -62,13 +71,15 @@ class FrankaInterface(ExecutionInterface):
         goal = FollowJointTrajectoryGoal()
         goal.trajectory = traj
         client.send_goal(goal)
+        rospy.loginfo("FrankaInterface goal sent")
         client.wait_for_result()
         result = client.get_result()
         error_code = int(result.error_code) if result is not None else 0
+        rospy.loginfo("FrankaInterface goal result error_code=%d", error_code)
         return ExecuteTrajectoryResponse(None, error_code)
 
     def ee_control(self, req):
-        if req.name not in ("panda", "franka", "robotiq"):
+        if req.name not in ("panda", "franka"):
             rospy.logerr(f"No such gripper:{req.name}!")
             return EEControlResponse(False)
         width = float(np.clip(req.control, 0.0, 0.04))

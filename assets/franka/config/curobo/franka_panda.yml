@@ -2,7 +2,7 @@
 ## Phase 4.3 Franka Panda CuRobo replacement config.
 ##
 ## Source asset family:
-##   /mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka
+##   /home/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka
 ##
 ## This file intentionally contains no legacy robot or legacy gripper
 ## end-effector names. It is the planning-side robot contract paired with the
@@ -19,8 +19,8 @@ robot_cfg:
     usd_flip_joints: {}
     usd_flip_joint_limits: []
 
-    urdf_path: "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/urdf/franka_panda_phase4.urdf"
-    asset_root_path: "/mnt/ssd/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka"
+    urdf_path: "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka/urdf/franka_panda_phase4.urdf"
+    asset_root_path: "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/assets/franka"
 
     base_link: "panda_link0"
     ee_link: "panda_tcp"
