@@ -672,6 +672,90 @@ class GraspPlanner:
             penetrates.append(bool(np.any(in_any_pad)))
         return np.asarray(penetrates, dtype=bool)
 
+    def _franka_object_points(self, visible_points, mask, object_id):
+        if mask is None:
+            return np.empty((0, 3), dtype=np.float64)
+        points = np.asarray(visible_points, dtype=np.float64).reshape(-1, 3)
+        labels = np.asarray(mask, dtype=np.uint32).reshape(-1)
+        if len(points) == 0 or len(labels) != len(points):
+            return np.empty((0, 3), dtype=np.float64)
+        obj_id = int(object_id)
+        if obj_id < 0:
+            return np.empty((0, 3), dtype=np.float64)
+        obj_mask = (labels & (1 << obj_id)).astype(bool)
+        return points[obj_mask]
+
+    def _franka_scan_pose_offset_before_ik(self, pose_t, object_id, visible_points, mask):
+        """Calibrate a Franka candidate pose before IK/filtering.
+
+        This is the robot-specific boundary where the Panda TCP can be shifted a
+        few millimeters in its local closing/approach axes.  It runs before
+        target/singularity/scene filtering so early DG objects are not discarded
+        only because the uncalibrated Franka pad geometry is slightly off.
+        """
+        scan_env = os.environ.get("TORC_FRANKA_PRE_FILTER_OFFSET_SCAN", "1")
+        if not self.is_franka_robot or scan_env.lower() in ("0", "false", "no", "off"):
+            return pose_t, (0.0, 0.0, np.nan)
+        if mask is None:
+            return pose_t, (0.0, 0.0, np.nan)
+
+        pts = self._franka_object_points(visible_points, mask, object_id)
+        if len(pts) < int(os.environ.get("TORC_FRANKA_SCAN_MIN_OBJECT_POINTS", "20")):
+            return pose_t, (0.0, 0.0, np.nan)
+        per_object_budget = int(os.environ.get("TORC_FRANKA_SCAN_POINTS_PER_OBJECT", "2500"))
+        if len(pts) > per_object_budget:
+            step = max(1, len(pts) // per_object_budget)
+            pts = pts[::step][:per_object_budget]
+
+        dx_extent = float(os.environ.get("TORC_FRANKA_SCAN_DX_EXTENT_M", "0.012"))
+        dz_extent = float(os.environ.get("TORC_FRANKA_SCAN_DZ_EXTENT_M", "0.012"))
+        step = float(os.environ.get("TORC_FRANKA_SCAN_STEP_M", "0.004"))
+        dx_values = np.arange(-dx_extent, dx_extent + 0.5 * step, step)
+        dz_values = np.arange(-dz_extent, dz_extent + 0.5 * step, step)
+
+        front_z = 0.0044
+        if RobotAdapter is not None:
+            try:
+                front_z = float(RobotAdapter.derive_tcp_pad_front_m())
+            except Exception:
+                front_z = 0.0044
+        target_clearance = float(os.environ.get("TORC_FRANKA_SCAN_TARGET_CLEARANCE_M", "0.002"))
+        opening_half = float(os.environ.get("TORC_FRANKA_PAD_OPENING_HALF_M", "0.040"))
+        half_x = float(os.environ.get("TORC_FRANKA_PAD_HALF_X_M", "0.0040"))
+
+        best = (float("inf"), 0.0, 0.0)
+        R = pose_t[:3, :3]
+        base_t = pose_t[:3, 3]
+        for dx in dx_values:
+            for dz in dz_values:
+                t = base_t + float(dx) * R[:, 0] + float(dz) * R[:, 2]
+                local = (pts - t) @ R
+                near_mask = (
+                    (np.abs(local[:, 0]) <= 0.09)
+                    & (np.abs(local[:, 1]) <= 0.075)
+                    & (local[:, 2] >= -0.035)
+                    & (local[:, 2] <= 0.16)
+                )
+                near = local[near_mask]
+                if len(near) < 20:
+                    near = local
+                x05, x95 = np.percentile(near[:, 0], [5, 95])
+                y05, y95 = np.percentile(near[:, 1], [5, 95])
+                z05 = float(np.percentile(near[:, 2], 5))
+                x_center = 0.5 * (float(x05) + float(x95))
+                x_span = float(x95 - x05)
+                y_span = float(y95 - y05)
+                z_error = abs(z05 - (front_z + target_clearance))
+                span_error = max(0.0, x_span - 2.0 * (opening_half - half_x))
+                y_error = max(0.0, y_span - 0.06)
+                score = 80.0 * abs(x_center) + 60.0 * z_error + 30.0 * span_error + 10.0 * y_error
+                if score < best[0]:
+                    best = (float(score), float(dx), float(dz))
+
+        adjusted = np.array(pose_t, dtype=np.float64, copy=True)
+        adjusted[:3, 3] += best[1] * adjusted[:3, 0] + best[2] * adjusted[:3, 2]
+        return adjusted, (best[1], best[2], best[0])
+
     def attach_extra_spheres(self):
         # add sphere to end-effector link for pre-grasp collision checking
         ee_link = self.extra_sphere_link
@@ -1195,6 +1279,7 @@ class GraspPlanner:
         ik_v_obj_ids = []
 
         ik_source_indices = []
+        ik_scan_offsets = []
         zipped = zip(poses, scores, samples, object_ids, raw_source_indices)
         for pose, score, sample, obj_id, source_index in zipped:
             # reject score threshold
@@ -1206,6 +1291,12 @@ class GraspPlanner:
             approach_t = pose_t[:3, 2] / np.linalg.norm(pose_t[:3, 2])
             displace_t = self.hand_depth
             pose_t[:3, 3] = pose_t[:3, 3] + displace_t * approach_t
+            if self.is_franka_robot:
+                pose_t, scan_result = self._franka_scan_pose_offset_before_ik(
+                    pose_t, obj_id, visible_points, mask
+                )
+            else:
+                scan_result = (0.0, 0.0, np.nan)
             backup_poses.append(pose_t)
 
             js = self.ik_solver.ik(self._pose_for_tracik(pose_t))
@@ -1216,6 +1307,7 @@ class GraspPlanner:
                 ik_v_samples.append(sample)
                 ik_v_obj_ids.append(obj_id)
                 ik_source_indices.append(source_index)
+                ik_scan_offsets.append(scan_result)
         t1 = time.time()
         print("IK time:", t1 - t0, flush=True)
         print(len(ik_v_pose_t), "grasps after IK filtering.", flush=True)
@@ -1223,6 +1315,18 @@ class GraspPlanner:
             "ik grasp ids",
             f"count={len(ik_v_obj_ids)} unique={sorted(set(int(v) for v in ik_v_obj_ids)) if len(ik_v_obj_ids) else []}",
         )
+        if self.is_franka_robot and len(ik_scan_offsets):
+            offsets = np.asarray(ik_scan_offsets, dtype=np.float64)
+            _stage_probe(
+                "franka pre-filter offset scan",
+                "count={} dx_range=[{:.4f},{:.4f}] dz_range=[{:.4f},{:.4f}]".format(
+                    len(offsets),
+                    float(np.nanmin(offsets[:, 0])),
+                    float(np.nanmax(offsets[:, 0])),
+                    float(np.nanmin(offsets[:, 1])),
+                    float(np.nanmax(offsets[:, 1])),
+                ),
+            )
         if len(ik_v_pose_t) == 0:
             return "IK_INFEASIBLE", backup_poses, [], scores
         if _env_flag("TORC_CAPTURE_SELECTED_GRASP"):
@@ -1243,6 +1347,10 @@ class GraspPlanner:
                     "ik_candidate_source_indices": np.asarray(
                         ik_source_indices,
                         dtype=np.int64,
+                    ),
+                    "ik_candidate_franka_scan_offsets": np.asarray(
+                        ik_scan_offsets,
+                        dtype=np.float64,
                     ),
                     "ik_candidate_count": int(len(ik_v_pose_t)),
                 }
