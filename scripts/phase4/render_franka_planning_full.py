@@ -192,7 +192,7 @@ def main() -> int:
     scene = os.environ.get("TORC_SCENE_REL", DEFAULT_SCENE)
     target = os.environ.get("TORC_TARGET_OBJECT", DEFAULT_TARGET)
     method = os.environ.get("TORC_METHOD", "dg_only")
-    pick_limit = os.environ.get("TORC_PICK_LIMIT", "2")
+    pick_limit = os.environ.get("TORC_PICK_LIMIT", "15")
     run_dir = PROJECT_ROOT / "phase4_artifacts" / f"torc_franka_pipeline_{int(time.time())}"
     run_dir.mkdir(parents=True, exist_ok=True)
     restart_result = restart_server_session()
