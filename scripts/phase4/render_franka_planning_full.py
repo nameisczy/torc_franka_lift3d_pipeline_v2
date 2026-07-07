@@ -125,11 +125,74 @@ def restart_server_session() -> dict:
     return result
 
 
+def _latest_tree_mtime(path: Path) -> float:
+    latest = path.stat().st_mtime if path.exists() else 0.0
+    for item in path.rglob("*"):
+        try:
+            latest = max(latest, item.stat().st_mtime)
+        except OSError:
+            pass
+    return latest
+
+
+def _run_experiment_with_progress_watchdog(cmd: list[str], cwd: Path, env: dict, run_dir: Path) -> dict:
+    watchdog_s = float(env.get("TORC_PHASE4_NO_PROGRESS_TIMEOUT_S", "180"))
+    poll_s = float(env.get("TORC_PHASE4_PROGRESS_POLL_S", "5"))
+    proc = subprocess.Popen(
+        cmd,
+        cwd=str(cwd),
+        env=env,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    started = time.time()
+    last_progress = started
+    last_mtime = _latest_tree_mtime(run_dir)
+    last_file_count = len([p for p in run_dir.rglob("*") if p.is_file()])
+    timed_out = False
+    while proc.poll() is None:
+        time.sleep(poll_s)
+        file_count = len([p for p in run_dir.rglob("*") if p.is_file()])
+        mtime = _latest_tree_mtime(run_dir)
+        tmux_exists = False
+        tmux = shutil.which("tmux")
+        if tmux is not None:
+            tmux_check = subprocess.run(
+                [tmux, "has-session", "-t", SERVER_SESSION],
+                text=True,
+                capture_output=True,
+            )
+            tmux_exists = tmux_check.returncode == 0
+        if file_count != last_file_count or mtime > last_mtime or tmux_exists:
+            last_progress = time.time()
+            last_file_count = file_count
+            last_mtime = mtime
+        if time.time() - last_progress > watchdog_s:
+            timed_out = True
+            proc.terminate()
+            try:
+                proc.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+            break
+    stdout, stderr = proc.communicate()
+    return {
+        "returncode": int(proc.returncode) if proc.returncode is not None else -9,
+        "stdout": stdout,
+        "stderr": stderr,
+        "timed_out_no_progress": timed_out,
+        "elapsed_s": time.time() - started,
+        "last_file_count": last_file_count,
+        "last_tree_mtime": last_mtime,
+    }
+
+
 def main() -> int:
     scene = os.environ.get("TORC_SCENE_REL", DEFAULT_SCENE)
     target = os.environ.get("TORC_TARGET_OBJECT", DEFAULT_TARGET)
     method = os.environ.get("TORC_METHOD", "dg_only")
-    pick_limit = os.environ.get("TORC_PICK_LIMIT", "1")
+    pick_limit = os.environ.get("TORC_PICK_LIMIT", "2")
     run_dir = PROJECT_ROOT / "phase4_artifacts" / f"torc_franka_pipeline_{int(time.time())}"
     run_dir.mkdir(parents=True, exist_ok=True)
     restart_result = restart_server_session()
@@ -150,6 +213,7 @@ def main() -> int:
             "TORC_USE_CGN_ZMQ": env.get("TORC_USE_CGN_ZMQ", "1"),
             "TORC_GRASP_PLANNER": env.get("TORC_GRASP_PLANNER", "cgn"),
             "TORC_CGN_ZMQ_ADDRESS": env.get("TORC_CGN_ZMQ_ADDRESS", "tcp://127.0.0.1:6007"),
+            "TORC_CAPTURE_SELECTED_GRASP": env.get("TORC_CAPTURE_SELECTED_GRASP", "1"),
             "TORC_SCENE_PATH": scene,
             "TORC_SCENE_NAME": Path(scene).stem,
             "TORC_RENDER_EXECUTION_VIDEO": env.get("TORC_RENDER_EXECUTION_VIDEO", "1"),
@@ -193,7 +257,7 @@ def main() -> int:
         str(run_dir),
         "--mj-pickle",
     ]
-    proc = subprocess.run(cmd, cwd=str(TORC_ROOT), env=env, text=True, capture_output=True)
+    proc_result = _run_experiment_with_progress_watchdog(cmd, TORC_ROOT, env, run_dir)
     manifest = {
         "phase": "4.3",
         "entrypoint": "original_torc_pipeline_with_franka_robot_selector",
@@ -204,13 +268,21 @@ def main() -> int:
         "run_dir": str(run_dir),
         "server_restart": restart_result,
         "cmd": cmd,
-        "returncode": proc.returncode,
-        "stdout_tail": proc.stdout[-4000:],
-        "stderr_tail": proc.stderr[-4000:],
+        "returncode": proc_result["returncode"],
+        "stdout_tail": proc_result["stdout"][-4000:],
+        "stderr_tail": proc_result["stderr"][-4000:],
+        "run_experiment_watchdog": {
+            "timed_out_no_progress": proc_result["timed_out_no_progress"],
+            "elapsed_s": proc_result["elapsed_s"],
+            "last_file_count": proc_result["last_file_count"],
+            "last_tree_mtime": proc_result["last_tree_mtime"],
+            "no_progress_timeout_s": env.get("TORC_PHASE4_NO_PROGRESS_TIMEOUT_S", "180"),
+        },
         "robot_boundary": {
             "TORC_ROBOT": env["TORC_ROBOT"],
             "TORC_GRASP_PLANNER": env["TORC_GRASP_PLANNER"],
             "TORC_USE_CGN_ZMQ": env["TORC_USE_CGN_ZMQ"],
+            "TORC_CAPTURE_SELECTED_GRASP": env["TORC_CAPTURE_SELECTED_GRASP"],
             "TORC_ROS_SETUP": env["TORC_ROS_SETUP"],
             "TORC_CONDA_PREFIX": env["TORC_CONDA_PREFIX"],
             "TORC_CUROBO_SRC": env["TORC_CUROBO_SRC"],
@@ -243,7 +315,7 @@ def main() -> int:
     MANIFEST.parent.mkdir(parents=True, exist_ok=True)
     MANIFEST.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(json.dumps(manifest, indent=2))
-    return int(proc.returncode)
+    return int(proc_result["returncode"])
 
 
 if __name__ == "__main__":

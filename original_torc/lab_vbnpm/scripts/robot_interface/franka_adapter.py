@@ -71,7 +71,7 @@ class RobotAdapter:
         pad_front_z = pad_center_z + pad_half_depth
         front_offset = pad_front_z - tcp_z
         extra_clearance = float(
-            os.environ.get("TORC_FRANKA_PAD_APPROACH_CLEARANCE_M", str(0.5 * pad_half_depth))
+            os.environ.get("TORC_FRANKA_PAD_APPROACH_CLEARANCE_M", "0.001")
         )
         return float(front_offset + extra_clearance)
 
@@ -118,7 +118,6 @@ class RobotAdapter:
         grasp.validate()
         contact = np.array(grasp.contact_pose, dtype=float, copy=True)
         contact[:3, :3] = self._frame_from(grasp.approach_direction, grasp.grasp_axis)
-        contact[:3, 3] -= 0.5 * float(grasp.opening_width) * contact[:3, 0]
         retreat = (
             float(self.tcp_contact_retreat_m)
             if self.tcp_contact_retreat_m is not None

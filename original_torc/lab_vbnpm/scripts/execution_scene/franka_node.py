@@ -89,6 +89,7 @@ class FrankaNode(ExecutionNode):
         self.gripper_geom_ids = set()
         self.arm_goal = None
         self.arm_goal_start_time = None
+        self.arm_goal_settle_count = 0
 
     def reset(self, xml_file, gui=True, save_image_dir=None, experiment_dir=None, mj_pickle: bool = False):
         franka_xml = build_franka_runtime_scene(xml_file, experiment_dir)
@@ -100,6 +101,7 @@ class FrankaNode(ExecutionNode):
         self.last_status_time = time.time()
         self.arm_goal = None
         self.arm_goal_start_time = None
+        self.arm_goal_settle_count = 0
 
     def _joint_to_actuator(self):
         mapping = {}
@@ -160,19 +162,45 @@ class FrankaNode(ExecutionNode):
     def _interpolate_points(self, joint_names, points):
         if not points:
             return []
-        current = dict(zip(self.arm_joint_names, self.get_joint_state(self.arm_joint_names)[0]))
-        prev_t = 0.0
-        prev = np.asarray([current.get(j, 0.0) for j in joint_names], dtype=float)
-        out = []
+        if len(points) == 1:
+            return [(joint_names, np.asarray(points[0].positions, dtype=float), np.zeros(len(joint_names)), 0.0)]
+
+        times = np.asarray([point.time_from_start.to_sec() for point in points], dtype=float)
+        positions = np.asarray([point.positions for point in points], dtype=float)
+        velocities = []
         for point in points:
-            target = np.asarray(point.positions, dtype=float)
-            t = max(float(point.time_from_start.to_sec()), prev_t + self.model.opt.timestep)
-            n = max(2, int(np.ceil((t - prev_t) / self.model.opt.timestep)))
-            for alpha in np.linspace(0.0, 1.0, n, endpoint=True)[1:]:
-                q = (1.0 - alpha) * prev + alpha * target
-                out.append((joint_names, q))
-            prev = target
-            prev_t = t
+            if len(point.velocities) == len(point.positions):
+                velocities.append(point.velocities)
+            else:
+                velocities.append(np.zeros(len(point.positions)))
+        velocities = np.asarray(velocities, dtype=float)
+
+        keep = np.ones(len(times), dtype=bool)
+        keep[1:] = np.diff(times) > 1e-9
+        times = times[keep]
+        positions = positions[keep]
+        velocities = velocities[keep]
+        if len(times) == 1:
+            return [(joint_names, positions[0], velocities[0], float(times[0]))]
+
+        if times[0] != 0.0:
+            times = times - times[0]
+        timestep = self.model.opt.timestep
+        out = []
+        for idx in range(len(times) - 1):
+            t0 = float(times[idx])
+            t1 = float(times[idx + 1])
+            if t1 <= t0:
+                continue
+            segment_times = np.arange(t0, t1, timestep)
+            if idx == 0 and (len(segment_times) == 0 or segment_times[0] != t0):
+                segment_times = np.insert(segment_times, 0, t0)
+            for t in segment_times:
+                alpha = float(np.clip((t - t0) / (t1 - t0), 0.0, 1.0))
+                q = (1.0 - alpha) * positions[idx] + alpha * positions[idx + 1]
+                qd = (1.0 - alpha) * velocities[idx] + alpha * velocities[idx + 1]
+                out.append((joint_names, q, qd, float(t)))
+        out.append((joint_names, positions[-1], velocities[-1], float(times[-1])))
         return out
 
     def follow_trajectory_cb(self):
@@ -212,24 +240,35 @@ class FrankaNode(ExecutionNode):
 
     def _arm_goal_settled(self):
         if self.arm_goal is None:
+            self.arm_goal_settle_count = 0
             return True
         names = list(self.arm_goal.keys())
         target = np.asarray([self.arm_goal[name] for name in names], dtype=float)
         qpos, qvel = self.get_joint_state(names)
         pos_err = float(np.max(np.abs(np.asarray(qpos, dtype=float) - target)))
         vel_err = float(np.max(np.abs(np.asarray(qvel, dtype=float))))
-        if pos_err <= 0.012 and vel_err <= 0.12:
+        pos_tol = float(os.environ.get("TORC_FRANKA_TRAJ_SETTLE_POS_TOL", "0.004"))
+        vel_tol = float(os.environ.get("TORC_FRANKA_TRAJ_SETTLE_VEL_TOL", "0.012"))
+        required = int(os.environ.get("TORC_FRANKA_TRAJ_SETTLE_STEPS", "24"))
+        if pos_err <= pos_tol and vel_err <= vel_tol:
+            self.arm_goal_settle_count += 1
+        else:
+            self.arm_goal_settle_count = 0
+        if self.arm_goal_settle_count >= required:
             rospy.loginfo(
-                "Franka trajectory settled: max_pos_err=%.6f max_vel=%.6f",
+                "Franka trajectory settled: max_pos_err=%.6f max_vel=%.6f stable_steps=%d",
                 pos_err,
                 vel_err,
+                self.arm_goal_settle_count,
             )
             return True
-        if self.arm_goal_start_time is not None and time.time() - self.arm_goal_start_time > 8.0:
+        timeout_s = float(os.environ.get("TORC_FRANKA_TRAJ_SETTLE_TIMEOUT_S", "45.0"))
+        if self.arm_goal_start_time is not None and time.time() - self.arm_goal_start_time > timeout_s:
             rospy.logwarn(
-                "Franka trajectory settle timeout: max_pos_err=%.6f max_vel=%.6f",
+                "Franka trajectory settle timeout: max_pos_err=%.6f max_vel=%.6f stable_steps=%d",
                 pos_err,
                 vel_err,
+                self.arm_goal_settle_count,
             )
             return True
         return False
@@ -242,10 +281,11 @@ class FrankaNode(ExecutionNode):
             self.follow_trajectory_as.set_succeeded(result)
             self.arm_goal = None
             self.arm_goal_start_time = None
+            self.arm_goal_settle_count = 0
 
     def do_traj(self):
         if self.arm_trajectory:
-            joint_names, q = self.arm_trajectory.pop(0)
+            joint_names, q, _qd, _t = self.arm_trajectory.pop(0)
             self._set_joint_positions(dict(zip(joint_names, q)), set_qpos=False, set_ctrl=True)
         elif self.arm_goal is not None:
             self._set_joint_positions(self.arm_goal, set_qpos=False, set_ctrl=True)

@@ -1795,8 +1795,20 @@ class CuroboPlanner(MotionPlanner):
         # setup tasks
         ee_task = FrameTask(self.ee, position_cost=1.0, orientation_cost=1.0)
         ee_task.set_target(pin.SE3(se3_path[0]))
-        # posture_task = PostureTask(cost=1.0)
-        # posture_task.set_target(start)  # Stay near original config
+        tasks = [ee_task]
+        posture_task = None
+        if self.is_franka_robot:
+            posture_task = PostureTask(
+                cost=float(os.environ.get("TORC_FRANKA_PINK_POSTURE_COST", "0.005")),
+                lm_damping=float(os.environ.get("TORC_FRANKA_PINK_POSTURE_DAMPING", "1e-6")),
+                gain=float(os.environ.get("TORC_FRANKA_PINK_POSTURE_GAIN", "0.2")),
+            )
+            posture_task.set_target(q_start)
+            tasks.append(posture_task)
+            stage_probe(
+                "pink_cartesian_motion franka posture regularization enabled",
+                f"cost={posture_task.cost} gain={posture_task.gain}",
+            )
 
         # IK loop
         traj = JointTrajectory()
@@ -1837,11 +1849,14 @@ class CuroboPlanner(MotionPlanner):
                 try:
                     qd = solve_ik(
                         config,
-                        [ee_task],
+                        tasks,
                         dt,
                         damping=1e-9,
                         solver=solver,
                     )
+                    if self.is_franka_robot:
+                        max_qd = float(os.environ.get("TORC_FRANKA_PINK_MAX_QD", "3.0"))
+                        qd = np.clip(qd, -max_qd, max_qd)
                     print(qd)
                     config.integrate_inplace(qd, dt)
                     config.check_limits()

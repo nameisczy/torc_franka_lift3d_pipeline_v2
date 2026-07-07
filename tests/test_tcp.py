@@ -111,7 +111,7 @@ def test_franka_tcp_contact_depth_is_derived_from_current_pad_geometry():
         + _vec(pad.get("pos"))[2]
         + _vec(pad.get("size"))[2]
     )
-    expected_retreat = (pad_front_z - tcp_z) + 0.5 * _vec(pad.get("size"))[2]
+    expected_retreat = (pad_front_z - tcp_z) + 0.001
     assert abs(retreat - expected_retreat) < 1e-6
     assert abs(module.RobotAdapter.derive_tcp_pad_front_m() - (pad_front_z - tcp_z)) < 1e-6
 
@@ -125,7 +125,7 @@ def test_franka_adapter_maps_canonical_closing_axis_to_current_mujoco_local_x():
     assert frame[:, 2].tolist() == [0.0, 0.0, 1.0]
 
 
-def test_franka_adapter_centers_cgn_contact_using_negative_local_x():
+def test_franka_adapter_does_not_apply_fixed_opening_width_lateral_shift():
     adapter_path = SCRIPTS_ROOT / "robot_interface" / "franka_adapter.py"
     grasp_path = SCRIPTS_ROOT / "grasp_representation" / "canonical_grasp.py"
     adapter_module = _load_module(adapter_path, "franka_adapter_centering_contract")
@@ -146,7 +146,7 @@ def test_franka_adapter_centers_cgn_contact_using_negative_local_x():
     )
     command = adapter_module.RobotAdapter().adapt(grasp)
     retreat = adapter_module.RobotAdapter._derive_tcp_contact_retreat_m()
-    assert abs(command.tcp_contact_pose_world[0, 3] + 0.04) < 1e-9
+    assert abs(command.tcp_contact_pose_world[0, 3]) < 1e-9
     assert abs(command.tcp_contact_pose_world[2, 3] + retreat) < 1e-9
 
 
@@ -173,7 +173,7 @@ def test_franka_adapter_scan_offsets_move_tcp_in_local_x_and_z(monkeypatch):
     )
     command = adapter_module.RobotAdapter().adapt(grasp)
     retreat = adapter_module.RobotAdapter._derive_tcp_contact_retreat_m()
-    assert abs(command.tcp_contact_pose_world[0, 3] - (-0.04 + 0.008)) < 1e-9
+    assert abs(command.tcp_contact_pose_world[0, 3] - 0.008) < 1e-9
     assert abs(command.tcp_contact_pose_world[2, 3] - (-retreat + 0.006)) < 1e-9
 
 

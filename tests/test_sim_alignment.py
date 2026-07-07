@@ -118,3 +118,46 @@ def test_mujoco_and_curobo_share_tcp_and_joint_order_contract():
         assert "gripper0_right_grip_site" in text or "panda_tcp" in text, f"{label} must declare shared TCP"
         for joint in expected_joints:
             assert joint in text, f"{label} missing joint order token {joint}"
+
+
+def test_franka_execution_requires_stable_settle_before_next_segment():
+    node = SCRIPTS_ROOT / "execution_scene" / "franka_node.py"
+    text = _read(node)
+
+    assert "arm_goal_settle_count" in text
+    assert "TORC_FRANKA_TRAJ_SETTLE_POS_TOL" in text
+    assert "TORC_FRANKA_TRAJ_SETTLE_VEL_TOL" in text
+    assert "TORC_FRANKA_TRAJ_SETTLE_STEPS" in text
+    assert "TORC_FRANKA_TRAJ_SETTLE_TIMEOUT_S" in text
+    assert 'os.environ.get("TORC_FRANKA_TRAJ_SETTLE_TIMEOUT_S", "45.0")' in text
+    assert 'os.environ.get("TORC_FRANKA_TRAJ_SETTLE_VEL_TOL", "0.012")' in text
+
+
+def test_franka_execution_preserves_torc_style_velocity_trajectory_contract():
+    interface_text = _read(SCRIPTS_ROOT / "execution_scene" / "franka_interface.py")
+    node_text = _read(SCRIPTS_ROOT / "execution_scene" / "franka_node.py")
+
+    assert "franka_use_toppra_retime" in interface_text
+    assert "self._linear_retime(" in interface_text
+    assert "raw_plan, desired_duration, timestep" in interface_text
+    assert "velocities=tuple(qd)" in interface_text
+    assert "velocities=tuple([0.0] * len(joint_names))" not in interface_text
+
+    assert "CubicHermiteSpline" not in node_text
+    assert "(1.0 - alpha) * positions[idx] + alpha * positions[idx + 1]" in node_text
+    assert "sample_positions = path(sample_times)" not in node_text
+
+
+def test_franka_runtime_scene_uses_asset_consistent_servo_dynamics():
+    scene_patch = _read(SCRIPTS_ROOT / "execution_scene" / "franka_scene_patch.py")
+    interface_text = _read(SCRIPTS_ROOT / "execution_scene" / "franka_interface.py")
+
+    assert 'os.environ.get("TORC_FRANKA_ARM_POSITION_KP", "320")' in scene_patch
+    assert 'os.environ.get("TORC_FRANKA_ARM_JOINT_DAMPING", "8.0")' in scene_patch
+    assert '"robot0_joint1": "5"' in scene_patch
+    assert '"robot0_joint7": "0.714286"' in scene_patch
+    assert 'joint.set("armature", armature_override or asset_armature[name])' in scene_patch
+    assert 'os.environ.get("TORC_FRANKA_ARM_JOINT_ARMATURE", "1.0")' not in scene_patch
+
+    assert '"/robot/franka_retime_padding", 2.2' in interface_text
+    assert '"/robot/franka_min_segment_duration", 0.18' in interface_text

@@ -104,7 +104,7 @@ def _replace_arm_torque_actuators_with_position(root: ET.Element) -> None:
             {
                 "name": f"robot0_pos_j{idx}",
                 "joint": joint,
-                "kp": os.environ.get("TORC_FRANKA_ARM_POSITION_KP", "650"),
+                "kp": os.environ.get("TORC_FRANKA_ARM_POSITION_KP", "320"),
                 "ctrllimited": "true",
                 "ctrlrange": joint_ranges[joint],
                 "forcelimited": "true",
@@ -160,13 +160,22 @@ def _add_franka_robot_body(worldbody: ET.Element) -> None:
 
 
 def _stabilize_franka_arm_joints(root: ET.Element) -> None:
-    damping = os.environ.get("TORC_FRANKA_ARM_JOINT_DAMPING", "2.0")
-    armature = os.environ.get("TORC_FRANKA_ARM_JOINT_ARMATURE", "1.0")
+    asset_armature = {
+        "robot0_joint1": "5",
+        "robot0_joint2": "2.5",
+        "robot0_joint3": "1.66667",
+        "robot0_joint4": "1.25",
+        "robot0_joint5": "1",
+        "robot0_joint6": "0.833333",
+        "robot0_joint7": "0.714286",
+    }
+    damping = os.environ.get("TORC_FRANKA_ARM_JOINT_DAMPING", "8.0")
+    armature_override = os.environ.get("TORC_FRANKA_ARM_JOINT_ARMATURE")
     for joint in root.findall(".//joint"):
         name = joint.attrib.get("name", "")
         if re.fullmatch(r"robot0_joint[1-7]", name):
             joint.set("damping", damping)
-            joint.set("armature", armature)
+            joint.set("armature", armature_override or asset_armature[name])
 
 
 def build_franka_runtime_scene(scene_xml: str, experiment_dir: str | None = None) -> str:

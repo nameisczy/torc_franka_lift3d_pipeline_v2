@@ -33,8 +33,6 @@ DEFAULT_RUN = (
 )
 EXP_DIR = Path(os.environ.get("TORC_SELECTED_GRASP_EXP_DIR", str(DEFAULT_RUN)))
 DEBUG_DIR = EXP_DIR / "selected_grasp_debug"
-DEBUG_JSON = DEBUG_DIR / "pick_01_selected_grasp_debug.json"
-DEBUG_NPZ = DEBUG_DIR / "pick_01_selected_grasp_debug.npz"
 OUT_PNG = PROJECT_ROOT / "franka_selected_grasp_pose.png"
 OUT_MANIFEST = PROJECT_ROOT / "phase4_artifacts/selected_grasp_pose_render_manifest.json"
 POSE_XML = PROJECT_ROOT / "phase4_artifacts/selected_grasp_pose_scene.xml"
@@ -108,9 +106,9 @@ def camera() -> mujoco.MjvCamera:
     return cam
 
 
-def main() -> None:
-    metadata = json.loads(DEBUG_JSON.read_text(encoding="utf-8"))
-    arrays = np.load(DEBUG_NPZ)
+def render_pick(debug_json: Path, debug_npz: Path, out_png: Path) -> dict:
+    metadata = json.loads(debug_json.read_text(encoding="utf-8"))
+    arrays = np.load(debug_npz)
     selected_q = np.asarray(arrays["selected_grasp_joint_values"], dtype=np.float64)
     selected_T = np.asarray(arrays["selected_transformed_grasp_matrix"], dtype=np.float64)
 
@@ -142,7 +140,7 @@ def main() -> None:
     draw = ImageDraw.Draw(img, "RGBA")
     draw.rectangle((0, 0, 1400, 118), fill=(0, 0, 0, 145))
     draw.text((18, 14), "Franka at selected TORC pipeline grasp pose", fill=(255, 255, 255, 255))
-    draw.text((18, 40), f"source: {DEBUG_NPZ}", fill=(220, 240, 255, 255))
+    draw.text((18, 40), f"source: {debug_npz}", fill=(220, 240, 255, 255))
     draw.text(
         (18, 66),
         f"object={metadata.get('intended_object_name')} segment={metadata.get('selected_object_segment_id')} "
@@ -150,21 +148,63 @@ def main() -> None:
         fill=(255, 255, 255, 255),
     )
     draw.text((18, 92), "cyan: selected grasp TCP target; yellow: MuJoCo TCP from selected_grasp_joint_values", fill=(255, 245, 180, 255))
-    img.save(OUT_PNG)
+    img.save(out_png)
+    return {
+        "output_png": str(out_png),
+        "source_debug_json": str(debug_json),
+        "source_debug_npz": str(debug_npz),
+        "selected_metadata": metadata,
+        "selected_grasp_joint_values": selected_q.tolist(),
+        "selected_transformed_grasp_matrix": selected_T.tolist(),
+        "achieved_tcp_world": achieved_pos.tolist(),
+        "tcp_position_error_m": float(np.linalg.norm(achieved_pos - selected_T[:3, 3])),
+        "planning_executed_for_pose_selection": bool(metadata.get("planning", {}).get("plan2_grasp_approach_success")),
+    }
+
+
+def combine_images(paths: list[Path], output: Path) -> None:
+    images = [Image.open(path).convert("RGB") for path in paths]
+    if len(images) == 1:
+        images[0].save(output)
+        return
+    width = max(img.width for img in images)
+    height = sum(img.height for img in images)
+    canvas = Image.new("RGB", (width, height), (12, 12, 12))
+    y = 0
+    for img in images:
+        canvas.paste(img, (0, y))
+        y += img.height
+    canvas.save(output)
+
+
+def main() -> None:
+    pick_jsons = sorted(DEBUG_DIR.glob("pick_*_selected_grasp_debug.json"))
+    if not pick_jsons:
+        raise RuntimeError(f"no selected grasp debug JSON files found in {DEBUG_DIR}")
+
+    rendered = []
+    output_paths = []
+    for debug_json in pick_jsons:
+        debug_npz = debug_json.with_suffix(".npz")
+        if not debug_npz.exists():
+            continue
+        pick_tag = debug_json.name.replace("_selected_grasp_debug.json", "")
+        out_png = PROJECT_ROOT / f"franka_selected_grasp_pose_{pick_tag}.png"
+        rendered.append(render_pick(debug_json, debug_npz, out_png))
+        output_paths.append(out_png)
+
+    if not output_paths:
+        raise RuntimeError(f"no selected grasp debug NPZ files found in {DEBUG_DIR}")
+    combine_images(output_paths, OUT_PNG)
 
     OUT_MANIFEST.write_text(
         json.dumps(
             {
                 "output_png": str(OUT_PNG),
-                "source_debug_json": str(DEBUG_JSON),
-                "source_debug_npz": str(DEBUG_NPZ),
+                "individual_outputs": [str(path) for path in output_paths],
+                "pick_count": len(output_paths),
                 "source_pipeline": "scripts/phase4/render_franka_planning_full.py with TORC_CAPTURE_SELECTED_GRASP=1",
-                "selected_metadata": metadata,
-                "selected_grasp_joint_values": selected_q.tolist(),
-                "selected_transformed_grasp_matrix": selected_T.tolist(),
-                "achieved_tcp_world": achieved_pos.tolist(),
-                "tcp_position_error_m": float(np.linalg.norm(achieved_pos - selected_T[:3, 3])),
-                "planning_executed_for_pose_selection": bool(metadata.get("planning", {}).get("plan2_grasp_approach_success")),
+                "rendered_picks": rendered,
             },
             indent=2,
         ),

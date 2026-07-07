@@ -116,3 +116,13 @@ def test_planner_joint_order_matches_geometry_diff_contract():
         idx = declared.find(joint)
         assert idx > last_index, f"joint {joint} is missing or out of order"
         last_index = idx
+
+
+def test_franka_pink_cartesian_motion_has_redundancy_regularization():
+    planner_path = SCRIPTS_ROOT / "motion_planner" / "curobo_planner.py"
+    text = _read(planner_path)
+
+    assert "self.is_franka_robot" in text
+    assert "PostureTask" in text
+    assert "TORC_FRANKA_PINK_POSTURE_COST" in text
+    assert "TORC_FRANKA_PINK_MAX_QD" in text

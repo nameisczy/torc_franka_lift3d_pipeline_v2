@@ -1,5 +1,8 @@
 import rospy
 
+rospy.init_node('sim_params', anonymous=True)
+rospy.wait_for_service('/rosout/get_loggers', timeout=30)
+
 pose, size = (
     [0.55, 0.65, 1.05],
     [0.50, 1.30, 0.52],

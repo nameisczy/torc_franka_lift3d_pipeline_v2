@@ -122,3 +122,35 @@ def test_active_grasp_pipeline_does_not_consume_raw_cgn_pose_for_ik():
         assert not re.search(pattern, text, flags=re.DOTALL), (
             f"open-loop pipeline still contains forbidden TORC grasp path: {pattern}"
         )
+
+
+def test_franka_grasp_geometry_lives_below_planner_boundary():
+    planner = SCRIPTS_ROOT / "grasp_planner" / "curobo_grasp_planner.py"
+    adapter = SCRIPTS_ROOT / "robot_interface" / "franka_grasp_adapter.py"
+    planner_text = _read(planner)
+    adapter_text = _read(adapter)
+
+    assert "FrankaGraspGeometryConfig" in adapter_text
+    assert "enclosure_score_weight" in adapter_text
+    assert "scan_forward_extent_m: float = 0.020" in adapter_text
+    assert "scan_step_m: float = 0.004" in adapter_text
+    assert "scan_target_clearance_m: float = 0.001" in adapter_text
+    assert "dz_candidates" in adapter_text
+    assert "penetration_penalty" in adapter_text
+    assert "scan_backward_extent_m: float = 0.002" in adapter_text
+    assert "scan_dz_extent_m" not in adapter_text
+    assert "TORC_FRANKA_SCAN_FORWARD_EXTENT_M" in adapter_text
+    assert "TORC_FRANKA_SCAN_BACKWARD_EXTENT_M" in adapter_text
+    assert "FrankaGraspAdapterScorer" in planner_text
+    for method in [
+        "scan_pose_offset_before_ik",
+        "single_object_collides_with",
+        "pad_penetrates_object",
+        "enclosure_quality_scores",
+    ]:
+        assert method in adapter_text
+        assert f"def _franka_{method}" not in planner_text
+
+    assert "def _franka_single_object_collides_with" not in planner_text
+    assert "franka enclosure score" in planner_text
+    assert "franka enclosure rejection" not in planner_text

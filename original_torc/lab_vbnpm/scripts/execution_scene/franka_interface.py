@@ -46,38 +46,109 @@ class FrankaInterface(ExecutionInterface):
         acc_lim = float(self._get_param("/robot/acc_ang_lim", 850.0)) * np.pi / 180.0
         vel_lim = max(vel_lim, 1e-3)
         acc_lim = max(acc_lim, 1e-3)
+        padding = float(self._get_param("/robot/franka_retime_padding", 2.2))
+        min_segment = float(self._get_param("/robot/franka_min_segment_duration", 0.18))
         dq = float(np.max(np.abs(np.asarray(q1, dtype=float) - np.asarray(q0, dtype=float))))
         if dq <= 1e-8:
             return 0.02
-        # Trapezoid lower bound, padded slightly so MuJoCo position actuators settle.
+        # Trapezoid lower bound, padded so MuJoCo position actuators settle on short approach moves.
         by_vel = dq / vel_lim
         by_acc = 2.0 * np.sqrt(dq / acc_lim)
-        return max(0.08, 1.35 * max(by_vel, by_acc))
+        return max(min_segment, padding * max(by_vel, by_acc))
+
+    def _linear_retime(self, raw_plan, desired_duration, timestep):
+        segment_times = np.asarray(
+            [self._segment_duration(raw_plan[i], raw_plan[i + 1]) for i in range(len(raw_plan) - 1)],
+            dtype=float,
+        )
+        scale = desired_duration / max(float(np.sum(segment_times)), 1e-6)
+        knot_times = np.concatenate(([0.0], np.cumsum(segment_times * scale)))
+        sample_times = np.arange(0.0, knot_times[-1] + timestep, timestep)
+        if len(sample_times) == 0 or sample_times[-1] < knot_times[-1]:
+            sample_times = np.append(sample_times, knot_times[-1])
+        sample_times[-1] = knot_times[-1]
+        positions = np.vstack(
+            [np.interp(sample_times, knot_times, raw_plan[:, j]) for j in range(raw_plan.shape[1])]
+        ).T
+        velocities = np.gradient(positions, sample_times, axis=0, edge_order=1)
+        velocities[0] = 0.0
+        velocities[-1] = 0.0
+        return positions, velocities, sample_times, knot_times
 
     def _retime_points(self, joint_names, points):
         if len(points) <= 1:
             return points
-        retimed = []
-        elapsed = 0.0
-        prev = np.asarray(points[0].positions, dtype=float)
-        retimed.append(
-            JointTrajectoryPoint(
-                positions=tuple(prev),
-                velocities=tuple([0.0] * len(joint_names)),
-                time_from_start=rospy.Duration(0.0),
-            )
+        raw_plan = np.asarray([point.positions for point in points], dtype=float)
+        if raw_plan.shape[0] < 2:
+            return points
+
+        vel_lim = float(self._get_param("/robot/vel_ang_lim", 20.0)) * np.pi / 180.0
+        acc_lim = float(self._get_param("/robot/acc_ang_lim", 850.0)) * np.pi / 180.0
+        vel_lim = max(vel_lim, 1e-3)
+        acc_lim = max(acc_lim, 1e-3)
+
+        requested_duration = float(points[-1].time_from_start.to_sec() - points[0].time_from_start.to_sec())
+        lower_bound = sum(
+            self._segment_duration(raw_plan[i], raw_plan[i + 1])
+            for i in range(len(raw_plan) - 1)
         )
-        for point in points[1:]:
-            target = np.asarray(point.positions, dtype=float)
-            elapsed += self._segment_duration(prev, target)
+        desired_duration = max(requested_duration, lower_bound, 0.02)
+        timestep = float(self._get_param("/robot/franka_retime_timestep", 0.02))
+        use_toppra = bool(int(self._get_param("/robot/franka_use_toppra_retime", 0)))
+        if use_toppra:
+            try:
+                import toppra as ta
+                import toppra.algorithm as ta_algo
+                import toppra.constraint as ta_constraint
+
+                path_param = np.linspace(0.0, 1.0, len(raw_plan))
+                path = ta.SplineInterpolator(path_param, raw_plan)
+                constraints = [
+                    ta_constraint.JointVelocityConstraint([[-vel_lim, vel_lim]] * raw_plan.shape[1]),
+                    ta_constraint.JointAccelerationConstraint([[-acc_lim, acc_lim]] * raw_plan.shape[1]),
+                ]
+                instance = ta_algo.TOPPRAsd(constraints, path)
+                instance.set_desired_duration(desired_duration)
+                trajectory = instance.compute_trajectory(0.0, 0.0)
+                if trajectory is None:
+                    raise RuntimeError("TOPPRA returned no trajectory")
+
+                sample_times = np.arange(0.0, trajectory.duration + timestep, timestep)
+                if len(sample_times) == 0 or sample_times[-1] < trajectory.duration:
+                    sample_times = np.append(sample_times, trajectory.duration)
+                sample_times[-1] = trajectory.duration
+                positions = trajectory(sample_times)
+                velocities = trajectory(sample_times, 1)
+                knot_times = np.linspace(0.0, float(sample_times[-1]), len(raw_plan))
+            except Exception as exc:
+                rospy.logwarn(
+                    "Franka TOPPRA retime unavailable (%s); using shape-preserving linear retime",
+                    repr(exc),
+                )
+                positions, velocities, sample_times, knot_times = self._linear_retime(
+                    raw_plan, desired_duration, timestep
+                )
+        else:
+            positions, velocities, sample_times, knot_times = self._linear_retime(
+                raw_plan, desired_duration, timestep
+            )
+
+        if len(raw_plan) >= 2:
+            lo = np.minimum(raw_plan[:-1], raw_plan[1:])
+            hi = np.maximum(raw_plan[:-1], raw_plan[1:])
+            seg_idx = np.searchsorted(knot_times[1:], sample_times, side="right")
+            seg_idx = np.clip(seg_idx, 0, len(raw_plan) - 2)
+            positions = np.minimum(np.maximum(positions, lo[seg_idx]), hi[seg_idx])
+
+        retimed = []
+        for q, qd, t in zip(positions, velocities, sample_times):
             retimed.append(
                 JointTrajectoryPoint(
-                    positions=tuple(target),
-                    velocities=tuple([0.0] * len(joint_names)),
-                    time_from_start=rospy.Duration.from_sec(elapsed),
+                    positions=tuple(q),
+                    velocities=tuple(qd),
+                    time_from_start=rospy.Duration.from_sec(float(t)),
                 )
             )
-            prev = target
         return retimed
 
     def execute_trajectory(self, req):
