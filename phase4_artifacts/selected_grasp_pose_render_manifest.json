@@ -2,15 +2,24 @@
   "output_png": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose.png",
   "individual_outputs": [
     "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_01.png",
-    "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_02.png"
+    "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_02.png",
+    "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_03.png",
+    "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_04.png",
+    "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_06.png",
+    "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_07.png",
+    "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_08.png",
+    "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_10.png",
+    "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_11.png"
   ],
-  "pick_count": 2,
+  "pick_count": 9,
   "source_pipeline": "scripts/phase4/render_franka_planning_full.py with TORC_CAPTURE_SELECTED_GRASP=1",
   "rendered_picks": [
     {
       "output_png": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_01.png",
-      "source_debug_json": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783413740/exp_2026-07-07_12-42-34__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.json",
-      "source_debug_npz": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783413740/exp_2026-07-07_12-42-34__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.npz",
+      "source_debug_json": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.json",
+      "source_debug_npz": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.npz",
+      "scene_xml": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/selected_grasp_pose_scene.xml",
+      "scene_state_source": "initial_scene",
       "selected_metadata": {
         "capture_version": "f2_6_selected_grasp_capture_v1",
         "behavior_preserving": true,
@@ -21,14 +30,14 @@
         "pick_count": 1,
         "selected_object_segment_id": 10,
         "dg_chosen_segment_id": 10,
-        "selected_index_in_sorted_validated_candidates": 3,
-        "selected_raw_cgn_index": 1957,
-        "selected_score": 0.3850368770235966,
-        "num_raw_cgn_grasps": 3752,
-        "num_ik_candidates": 3471,
-        "num_validated_candidates_before_score_sort": 13,
-        "num_validated_candidates_after_score_filter": 13,
-        "num_candidates_for_chosen_segment": 10,
+        "selected_index_in_sorted_validated_candidates": 0,
+        "selected_raw_cgn_index": 1829,
+        "selected_score": 0.6291837688087979,
+        "num_raw_cgn_grasps": 3730,
+        "num_ik_candidates": 3339,
+        "num_validated_candidates_before_score_sort": 47,
+        "num_validated_candidates_after_score_filter": 47,
+        "num_candidates_for_chosen_segment": 47,
         "frame_labels": {
           "raw_cgn_grasp_matrices": "T_world_cgn_raw",
           "ik_candidate_matrices": "T_world_robot_tcp_goal_after_robot_grasp_adapter",
@@ -66,37 +75,37 @@
         },
         "intended_object_id": 32,
         "intended_object_name": "obj_000068_0",
-        "json_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783413740/exp_2026-07-07_12-42-34__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.json",
-        "npz_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783413740/exp_2026-07-07_12-42-34__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.npz",
-        "written_unix_time": 1783414190.8149533
+        "json_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.json",
+        "npz_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_01_selected_grasp_debug.npz",
+        "written_unix_time": 1783431773.8820155
       },
       "selected_grasp_joint_values": [
-        2.878424882888794,
-        -0.5296800136566162,
-        2.8850157260894775,
-        -1.3052340745925903,
-        0.5636671185493469,
-        1.6934829950332642,
-        -0.5262370705604553
+        -0.2523164451122284,
+        0.5734712481498718,
+        -0.3237556219100952,
+        -1.2700530290603638,
+        0.6908593773841858,
+        1.5719687938690186,
+        -0.5296532511711121
       ],
       "selected_transformed_grasp_matrix": [
         [
-          -0.6682926876987811,
-          0.7346984800478215,
-          0.11663201526064958,
-          0.658498767365819
+          -0.6455212636604297,
+          0.7587144987970716,
+          0.0874906136528415,
+          0.6507619367601103
         ],
         [
-          0.7060245753466988,
-          0.5770346976572378,
-          0.41056090498991,
-          -0.2280717196225771
+          0.6766166921904687,
+          0.5149827902703688,
+          0.5262913428649326,
+          -0.22339104576442864
         ],
         [
-          0.23433775320006156,
-          0.35671991970598066,
-          -0.9043432513764371,
-          1.2146155264951755
+          0.3542487120815979,
+          0.39892986230721555,
+          -0.8457912360317263,
+          1.2082634596159338
         ],
         [
           0.0,
@@ -106,17 +115,19 @@
         ]
       ],
       "achieved_tcp_world": [
-        0.6585049894330995,
-        -0.22806684288677814,
-        1.214617252654984
+        0.6507557118625066,
+        -0.22339571111038953,
+        1.2082608675341442
       ],
-      "tcp_position_error_m": 8.091742765383483e-06,
+      "tcp_position_error_m": 8.199615302910157e-06,
       "planning_executed_for_pose_selection": true
     },
     {
       "output_png": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_02.png",
-      "source_debug_json": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783413740/exp_2026-07-07_12-42-34__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_02_selected_grasp_debug.json",
-      "source_debug_npz": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783413740/exp_2026-07-07_12-42-34__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_02_selected_grasp_debug.npz",
+      "source_debug_json": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_02_selected_grasp_debug.json",
+      "source_debug_npz": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_02_selected_grasp_debug.npz",
+      "scene_xml": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/runtime_scene/difficult_116_franka_runtime.xml",
+      "scene_state_source": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/state_1.pkl",
       "selected_metadata": {
         "capture_version": "f2_6_selected_grasp_capture_v1",
         "behavior_preserving": true,
@@ -125,15 +136,125 @@
         "target_object": "obj_000070_0",
         "method": "dg_only",
         "pick_count": 2,
+        "selected_object_segment_id": 12,
+        "dg_chosen_segment_id": 12,
+        "selected_index_in_sorted_validated_candidates": 12,
+        "selected_raw_cgn_index": 2485,
+        "selected_score": 0.6521583085148643,
+        "num_raw_cgn_grasps": 3896,
+        "num_ik_candidates": 3558,
+        "num_validated_candidates_before_score_sort": 94,
+        "num_validated_candidates_after_score_filter": 94,
+        "num_candidates_for_chosen_segment": 7,
+        "frame_labels": {
+          "raw_cgn_grasp_matrices": "T_world_cgn_raw",
+          "ik_candidate_matrices": "T_world_robot_tcp_goal_after_robot_grasp_adapter",
+          "validated_candidate_matrices": "T_world_robot_tcp_goal_after_all_grasp_filters",
+          "validated_pregrasp_matrices": "T_world_robot_tcp_pregrasp"
+        },
+        "hand_depth_m": 0.0,
+        "grasp_planner": "cgn",
+        "planning": {
+          "plan1_pregrasp_success": true,
+          "plan2_grasp_approach_success": true,
+          "plan3_lift_success": true,
+          "place_requested": true,
+          "plan_count": 4
+        },
+        "execution_result": {
+          "retract_success": true,
+          "grasped": [
+            "obj_000079_0"
+          ],
+          "dropped": [
+            "obj_000020_0"
+          ]
+        },
+        "missing_fields": {
+          "selected_postgrasp_lift_pose_matrix": "not directly represented as a single pose before execution; lift is encoded as plan3 trajectory",
+          "raw_cgn_index": null
+        },
+        "scientific_semantics": {
+          "real_cgn_predictions": true,
+          "original_torc_selection_path": true,
+          "gt_grasp_used": false,
+          "fake_grasp_used": false,
+          "collision_checking_disabled": false,
+          "planning_skipped": false,
+          "franka_used": true
+        },
+        "intended_object_id": 37,
+        "intended_object_name": "obj_000079_0",
+        "json_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_02_selected_grasp_debug.json",
+        "npz_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_02_selected_grasp_debug.npz",
+        "written_unix_time": 1783432035.86397
+      },
+      "selected_grasp_joint_values": [
+        1.207118034362793,
+        1.5227421522140503,
+        -1.752457857131958,
+        -1.3757566213607788,
+        1.1340656280517578,
+        1.7243757247924805,
+        -1.5721616744995117
+      ],
+      "selected_transformed_grasp_matrix": [
+        [
+          -0.830203423264454,
+          -0.50181404827193,
+          0.24278578409149026,
+          0.7057953759311913
+        ],
+        [
+          -0.5542566227606454,
+          0.6964094913576142,
+          -0.4558655684223067,
+          0.17963501137065593
+        ],
+        [
+          0.05968142194976783,
+          -0.5130267841974396,
+          -0.856295303367996,
+          1.1496274360030536
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "achieved_tcp_world": [
+        0.7057953100773222,
+        0.17963496016531946,
+        1.1496274217298854
+      ],
+      "tcp_position_error_m": 8.463121110903264e-08,
+      "planning_executed_for_pose_selection": true
+    },
+    {
+      "output_png": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_03.png",
+      "source_debug_json": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_03_selected_grasp_debug.json",
+      "source_debug_npz": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_03_selected_grasp_debug.npz",
+      "scene_xml": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/runtime_scene/difficult_116_franka_runtime.xml",
+      "scene_state_source": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/state_2.pkl",
+      "selected_metadata": {
+        "capture_version": "f2_6_selected_grasp_capture_v1",
+        "behavior_preserving": true,
+        "scene_name": "difficult_116",
+        "scene_path": "tests/scenes/final/difficult_116.xml",
+        "target_object": "obj_000070_0",
+        "method": "dg_only",
+        "pick_count": 3,
         "selected_object_segment_id": 4,
         "dg_chosen_segment_id": 4,
-        "selected_index_in_sorted_validated_candidates": 9,
-        "selected_raw_cgn_index": 381,
-        "selected_score": 0.5289301417260436,
-        "num_raw_cgn_grasps": 3848,
-        "num_ik_candidates": 3567,
-        "num_validated_candidates_before_score_sort": 10,
-        "num_validated_candidates_after_score_filter": 10,
+        "selected_index_in_sorted_validated_candidates": 42,
+        "selected_raw_cgn_index": 768,
+        "selected_score": 0.44350087884686606,
+        "num_raw_cgn_grasps": 3220,
+        "num_ik_candidates": 3176,
+        "num_validated_candidates_before_score_sort": 58,
+        "num_validated_candidates_after_score_filter": 58,
         "num_candidates_for_chosen_segment": 1,
         "frame_labels": {
           "raw_cgn_grasp_matrices": "T_world_cgn_raw",
@@ -154,8 +275,8 @@
           "retract_success": false,
           "grasped": [],
           "dropped": [
-            "obj_000016_0",
-            "obj_000020_0"
+            "obj_000020_0",
+            "obj_000079_0"
           ]
         },
         "missing_fields": {
@@ -173,37 +294,37 @@
         },
         "intended_object_id": 27,
         "intended_object_name": "obj_000016_0",
-        "json_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783413740/exp_2026-07-07_12-42-34__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_02_selected_grasp_debug.json",
-        "npz_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783413740/exp_2026-07-07_12-42-34__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_02_selected_grasp_debug.npz",
-        "written_unix_time": 1783414526.8484194
+        "json_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_03_selected_grasp_debug.json",
+        "npz_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_03_selected_grasp_debug.npz",
+        "written_unix_time": 1783432258.724983
       },
       "selected_grasp_joint_values": [
-        -1.7880547046661377,
-        0.7579212784767151,
-        1.5657589435577393,
-        -2.114649534225464,
-        0.9485465288162231,
-        2.3369901180267334,
-        -0.2917589247226715
+        -1.75198233127594,
+        1.4966343641281128,
+        1.6702735424041748,
+        -2.2133641242980957,
+        0.12659615278244019,
+        2.6629438400268555,
+        -2.810821056365967
       ],
       "selected_transformed_grasp_matrix": [
         [
-          -0.44271700462163055,
-          0.6939348831639837,
-          0.5678521213723167,
-          0.5937135427979958
+          0.3810131549027452,
+          -0.7163666910737743,
+          0.5845064069033534,
+          0.5936124722929076
         ],
         [
-          0.4254598939994302,
-          -0.39489227422025275,
-          0.8142751195751661,
-          -0.10929621901751065
+          -0.23673638072866124,
+          0.5355283894161932,
+          0.8106572828074713,
+          -0.11115261402821267
         ],
         [
-          0.7892943255952405,
-          0.6020917452426546,
-          -0.12041593704244191,
-          1.2673305121704024
+          -0.893747649972044,
+          -0.4472450201503756,
+          0.03445330347207742,
+          1.2556048119755783
         ],
         [
           0.0,
@@ -213,11 +334,671 @@
         ]
       ],
       "achieved_tcp_world": [
-        0.5937134575400943,
-        -0.10929579120068285,
-        1.267330171662942
+        0.5936124990278416,
+        -0.1111526591593339,
+        1.2556047880463934
       ],
-      "tcp_position_error_m": 5.533908912690747e-07,
+      "tcp_position_error_m": 5.7655708213613275e-08,
+      "planning_executed_for_pose_selection": true
+    },
+    {
+      "output_png": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_04.png",
+      "source_debug_json": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_04_selected_grasp_debug.json",
+      "source_debug_npz": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_04_selected_grasp_debug.npz",
+      "scene_xml": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/runtime_scene/difficult_116_franka_runtime.xml",
+      "scene_state_source": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/state_3.pkl",
+      "selected_metadata": {
+        "capture_version": "f2_6_selected_grasp_capture_v1",
+        "behavior_preserving": true,
+        "scene_name": "difficult_116",
+        "scene_path": "tests/scenes/final/difficult_116.xml",
+        "target_object": "obj_000070_0",
+        "method": "dg_only",
+        "pick_count": 4,
+        "selected_object_segment_id": 8,
+        "dg_chosen_segment_id": 8,
+        "selected_index_in_sorted_validated_candidates": 0,
+        "selected_raw_cgn_index": 2383,
+        "selected_score": 0.6078898907380551,
+        "num_raw_cgn_grasps": 3600,
+        "num_ik_candidates": 3491,
+        "num_validated_candidates_before_score_sort": 89,
+        "num_validated_candidates_after_score_filter": 89,
+        "num_candidates_for_chosen_segment": 89,
+        "frame_labels": {
+          "raw_cgn_grasp_matrices": "T_world_cgn_raw",
+          "ik_candidate_matrices": "T_world_robot_tcp_goal_after_robot_grasp_adapter",
+          "validated_candidate_matrices": "T_world_robot_tcp_goal_after_all_grasp_filters",
+          "validated_pregrasp_matrices": "T_world_robot_tcp_pregrasp"
+        },
+        "hand_depth_m": 0.0,
+        "grasp_planner": "cgn",
+        "planning": {
+          "plan1_pregrasp_success": true,
+          "plan2_grasp_approach_success": true,
+          "plan3_lift_success": true,
+          "place_requested": true,
+          "plan_count": 4
+        },
+        "execution_result": {
+          "retract_success": true,
+          "grasped": [
+            "obj_000068_0"
+          ],
+          "dropped": [
+            "obj_000020_0",
+            "obj_000079_0"
+          ]
+        },
+        "missing_fields": {
+          "selected_postgrasp_lift_pose_matrix": "not directly represented as a single pose before execution; lift is encoded as plan3 trajectory",
+          "raw_cgn_index": null
+        },
+        "scientific_semantics": {
+          "real_cgn_predictions": true,
+          "original_torc_selection_path": true,
+          "gt_grasp_used": false,
+          "fake_grasp_used": false,
+          "collision_checking_disabled": false,
+          "planning_skipped": false,
+          "franka_used": true
+        },
+        "intended_object_id": 32,
+        "intended_object_name": "obj_000068_0",
+        "json_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_04_selected_grasp_debug.json",
+        "npz_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_04_selected_grasp_debug.npz",
+        "written_unix_time": 1783432484.84427
+      },
+      "selected_grasp_joint_values": [
+        0.24148046970367432,
+        1.7627999782562256,
+        -2.387101650238037,
+        -1.4023683071136475,
+        2.170590877532959,
+        0.7630002498626709,
+        -0.5959177017211914
+      ],
+      "selected_transformed_grasp_matrix": [
+        [
+          -0.5592698738668419,
+          0.827729296871936,
+          0.045622574290117235,
+          0.6450443588211299
+        ],
+        [
+          0.8247095243429695,
+          0.5499591657569767,
+          0.131905710482463,
+          -0.20949507092793873
+        ],
+        [
+          0.08409166809476368,
+          0.11139626160594762,
+          -0.9902118279728128,
+          1.2178341230813576
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "achieved_tcp_world": [
+        0.6450439505436989,
+        -0.20949517805113804,
+        1.2178439952820967
+      ],
+      "tcp_position_error_m": 9.881220232027738e-06,
+      "planning_executed_for_pose_selection": true
+    },
+    {
+      "output_png": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_06.png",
+      "source_debug_json": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_06_selected_grasp_debug.json",
+      "source_debug_npz": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_06_selected_grasp_debug.npz",
+      "scene_xml": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/runtime_scene/difficult_116_franka_runtime.xml",
+      "scene_state_source": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/state_5.pkl",
+      "selected_metadata": {
+        "capture_version": "f2_6_selected_grasp_capture_v1",
+        "behavior_preserving": true,
+        "scene_name": "difficult_116",
+        "scene_path": "tests/scenes/final/difficult_116.xml",
+        "target_object": "obj_000070_0",
+        "method": "dg_only",
+        "pick_count": 6,
+        "selected_object_segment_id": 5,
+        "dg_chosen_segment_id": 5,
+        "selected_index_in_sorted_validated_candidates": 0,
+        "selected_raw_cgn_index": 1835,
+        "selected_score": 0.48956180444361425,
+        "num_raw_cgn_grasps": 4356,
+        "num_ik_candidates": 4128,
+        "num_validated_candidates_before_score_sort": 12,
+        "num_validated_candidates_after_score_filter": 12,
+        "num_candidates_for_chosen_segment": 10,
+        "frame_labels": {
+          "raw_cgn_grasp_matrices": "T_world_cgn_raw",
+          "ik_candidate_matrices": "T_world_robot_tcp_goal_after_robot_grasp_adapter",
+          "validated_candidate_matrices": "T_world_robot_tcp_goal_after_all_grasp_filters",
+          "validated_pregrasp_matrices": "T_world_robot_tcp_pregrasp"
+        },
+        "hand_depth_m": 0.0,
+        "grasp_planner": "cgn",
+        "planning": {
+          "plan1_pregrasp_success": true,
+          "plan2_grasp_approach_success": true,
+          "plan3_lift_success": true,
+          "place_requested": true,
+          "plan_count": 4
+        },
+        "execution_result": {
+          "retract_success": false,
+          "grasped": [],
+          "dropped": [
+            "obj_000016_0",
+            "obj_000068_0",
+            "obj_000020_0",
+            "obj_000079_0"
+          ]
+        },
+        "missing_fields": {
+          "selected_postgrasp_lift_pose_matrix": "not directly represented as a single pose before execution; lift is encoded as plan3 trajectory",
+          "raw_cgn_index": null
+        },
+        "scientific_semantics": {
+          "real_cgn_predictions": true,
+          "original_torc_selection_path": true,
+          "gt_grasp_used": false,
+          "fake_grasp_used": false,
+          "collision_checking_disabled": false,
+          "planning_skipped": false,
+          "franka_used": true
+        },
+        "intended_object_id": 27,
+        "intended_object_name": "obj_000016_0",
+        "json_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_06_selected_grasp_debug.json",
+        "npz_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_06_selected_grasp_debug.npz",
+        "written_unix_time": 1783432813.8431802
+      },
+      "selected_grasp_joint_values": [
+        0.618496298789978,
+        0.276210218667984,
+        -1.1900153160095215,
+        -2.0599725246429443,
+        1.6172997951507568,
+        1.526397943496704,
+        -0.4186018109321594
+      ],
+      "selected_transformed_grasp_matrix": [
+        [
+          -0.4065081096578558,
+          0.7577034231579337,
+          0.5105258850608322,
+          0.5893079378868428
+        ],
+        [
+          0.4314394312075879,
+          -0.33335730306995914,
+          0.8382916710126592,
+          -0.09512239188970606
+        ],
+        [
+          0.8053640009223592,
+          0.561033359992677,
+          -0.19139068679969118,
+          1.2594393357448639
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "achieved_tcp_world": [
+        0.5893079435622821,
+        -0.09512235829835433,
+        1.2594393504770585
+      ],
+      "tcp_position_error_m": 3.7116399066040927e-08,
+      "planning_executed_for_pose_selection": true
+    },
+    {
+      "output_png": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_07.png",
+      "source_debug_json": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_07_selected_grasp_debug.json",
+      "source_debug_npz": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_07_selected_grasp_debug.npz",
+      "scene_xml": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/runtime_scene/difficult_116_franka_runtime.xml",
+      "scene_state_source": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/state_6.pkl",
+      "selected_metadata": {
+        "capture_version": "f2_6_selected_grasp_capture_v1",
+        "behavior_preserving": true,
+        "scene_name": "difficult_116",
+        "scene_path": "tests/scenes/final/difficult_116.xml",
+        "target_object": "obj_000070_0",
+        "method": "dg_only",
+        "pick_count": 7,
+        "selected_object_segment_id": 3,
+        "dg_chosen_segment_id": 3,
+        "selected_index_in_sorted_validated_candidates": 4,
+        "selected_raw_cgn_index": 715,
+        "selected_score": 0.3731219077227513,
+        "num_raw_cgn_grasps": 3844,
+        "num_ik_candidates": 3454,
+        "num_validated_candidates_before_score_sort": 6,
+        "num_validated_candidates_after_score_filter": 6,
+        "num_candidates_for_chosen_segment": 2,
+        "frame_labels": {
+          "raw_cgn_grasp_matrices": "T_world_cgn_raw",
+          "ik_candidate_matrices": "T_world_robot_tcp_goal_after_robot_grasp_adapter",
+          "validated_candidate_matrices": "T_world_robot_tcp_goal_after_all_grasp_filters",
+          "validated_pregrasp_matrices": "T_world_robot_tcp_pregrasp"
+        },
+        "hand_depth_m": 0.0,
+        "grasp_planner": "cgn",
+        "planning": {
+          "plan1_pregrasp_success": true,
+          "plan2_grasp_approach_success": true,
+          "plan3_lift_success": true,
+          "place_requested": true,
+          "plan_count": 4
+        },
+        "execution_result": {
+          "retract_success": false,
+          "grasped": [],
+          "dropped": [
+            "obj_000016_0",
+            "obj_000068_0",
+            "obj_000020_0",
+            "obj_000079_0"
+          ]
+        },
+        "missing_fields": {
+          "selected_postgrasp_lift_pose_matrix": "not directly represented as a single pose before execution; lift is encoded as plan3 trajectory",
+          "raw_cgn_index": null
+        },
+        "scientific_semantics": {
+          "real_cgn_predictions": true,
+          "original_torc_selection_path": true,
+          "gt_grasp_used": false,
+          "fake_grasp_used": false,
+          "collision_checking_disabled": false,
+          "planning_skipped": false,
+          "franka_used": true
+        },
+        "intended_object_id": 25,
+        "intended_object_name": "obj_000012_0",
+        "json_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_07_selected_grasp_debug.json",
+        "npz_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_07_selected_grasp_debug.npz",
+        "written_unix_time": 1783433048.5767365
+      },
+      "selected_grasp_joint_values": [
+        -2.4738361835479736,
+        -1.4046887159347534,
+        1.1742346286773682,
+        -1.4005062580108643,
+        1.4688751697540283,
+        0.9731135368347168,
+        -1.4995790719985962
+      ],
+      "selected_transformed_grasp_matrix": [
+        [
+          -0.9890385477816923,
+          0.07954273352590133,
+          -0.12440138481989951,
+          0.6268164404174311
+        ],
+        [
+          0.06294120553152496,
+          0.989234246983928,
+          0.13211362246331493,
+          -0.09334285705043807
+        ],
+        [
+          0.13357078890281213,
+          0.12283549217294014,
+          -0.9833973185922932,
+          1.2236325574309812
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "achieved_tcp_world": [
+        0.626816433095267,
+        -0.09334284543658138,
+        1.2236325591059316
+      ],
+      "tcp_position_error_m": 1.3831168181399443e-08,
+      "planning_executed_for_pose_selection": true
+    },
+    {
+      "output_png": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_08.png",
+      "source_debug_json": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_08_selected_grasp_debug.json",
+      "source_debug_npz": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_08_selected_grasp_debug.npz",
+      "scene_xml": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/runtime_scene/difficult_116_franka_runtime.xml",
+      "scene_state_source": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/state_7.pkl",
+      "selected_metadata": {
+        "capture_version": "f2_6_selected_grasp_capture_v1",
+        "behavior_preserving": true,
+        "scene_name": "difficult_116",
+        "scene_path": "tests/scenes/final/difficult_116.xml",
+        "target_object": "obj_000070_0",
+        "method": "dg_only",
+        "pick_count": 8,
+        "selected_object_segment_id": 8,
+        "dg_chosen_segment_id": 8,
+        "selected_index_in_sorted_validated_candidates": 0,
+        "selected_raw_cgn_index": 3244,
+        "selected_score": 0.6120692647984669,
+        "num_raw_cgn_grasps": 4088,
+        "num_ik_candidates": 3732,
+        "num_validated_candidates_before_score_sort": 45,
+        "num_validated_candidates_after_score_filter": 45,
+        "num_candidates_for_chosen_segment": 24,
+        "frame_labels": {
+          "raw_cgn_grasp_matrices": "T_world_cgn_raw",
+          "ik_candidate_matrices": "T_world_robot_tcp_goal_after_robot_grasp_adapter",
+          "validated_candidate_matrices": "T_world_robot_tcp_goal_after_all_grasp_filters",
+          "validated_pregrasp_matrices": "T_world_robot_tcp_pregrasp"
+        },
+        "hand_depth_m": 0.0,
+        "grasp_planner": "cgn",
+        "planning": {
+          "plan1_pregrasp_success": true,
+          "plan2_grasp_approach_success": true,
+          "plan3_lift_success": true,
+          "place_requested": true,
+          "plan_count": 4
+        },
+        "execution_result": {
+          "retract_success": true,
+          "grasped": [
+            "obj_000058_0"
+          ],
+          "dropped": [
+            "obj_000016_0",
+            "obj_000068_0",
+            "obj_000020_0",
+            "obj_000079_0"
+          ]
+        },
+        "missing_fields": {
+          "selected_postgrasp_lift_pose_matrix": "not directly represented as a single pose before execution; lift is encoded as plan3 trajectory",
+          "raw_cgn_index": null
+        },
+        "scientific_semantics": {
+          "real_cgn_predictions": true,
+          "original_torc_selection_path": true,
+          "gt_grasp_used": false,
+          "fake_grasp_used": false,
+          "collision_checking_disabled": false,
+          "planning_skipped": false,
+          "franka_used": true
+        },
+        "intended_object_id": 31,
+        "intended_object_name": "obj_000058_0",
+        "json_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_08_selected_grasp_debug.json",
+        "npz_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_08_selected_grasp_debug.npz",
+        "written_unix_time": 1783433288.3959215
+      },
+      "selected_grasp_joint_values": [
+        -1.0097535848617554,
+        0.2323818802833557,
+        0.7839568257331848,
+        -1.999412178993225,
+        -1.0573982000350952,
+        2.867403268814087,
+        1.7623711824417114
+      ],
+      "selected_transformed_grasp_matrix": [
+        [
+          0.36340362251195457,
+          0.6451171606194676,
+          0.6721321716890696,
+          0.6729106713895808
+        ],
+        [
+          0.930571293823737,
+          -0.21694173752422452,
+          -0.29491244400870376,
+          -0.1447843330831284
+        ],
+        [
+          -0.04443955733808552,
+          0.7326391551058725,
+          -0.6791649241158945,
+          1.2368425254095237
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "achieved_tcp_world": [
+        0.6729103721380068,
+        -0.14478511546337372,
+        1.2368418126317837
+      ],
+      "tcp_position_error_m": 1.0998738379461857e-06,
+      "planning_executed_for_pose_selection": true
+    },
+    {
+      "output_png": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_10.png",
+      "source_debug_json": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_10_selected_grasp_debug.json",
+      "source_debug_npz": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_10_selected_grasp_debug.npz",
+      "scene_xml": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/runtime_scene/difficult_116_franka_runtime.xml",
+      "scene_state_source": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/state_9.pkl",
+      "selected_metadata": {
+        "capture_version": "f2_6_selected_grasp_capture_v1",
+        "behavior_preserving": true,
+        "scene_name": "difficult_116",
+        "scene_path": "tests/scenes/final/difficult_116.xml",
+        "target_object": "obj_000070_0",
+        "method": "dg_only",
+        "pick_count": 10,
+        "selected_object_segment_id": 5,
+        "dg_chosen_segment_id": 5,
+        "selected_index_in_sorted_validated_candidates": 3,
+        "selected_raw_cgn_index": 1069,
+        "selected_score": 0.5387380415606067,
+        "num_raw_cgn_grasps": 3708,
+        "num_ik_candidates": 3278,
+        "num_validated_candidates_before_score_sort": 35,
+        "num_validated_candidates_after_score_filter": 35,
+        "num_candidates_for_chosen_segment": 34,
+        "frame_labels": {
+          "raw_cgn_grasp_matrices": "T_world_cgn_raw",
+          "ik_candidate_matrices": "T_world_robot_tcp_goal_after_robot_grasp_adapter",
+          "validated_candidate_matrices": "T_world_robot_tcp_goal_after_all_grasp_filters",
+          "validated_pregrasp_matrices": "T_world_robot_tcp_pregrasp"
+        },
+        "hand_depth_m": 0.0,
+        "grasp_planner": "cgn",
+        "planning": {
+          "plan1_pregrasp_success": true,
+          "plan2_grasp_approach_success": true,
+          "plan3_lift_success": true,
+          "place_requested": true,
+          "plan_count": 4
+        },
+        "execution_result": {
+          "retract_success": false,
+          "grasped": [],
+          "dropped": [
+            "obj_000016_0",
+            "obj_000058_0",
+            "obj_000068_0",
+            "obj_000020_0",
+            "obj_000079_0"
+          ]
+        },
+        "missing_fields": {
+          "selected_postgrasp_lift_pose_matrix": "not directly represented as a single pose before execution; lift is encoded as plan3 trajectory",
+          "raw_cgn_index": null
+        },
+        "scientific_semantics": {
+          "real_cgn_predictions": true,
+          "original_torc_selection_path": true,
+          "gt_grasp_used": false,
+          "fake_grasp_used": false,
+          "collision_checking_disabled": false,
+          "planning_skipped": false,
+          "franka_used": true
+        },
+        "intended_object_id": 28,
+        "intended_object_name": "obj_000051_0",
+        "json_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_10_selected_grasp_debug.json",
+        "npz_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_10_selected_grasp_debug.npz",
+        "written_unix_time": 1783433627.241189
+      },
+      "selected_grasp_joint_values": [
+        -2.0796585083007812,
+        -0.5791844129562378,
+        2.1989524364471436,
+        -1.8733716011047363,
+        -0.14970499277114868,
+        2.5632312297821045,
+        -0.6194238066673279
+      ],
+      "selected_transformed_grasp_matrix": [
+        [
+          -0.9028153639460467,
+          -0.1136698688855396,
+          0.4147331425513419,
+          0.6840103570445804
+        ],
+        [
+          -0.2988078077893672,
+          0.8593921483180748,
+          -0.4149205097525992,
+          0.10471266223456017
+        ],
+        [
+          -0.30925444641440486,
+          -0.4985221121643336,
+          -0.8098378794895504,
+          1.1300549011719774
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "achieved_tcp_world": [
+        0.6840103771795121,
+        0.1047126067580476,
+        1.130054958645239
+      ],
+      "tcp_position_error_m": 8.237860604755377e-08,
+      "planning_executed_for_pose_selection": true
+    },
+    {
+      "output_png": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/franka_selected_grasp_pose_pick_11.png",
+      "source_debug_json": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_11_selected_grasp_debug.json",
+      "source_debug_npz": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_11_selected_grasp_debug.npz",
+      "scene_xml": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/runtime_scene/difficult_116_franka_runtime.xml",
+      "scene_state_source": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/state_10.pkl",
+      "selected_metadata": {
+        "capture_version": "f2_6_selected_grasp_capture_v1",
+        "behavior_preserving": true,
+        "scene_name": "difficult_116",
+        "scene_path": "tests/scenes/final/difficult_116.xml",
+        "target_object": "obj_000070_0",
+        "method": "dg_only",
+        "pick_count": 11,
+        "selected_object_segment_id": 5,
+        "dg_chosen_segment_id": 5,
+        "selected_index_in_sorted_validated_candidates": 0,
+        "selected_raw_cgn_index": 660,
+        "selected_score": 0.3855193360298172,
+        "num_raw_cgn_grasps": 3684,
+        "num_ik_candidates": 3125,
+        "num_validated_candidates_before_score_sort": 1,
+        "num_validated_candidates_after_score_filter": 1,
+        "num_candidates_for_chosen_segment": 1,
+        "frame_labels": {
+          "raw_cgn_grasp_matrices": "T_world_cgn_raw",
+          "ik_candidate_matrices": "T_world_robot_tcp_goal_after_robot_grasp_adapter",
+          "validated_candidate_matrices": "T_world_robot_tcp_goal_after_all_grasp_filters",
+          "validated_pregrasp_matrices": "T_world_robot_tcp_pregrasp"
+        },
+        "hand_depth_m": 0.0,
+        "grasp_planner": "cgn",
+        "planning": {
+          "plan1_pregrasp_success": true,
+          "plan2_grasp_approach_success": true,
+          "plan3_lift_success": true,
+          "place_requested": true,
+          "plan_count": 4
+        },
+        "execution_result": null,
+        "missing_fields": {
+          "selected_postgrasp_lift_pose_matrix": "not directly represented as a single pose before execution; lift is encoded as plan3 trajectory",
+          "raw_cgn_index": null
+        },
+        "scientific_semantics": {
+          "real_cgn_predictions": true,
+          "original_torc_selection_path": true,
+          "gt_grasp_used": false,
+          "fake_grasp_used": false,
+          "collision_checking_disabled": false,
+          "planning_skipped": false,
+          "franka_used": true
+        },
+        "intended_object_id": 28,
+        "intended_object_name": "obj_000051_0",
+        "json_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_11_selected_grasp_debug.json",
+        "npz_path": "/home/ziyaochen/torc_franka_lift3d_pipeline_v2/phase4_artifacts/torc_franka_pipeline_1783431469/exp_2026-07-07_17-38-00__difficult_116_obj_000070_0_dg_only/selected_grasp_debug/pick_11_selected_grasp_debug.npz",
+        "written_unix_time": 1783433749.893265
+      },
+      "selected_grasp_joint_values": [
+        2.469165325164795,
+        -1.7627999782562256,
+        -1.1368595361709595,
+        -1.706661343574524,
+        -2.194312810897827,
+        1.0758960247039795,
+        2.786130905151367
+      ],
+      "selected_transformed_grasp_matrix": [
+        [
+          0.9274808399989928,
+          0.24898693743081995,
+          0.2788992585568914,
+          0.6850330452922636
+        ],
+        [
+          0.331047170746079,
+          -0.8935949366493237,
+          -0.3031432993415953,
+          0.09902330731444314
+        ],
+        [
+          0.17374424357595059,
+          0.373488412381847,
+          -0.9112186036515654,
+          1.1374698671511403
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "achieved_tcp_world": [
+        0.685033863567103,
+        0.09902260174453026,
+        1.1374787306751353
+      ],
+      "tcp_position_error_m": 8.929135469041328e-06,
       "planning_executed_for_pose_selection": true
     }
   ]

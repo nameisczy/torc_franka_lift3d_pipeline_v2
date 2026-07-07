@@ -1112,12 +1112,14 @@ class GraspPlanner:
             offsets = np.asarray(ik_scan_offsets, dtype=np.float64)
             _stage_probe(
                 "franka pre-filter offset scan",
-                "count={} dx_range=[{:.4f},{:.4f}] dz_range=[{:.4f},{:.4f}]".format(
+                "count={} dx_range=[{:.4f},{:.4f}] dy_range=[{:.4f},{:.4f}] dz_range=[{:.4f},{:.4f}]".format(
                     len(offsets),
                     float(np.nanmin(offsets[:, 0])),
                     float(np.nanmax(offsets[:, 0])),
                     float(np.nanmin(offsets[:, 1])),
                     float(np.nanmax(offsets[:, 1])),
+                    float(np.nanmin(offsets[:, 2])),
+                    float(np.nanmax(offsets[:, 2])),
                 ),
             )
         if len(ik_v_pose_t) == 0:

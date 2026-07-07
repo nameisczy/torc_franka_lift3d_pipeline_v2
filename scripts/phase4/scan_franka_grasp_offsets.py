@@ -2,9 +2,9 @@
 """Offline Franka grasp offset calibration for a captured TORC pick.
 
 The scan keeps TORC's selected candidates unchanged and only evaluates small
-Franka TCP offsets in the adapter frame: local X for closing-axis centering and
-local Z for approach/contact retreat.  It uses the current Panda pad dimensions
-as the scoring geometry.
+Franka TCP offsets in the adapter frame: local X for closing-axis centering,
+local Y for the orthogonal lateral direction, and local Z for approach/contact
+retreat.  It uses the current Panda pad dimensions as the scoring geometry.
 """
 
 from __future__ import annotations
@@ -41,9 +41,9 @@ def _pad_geometry() -> dict[str, float]:
     }
 
 
-def _local_points(points: np.ndarray, pose: np.ndarray, dx: float, dz: float) -> np.ndarray:
+def _local_points(points: np.ndarray, pose: np.ndarray, dx: float, dy: float, dz: float) -> np.ndarray:
     adjusted = np.array(pose, dtype=np.float64, copy=True)
-    adjusted[:3, 3] += dx * adjusted[:3, 0] + dz * adjusted[:3, 2]
+    adjusted[:3, 3] += dx * adjusted[:3, 0] + dy * adjusted[:3, 1] + dz * adjusted[:3, 2]
     return (points - adjusted[:3, 3]) @ adjusted[:3, :3]
 
 
@@ -81,13 +81,14 @@ def _pad_penetration_count(local: np.ndarray, geom: dict[str, float]) -> int:
     return int(np.count_nonzero(inside))
 
 
-def _score_pose(points: np.ndarray, pose: np.ndarray, dx: float, dz: float, geom: dict[str, float]) -> dict:
-    local = _local_points(points, pose, dx, dz)
+def _score_pose(points: np.ndarray, pose: np.ndarray, dx: float, dy: float, dz: float, geom: dict[str, float]) -> dict:
+    local = _local_points(points, pose, dx, dy, dz)
     near = _near_grasp_points(local)
     x05, x50, x95 = np.percentile(near[:, 0], [5, 50, 95])
-    y05, y95 = np.percentile(near[:, 1], [5, 95])
+    y05, y50, y95 = np.percentile(near[:, 1], [5, 50, 95])
     z05, z50 = np.percentile(near[:, 2], [5, 50])
     x_center = 0.5 * (x05 + x95)
+    y_center = 0.5 * (y05 + y95)
     x_span = x95 - x05
     y_span = y95 - y05
     penetration = _pad_penetration_count(near, geom)
@@ -95,12 +96,14 @@ def _score_pose(points: np.ndarray, pose: np.ndarray, dx: float, dz: float, geom
     desired_z05 = geom["front_z_m"] + float(os.environ.get("TORC_FRANKA_SCAN_TARGET_CLEARANCE_M", "0.002"))
     z_error = abs(z05 - desired_z05)
     x_error = abs(x_center)
+    y_error = abs(y_center)
     opening_half = geom["opening_half_m"]
     span_error = max(0.0, x_span - 2.0 * (opening_half - geom["half_x_m"]))
 
     score = (
         1000.0 * penetration
         + 80.0 * x_error
+        + 55.0 * y_error
         + 60.0 * z_error
         + 30.0 * span_error
         + 10.0 * max(0.0, y_span - 0.06)
@@ -108,6 +111,7 @@ def _score_pose(points: np.ndarray, pose: np.ndarray, dx: float, dz: float, geom
     return {
         "score": float(score),
         "dx_m": float(dx),
+        "dy_m": float(dy),
         "dz_m": float(dz),
         "penetration_points": penetration,
         "near_points": int(len(near)),
@@ -117,6 +121,8 @@ def _score_pose(points: np.ndarray, pose: np.ndarray, dx: float, dz: float, geom
         "x_center_m": float(x_center),
         "x_span_m": float(x_span),
         "y_span_m": float(y_span),
+        "y_center_m": float(y_center),
+        "y50_m": float(y50),
         "z05_m": float(z05),
         "z50_m": float(z50),
         "z_error_m": float(z_error),
@@ -139,21 +145,23 @@ def main() -> int:
     geom = _pad_geometry()
 
     dx_values = np.arange(-0.018, 0.0181, 0.002)
+    dy_values = np.arange(-0.012, 0.0121, 0.002)
     dz_values = np.arange(-0.018, 0.0181, 0.002)
     results = []
     for candidate_index, pose in enumerate(poses):
         for dx in dx_values:
-            for dz in dz_values:
-                item = _score_pose(points, pose, float(dx), float(dz), geom)
-                item.update(
-                    {
-                        "candidate_index": int(candidate_index),
-                        "candidate_score": float(scores[candidate_index]),
-                        "candidate_object_id": int(obj_ids[candidate_index]),
-                        "candidate_source_index": int(source_indices[candidate_index]),
-                    }
-                )
-                results.append(item)
+            for dy in dy_values:
+                for dz in dz_values:
+                    item = _score_pose(points, pose, float(dx), float(dy), float(dz), geom)
+                    item.update(
+                        {
+                            "candidate_index": int(candidate_index),
+                            "candidate_score": float(scores[candidate_index]),
+                            "candidate_object_id": int(obj_ids[candidate_index]),
+                            "candidate_source_index": int(source_indices[candidate_index]),
+                        }
+                    )
+                    results.append(item)
 
     results.sort(key=lambda item: item["score"])
     selected_candidate = int(meta.get("selected_index_in_sorted_validated_candidates", 0))
@@ -172,6 +180,7 @@ def main() -> int:
         "pad_geometry": geom,
         "scan_grid": {
             "dx_values_m": [float(x) for x in dx_values],
+            "dy_values_m": [float(y) for y in dy_values],
             "dz_values_m": [float(z) for z in dz_values],
         },
         "best_overall": results[:20],

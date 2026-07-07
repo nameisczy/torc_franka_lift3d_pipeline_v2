@@ -305,6 +305,45 @@ class FrankaNode(ExecutionNode):
 
     def experiment_result_cb(self, req):
         with self.mj_lock:
+            def debug_save_state(extra_data_dict: dict = {}):
+                print("debug_save_state:")
+                if self.experiment_dir is None:
+                    print("  experiment_dir is None, nothing saved")
+                    return
+                import os
+                import pickle
+
+                raw_state = np.empty(
+                    mujoco.mj_stateSize(self.model, mujoco.mjtState.mjSTATE_INTEGRATION)
+                )
+                mujoco.mj_getState(
+                    self.model,
+                    self.data,
+                    raw_state,
+                    mujoco.mjtState.mjSTATE_INTEGRATION,
+                )
+
+                def get_next_file_name(prefix: str, suffix: str) -> str:
+                    i = 1
+                    while True:
+                        file_name = f"{self.experiment_dir}/{prefix}{i}{suffix}"
+                        if not os.path.exists(file_name):
+                            return file_name
+                        i += 1
+
+                state_file = get_next_file_name("state_", ".pkl")
+                with open(state_file, "wb") as file:
+                    pickle.dump(
+                        {
+                            "mujoco_state": raw_state,
+                            "scene_xml": self.ws_xml_path,
+                            "target": req.target,
+                            **extra_data_dict,
+                        },
+                        file,
+                    )
+                print(f"  Saved state to {state_file}")
+
             dropped = []
             for i in range(self.model.nbody):
                 body = self.model.body(i)
@@ -332,6 +371,16 @@ class FrankaNode(ExecutionNode):
             result.success = target in grasping
             result.dropped = dropped
             result.grasping = sorted(grasping)
+            if self.mj_pickle:
+                debug_save_state(
+                    {
+                        "experiment_result": {
+                            "success": result.success,
+                            "dropped": result.dropped,
+                            "grasping": result.grasping,
+                        }
+                    }
+                )
             return result
 
     def publish_joint_state(self, now):

@@ -32,6 +32,7 @@ class FrankaGraspGeometryConfig:
     scan_min_object_points: int = 20
     scan_points_per_object: int = 2500
     scan_dx_extent_m: float = 0.012
+    scan_dy_extent_m: float = 0.008
     scan_forward_extent_m: float = 0.020
     scan_backward_extent_m: float = 0.002
     scan_step_m: float = 0.004
@@ -59,6 +60,7 @@ class FrankaGraspGeometryConfig:
             scan_min_object_points=_env_int("TORC_FRANKA_SCAN_MIN_OBJECT_POINTS", cls.scan_min_object_points),
             scan_points_per_object=_env_int("TORC_FRANKA_SCAN_POINTS_PER_OBJECT", cls.scan_points_per_object),
             scan_dx_extent_m=_env_float("TORC_FRANKA_SCAN_DX_EXTENT_M", cls.scan_dx_extent_m),
+            scan_dy_extent_m=_env_float("TORC_FRANKA_SCAN_DY_EXTENT_M", cls.scan_dy_extent_m),
             scan_forward_extent_m=_env_float("TORC_FRANKA_SCAN_FORWARD_EXTENT_M", cls.scan_forward_extent_m),
             scan_backward_extent_m=_env_float("TORC_FRANKA_SCAN_BACKWARD_EXTENT_M", cls.scan_backward_extent_m),
             scan_step_m=_env_float("TORC_FRANKA_SCAN_STEP_M", cls.scan_step_m),
@@ -137,9 +139,9 @@ class FrankaGraspAdapterScorer:
         """Refine a Panda TCP pose in local closing/approach axes before IK."""
         cfg = self.config
         if not cfg.pre_filter_offset_scan:
-            return pose_t, (0.0, 0.0, np.nan)
+            return pose_t, (0.0, 0.0, 0.0, np.nan)
         if mask is None:
-            return pose_t, (0.0, 0.0, np.nan)
+            return pose_t, (0.0, 0.0, 0.0, np.nan)
 
         pts = self.object_points(
             visible_points,
@@ -148,9 +150,10 @@ class FrankaGraspAdapterScorer:
             max_points=cfg.scan_points_per_object,
         )
         if len(pts) < cfg.scan_min_object_points:
-            return pose_t, (0.0, 0.0, np.nan)
+            return pose_t, (0.0, 0.0, 0.0, np.nan)
 
         dx_extent = cfg.scan_dx_extent_m
+        dy_extent = cfg.scan_dy_extent_m
         dz_forward_extent = cfg.scan_forward_extent_m
         dz_backward_extent = cfg.scan_backward_extent_m
         step = cfg.scan_step_m
@@ -172,20 +175,27 @@ class FrankaGraspAdapterScorer:
         if len(near) < 20:
             near = local
         x05, x95 = np.percentile(near[:, 0], [5, 95])
+        y05, y95 = np.percentile(near[:, 1], [5, 95])
         x_center = 0.5 * (float(x05) + float(x95))
+        y_center = 0.5 * (float(y05) + float(y95))
 
         z05_seed = float(np.percentile(near[:, 2], 5))
         seed_dx = float(np.clip(x_center, -dx_extent, dx_extent))
+        seed_dy = float(np.clip(y_center, -dy_extent, dy_extent))
         seed_dz = float(np.clip(z05_seed - z_target, -dz_backward_extent, dz_forward_extent))
         if step > 1e-9:
             seed_dx = float(np.round(seed_dx / step) * step)
+            seed_dy = float(np.round(seed_dy / step) * step)
             seed_dz = float(np.round(seed_dz / step) * step)
             dx_candidates = seed_dx + step * np.array([-3, -1, 0, 1, 3], dtype=np.float64)
+            dy_candidates = seed_dy + step * np.array([-2, 0, 2], dtype=np.float64)
             dz_candidates = seed_dz + step * np.array([-2, -1, 0, 1, 2, 4, 6], dtype=np.float64)
             dx_candidates = np.unique(np.clip(dx_candidates, -dx_extent, dx_extent))
+            dy_candidates = np.unique(np.clip(dy_candidates, -dy_extent, dy_extent))
             dz_candidates = np.unique(np.clip(dz_candidates, -dz_backward_extent, dz_forward_extent))
         else:
             dx_candidates = np.array([seed_dx])
+            dy_candidates = np.array([seed_dy])
             dz_candidates = np.array([seed_dz])
 
         usable_half_opening = max(1e-6, opening_half - half_x)
@@ -211,55 +221,60 @@ class FrankaGraspAdapterScorer:
         ]
         best = None
         for dx_c in dx_candidates:
-            for dz_c in dz_candidates:
-                shifted = near - np.array([dx_c, 0.0, dz_c], dtype=np.float64)
-                sx05, sx95 = np.percentile(shifted[:, 0], [5, 95])
-                sy05, sy95 = np.percentile(shifted[:, 1], [5, 95])
-                sz05, sz25 = np.percentile(shifted[:, 2], [5, 25])
-                sx_center = 0.5 * (float(sx05) + float(sx95))
-                sx_span = float(sx95 - sx05)
-                sy_span = float(sy95 - sy05)
+            for dy_c in dy_candidates:
+                for dz_c in dz_candidates:
+                    offset = np.array([dx_c, dy_c, dz_c], dtype=np.float64)
+                    shifted = near - offset
+                    sx05, sx95 = np.percentile(shifted[:, 0], [5, 95])
+                    sy05, sy95 = np.percentile(shifted[:, 1], [5, 95])
+                    sz05, sz25 = np.percentile(shifted[:, 2], [5, 25])
+                    sx_center = 0.5 * (float(sx05) + float(sx95))
+                    sy_center = 0.5 * (float(sy05) + float(sy95))
+                    sx_span = float(sx95 - sx05)
+                    sy_span = float(sy95 - sy05)
 
-                crosses_center = float(sx05) <= 0.0 <= float(sx95)
-                center_error = abs(sx_center) / usable_half_opening
-                span_error = max(0.0, sx_span - 2.0 * usable_half_opening) / usable_half_opening
-                y_error = max(0.0, sy_span - 0.06) / 0.06
-                z_error = abs(float(sz05) - z_target) / z_band
-                depth_reward = float(dz_c) / max(dz_forward_extent, 1e-6)
-                cross_penalty = 0.0 if crosses_center else 0.8
+                    crosses_center = float(sx05) <= 0.0 <= float(sx95)
+                    center_error = abs(sx_center) / usable_half_opening
+                    y_center_error = abs(sy_center) / 0.04
+                    span_error = max(0.0, sx_span - 2.0 * usable_half_opening) / usable_half_opening
+                    y_span_error = max(0.0, sy_span - 0.06) / 0.06
+                    z_error = abs(float(sz05) - z_target) / z_band
+                    depth_reward = float(dz_c) / max(dz_forward_extent, 1e-6)
+                    cross_penalty = 0.0 if crosses_center else 0.8
 
-                penetrates = False
-                if len(penetration_check):
-                    shifted_check = penetration_check - np.array([dx_c, 0.0, dz_c], dtype=np.float64)
-                    for pad_center in pad_centers:
-                        if np.any(np.all(np.abs(shifted_check - pad_center) <= pad_half_extents, axis=1)):
-                            penetrates = True
-                            break
-                penetration_penalty = 10.0 if penetrates else 0.0
+                    penetrates = False
+                    if len(penetration_check):
+                        shifted_check = penetration_check - offset
+                        for pad_center in pad_centers:
+                            if np.any(np.all(np.abs(shifted_check - pad_center) <= pad_half_extents, axis=1)):
+                                penetrates = True
+                                break
+                    penetration_penalty = 10.0 if penetrates else 0.0
 
-                # z05 keeps the visible surface near the pad front; z25 rewards
-                # enough depth that the target is not merely grazing the fingertip edge.
-                depth_contact_error = max(0.0, float(sz25) - (z_target + 0.012)) / 0.02
-                score = (
-                    2.2 * center_error
-                    + 1.5 * z_error
-                    + 1.0 * span_error
-                    + 0.6 * y_error
-                    + 0.8 * depth_contact_error
-                    + cross_penalty
-                    + penetration_penalty
-                    - 0.20 * depth_reward
-                )
-                if best is None or score < best[0]:
-                    best = (float(score), float(dx_c), float(dz_c))
+                    # z05 keeps the visible surface near the pad front; z25 rewards
+                    # enough depth that the target is not merely grazing the fingertip edge.
+                    depth_contact_error = max(0.0, float(sz25) - (z_target + 0.012)) / 0.02
+                    score = (
+                        2.2 * center_error
+                        + 1.5 * z_error
+                        + 1.0 * span_error
+                        + 0.8 * y_center_error
+                        + 0.6 * y_span_error
+                        + 0.8 * depth_contact_error
+                        + cross_penalty
+                        + penetration_penalty
+                        - 0.20 * depth_reward
+                    )
+                    if best is None or score < best[0]:
+                        best = (float(score), float(dx_c), float(dy_c), float(dz_c))
 
         if best is None:
-            return pose_t, (0.0, 0.0, np.nan)
-        score, dx, dz = best
+            return pose_t, (0.0, 0.0, 0.0, np.nan)
+        score, dx, dy, dz = best
 
         adjusted = np.array(pose_t, dtype=np.float64, copy=True)
-        adjusted[:3, 3] += dx * adjusted[:3, 0] + dz * adjusted[:3, 2]
-        return adjusted, (dx, dz, float(score))
+        adjusted[:3, 3] += dx * adjusted[:3, 0] + dy * adjusted[:3, 1] + dz * adjusted[:3, 2]
+        return adjusted, (dx, dy, dz, float(score))
 
     def single_object_collides_with(self, poses_world, visible_points, mask):
         """Panda proxy for TORC's exactly-one-object singularity rule.

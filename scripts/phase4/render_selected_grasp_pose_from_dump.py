@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import json
 import os
+import pickle
+import re
 from pathlib import Path
 import sys
 
@@ -43,6 +45,9 @@ FINGER_JOINTS = {
     "gripper0_right_finger_joint2": -0.04,
 }
 TCP_SITE = "gripper0_right_grip_site"
+PICK_TAG_RE = re.compile(r"pick_(\d+)")
+RENDER_WIDTH = 1280
+RENDER_HEIGHT = 720
 
 
 def set_qpos(model: mujoco.MjModel, data: mujoco.MjData, name: str, value: float) -> None:
@@ -106,18 +111,43 @@ def camera() -> mujoco.MjvCamera:
     return cam
 
 
+def initial_scene_xml() -> Path:
+    phase41.TORC_SCENE_XML = PROJECT_ROOT / "original_torc/lab_vbnpm/tests/scenes/final/difficult_116.xml"
+    phase41.patch_torc_scene()
+    POSE_XML.write_text(phase41.PATCHED_XML.read_text(encoding="utf-8"), encoding="utf-8")
+    return POSE_XML
+
+
+def state_for_pick(debug_json: Path) -> tuple[Path, np.ndarray | None, str]:
+    match = PICK_TAG_RE.search(debug_json.name)
+    pick_index = int(match.group(1)) if match else 1
+    if pick_index <= 1:
+        return initial_scene_xml(), None, "initial_scene"
+
+    state_file = EXP_DIR / f"state_{pick_index - 1}.pkl"
+    if not state_file.exists():
+        return initial_scene_xml(), None, f"missing_previous_state:{state_file}"
+
+    with state_file.open("rb") as file:
+        state_data = pickle.load(file)
+    scene_xml = Path(state_data.get("scene_xml", ""))
+    if not scene_xml.exists():
+        return initial_scene_xml(), None, f"missing_state_scene_xml:{scene_xml}"
+    raw_state = np.asarray(state_data["mujoco_state"], dtype=np.float64)
+    return scene_xml, raw_state, str(state_file)
+
+
 def render_pick(debug_json: Path, debug_npz: Path, out_png: Path) -> dict:
     metadata = json.loads(debug_json.read_text(encoding="utf-8"))
     arrays = np.load(debug_npz)
     selected_q = np.asarray(arrays["selected_grasp_joint_values"], dtype=np.float64)
     selected_T = np.asarray(arrays["selected_transformed_grasp_matrix"], dtype=np.float64)
 
-    phase41.TORC_SCENE_XML = PROJECT_ROOT / "original_torc/lab_vbnpm/tests/scenes/final/difficult_116.xml"
-    phase41.patch_torc_scene()
-    POSE_XML.write_text(phase41.PATCHED_XML.read_text(encoding="utf-8"), encoding="utf-8")
-
-    model = mujoco.MjModel.from_xml_path(str(POSE_XML))
+    scene_xml, raw_state, state_source = state_for_pick(debug_json)
+    model = mujoco.MjModel.from_xml_path(str(scene_xml))
     data = mujoco.MjData(model)
+    if raw_state is not None:
+        mujoco.mj_setState(model, data, raw_state, mujoco.mjtState.mjSTATE_INTEGRATION)
     for name, value in zip(ARM_JOINTS, selected_q):
         set_qpos(model, data, name, float(value))
     for name, value in FINGER_JOINTS.items():
@@ -127,7 +157,7 @@ def render_pick(debug_json: Path, debug_npz: Path, out_png: Path) -> dict:
     site_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_SITE, TCP_SITE)
     achieved_pos = np.asarray(data.site_xpos[site_id], dtype=np.float64)
 
-    renderer = mujoco.Renderer(model, height=950, width=1400)
+    renderer = mujoco.Renderer(model, height=RENDER_HEIGHT, width=RENDER_WIDTH)
     renderer.update_scene(data, camera=camera())
     scene = renderer.scene
     add_frame(scene, selected_T)
@@ -138,7 +168,7 @@ def render_pick(debug_json: Path, debug_npz: Path, out_png: Path) -> dict:
 
     img = Image.fromarray(image).convert("RGB")
     draw = ImageDraw.Draw(img, "RGBA")
-    draw.rectangle((0, 0, 1400, 118), fill=(0, 0, 0, 145))
+    draw.rectangle((0, 0, RENDER_WIDTH, 118), fill=(0, 0, 0, 145))
     draw.text((18, 14), "Franka at selected TORC pipeline grasp pose", fill=(255, 255, 255, 255))
     draw.text((18, 40), f"source: {debug_npz}", fill=(220, 240, 255, 255))
     draw.text(
@@ -147,12 +177,14 @@ def render_pick(debug_json: Path, debug_npz: Path, out_png: Path) -> dict:
         f"candidate={metadata.get('selected_index_in_sorted_validated_candidates')} score={metadata.get('selected_score'):.3f}",
         fill=(255, 255, 255, 255),
     )
-    draw.text((18, 92), "cyan: selected grasp TCP target; yellow: MuJoCo TCP from selected_grasp_joint_values", fill=(255, 245, 180, 255))
+    draw.text((18, 92), f"scene state: {state_source}; cyan target, yellow achieved TCP", fill=(255, 245, 180, 255))
     img.save(out_png)
     return {
         "output_png": str(out_png),
         "source_debug_json": str(debug_json),
         "source_debug_npz": str(debug_npz),
+        "scene_xml": str(scene_xml),
+        "scene_state_source": state_source,
         "selected_metadata": metadata,
         "selected_grasp_joint_values": selected_q.tolist(),
         "selected_transformed_grasp_matrix": selected_T.tolist(),
