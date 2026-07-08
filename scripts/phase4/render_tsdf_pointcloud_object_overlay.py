@@ -19,6 +19,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
 import render_franka_asset_alignment as phase41
+from output_paths import artifact_path, result_path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -31,9 +32,9 @@ POINTS_TXT = EXP_DIR / "output_target_points.txt"
 DEBUG_NPZ = EXP_DIR / "selected_grasp_debug/pick_01_selected_grasp_debug.npz"
 DEBUG_JSON = EXP_DIR / "selected_grasp_debug/pick_01_selected_grasp_debug.json"
 SCENE_XML = PROJECT_ROOT / "original_torc/lab_vbnpm/tests/scenes/final/difficult_116.xml"
-OVERLAY_XML = PROJECT_ROOT / "phase4_artifacts/tsdf_pointcloud_overlay_scene.xml"
-OUT_PNG = PROJECT_ROOT / "tsdf_pointcloud_object_overlay.png"
-OUT_MANIFEST = PROJECT_ROOT / "phase4_artifacts/tsdf_pointcloud_object_overlay_manifest.json"
+OVERLAY_XML = artifact_path("tsdf_pointcloud_overlay_scene.xml")
+OUT_PNG = result_path("tsdf_pointcloud_object_overlay.png")
+OUT_MANIFEST = artifact_path("tsdf_pointcloud_object_overlay_manifest.json")
 
 
 def body_positions_from_xml(xml_path: Path) -> dict[str, np.ndarray]:
@@ -119,6 +120,7 @@ def main() -> None:
 
     phase41.TORC_SCENE_XML = SCENE_XML
     phase41.patch_torc_scene()
+    OVERLAY_XML.parent.mkdir(parents=True, exist_ok=True)
     OVERLAY_XML.write_text(phase41.PATCHED_XML.read_text(encoding="utf-8"), encoding="utf-8")
     model = mujoco.MjModel.from_xml_path(str(OVERLAY_XML))
     data = mujoco.MjData(model)
@@ -134,8 +136,10 @@ def main() -> None:
     canvas = Image.new("RGB", (2200, 800), (255, 255, 255))
     canvas.paste(side, (0, 0))
     canvas.paste(top, (1100, 0))
+    OUT_PNG.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(OUT_PNG)
 
+    OUT_MANIFEST.parent.mkdir(parents=True, exist_ok=True)
     OUT_MANIFEST.write_text(
         json.dumps(
             {

@@ -22,6 +22,8 @@ import mujoco
 import numpy as np
 from PIL import Image, ImageDraw
 
+from output_paths import artifact_path, result_path
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TORC_SCENE_XML = Path(
@@ -34,9 +36,9 @@ TORC_LAB_ROOT = PROJECT_ROOT / "original_torc/lab_vbnpm"
 FRANKA_COMPILED_XML = PROJECT_ROOT / "assets/franka/mjcf/robosuite/panda_lift_compiled.xml"
 FRANKA_MESH_ROOT = PROJECT_ROOT / "assets/franka/meshes"
 FRANKA_CUROBO_YAML = PROJECT_ROOT / "assets/franka/config/curobo/franka_panda.yml"
-WORK_DIR = PROJECT_ROOT / "phase4_artifacts"
+WORK_DIR = artifact_path()
 PATCHED_XML = WORK_DIR / "phase4_1_franka_asset_alignment.xml"
-OUT_PNG = PROJECT_ROOT / "franka_asset_alignment.png"
+OUT_PNG = result_path("franka_asset_alignment.png")
 
 TORC_BASE_XYZ = np.array([0.0, 0.0, 0.0], dtype=np.float64)
 

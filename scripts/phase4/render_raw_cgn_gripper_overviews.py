@@ -23,14 +23,15 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
 import render_selected_grasp_pose_from_dump as selected_pose
+from output_paths import artifact_path, result_path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 EXP_DIR = Path(os.environ["TORC_SELECTED_GRASP_EXP_DIR"]).resolve()
 DEBUG_DIR = EXP_DIR / "selected_grasp_debug"
-OUT_DIR = PROJECT_ROOT / "phase4_artifacts" / "raw_cgn_gripper_overviews"
-OUT_COMBINED = PROJECT_ROOT / "franka_raw_cgn_gripper_overviews.png"
-OUT_MANIFEST = PROJECT_ROOT / "phase4_artifacts" / "raw_cgn_gripper_overviews_manifest.json"
+OUT_DIR = artifact_path("raw_cgn_gripper_overviews")
+OUT_COMBINED = result_path("franka_raw_cgn_gripper_overviews.png")
+OUT_MANIFEST = artifact_path("raw_cgn_gripper_overviews_manifest.json")
 
 RENDER_WIDTH = selected_pose.RENDER_WIDTH
 RENDER_HEIGHT = selected_pose.RENDER_HEIGHT

@@ -23,6 +23,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
 import render_franka_asset_alignment as phase41
+from output_paths import artifact_path, result_path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -37,9 +38,9 @@ DEBUG_DIR = EXP_DIR / "selected_grasp_debug"
 DEBUG_JSON = DEBUG_DIR / "pick_01_selected_grasp_debug.json"
 DEBUG_NPZ = DEBUG_DIR / "pick_01_selected_grasp_debug.npz"
 SCENE_XML = PROJECT_ROOT / "original_torc/lab_vbnpm/tests/scenes/final/difficult_116.xml"
-OUT_XML = PROJECT_ROOT / "phase4_artifacts/franka_grasp_geometry_contract_scene.xml"
-OUT_PNG = PROJECT_ROOT / "franka_grasp_geometry_contract.png"
-OUT_MANIFEST = PROJECT_ROOT / "phase4_artifacts/franka_grasp_geometry_contract_manifest.json"
+OUT_XML = artifact_path("franka_grasp_geometry_contract_scene.xml")
+OUT_PNG = result_path("franka_grasp_geometry_contract.png")
+OUT_MANIFEST = artifact_path("franka_grasp_geometry_contract_manifest.json")
 
 ARM_JOINTS = [f"robot0_joint{i}" for i in range(1, 8)]
 FINGER_JOINTS_OPEN = {
@@ -253,6 +254,7 @@ def main() -> None:
 
     phase41.TORC_SCENE_XML = SCENE_XML
     phase41.patch_torc_scene()
+    OUT_XML.parent.mkdir(parents=True, exist_ok=True)
     OUT_XML.write_text(phase41.PATCHED_XML.read_text(encoding="utf-8"), encoding="utf-8")
 
     model = mujoco.MjModel.from_xml_path(str(OUT_XML))
@@ -295,8 +297,10 @@ def main() -> None:
     canvas = Image.new("RGB", (2360, 860), (255, 255, 255))
     canvas.paste(side, (0, 0))
     canvas.paste(top, (1180, 0))
+    OUT_PNG.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(OUT_PNG)
 
+    OUT_MANIFEST.parent.mkdir(parents=True, exist_ok=True)
     OUT_MANIFEST.write_text(
         json.dumps(
             {

@@ -15,6 +15,8 @@ from pathlib import Path
 
 import numpy as np
 
+from output_paths import result_path
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_EXP_DIR = (
@@ -144,8 +146,8 @@ def main() -> int:
     source_indices = data["validated_source_indices_sorted"]
     geom = _pad_geometry()
 
-    dx_values = np.arange(-0.018, 0.0181, 0.002)
-    dy_values = np.arange(-0.012, 0.0121, 0.002)
+    dx_values = np.arange(-0.026, 0.0261, 0.002)
+    dy_values = np.arange(-0.030, 0.0301, 0.002)
     dz_values = np.arange(-0.018, 0.0181, 0.002)
     results = []
     for candidate_index, pose in enumerate(poses):
@@ -186,7 +188,8 @@ def main() -> int:
         "best_overall": results[:20],
         "best_for_selected_candidate": selected_results[:20],
     }
-    out_path = PROJECT_ROOT / "franka_grasp_offset_scan.json"
+    out_path = result_path("franka_grasp_offset_scan.json")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(output, indent=2), encoding="utf-8")
     print(out_path)
     print(json.dumps({"best_overall": results[0], "best_selected": selected_results[0]}, indent=2))

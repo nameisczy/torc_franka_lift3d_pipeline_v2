@@ -24,6 +24,7 @@ from PIL import Image, ImageDraw
 SCRIPT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
+from output_paths import artifact_path, result_path
 import render_franka_asset_alignment as phase41
 
 
@@ -35,9 +36,9 @@ DEFAULT_RUN = (
 )
 EXP_DIR = Path(os.environ.get("TORC_SELECTED_GRASP_EXP_DIR", str(DEFAULT_RUN)))
 DEBUG_DIR = EXP_DIR / "selected_grasp_debug"
-OUT_PNG = PROJECT_ROOT / "franka_selected_grasp_pose.png"
-OUT_MANIFEST = PROJECT_ROOT / "phase4_artifacts/selected_grasp_pose_render_manifest.json"
-POSE_XML = PROJECT_ROOT / "phase4_artifacts/selected_grasp_pose_scene.xml"
+OUT_PNG = result_path("franka_selected_grasp_pose.png")
+OUT_MANIFEST = artifact_path("selected_grasp_pose_render_manifest.json")
+POSE_XML = artifact_path("selected_grasp_pose_scene.xml")
 
 ARM_JOINTS = [f"robot0_joint{i}" for i in range(1, 8)]
 FINGER_JOINTS = {
@@ -114,6 +115,7 @@ def camera() -> mujoco.MjvCamera:
 def initial_scene_xml() -> Path:
     phase41.TORC_SCENE_XML = PROJECT_ROOT / "original_torc/lab_vbnpm/tests/scenes/final/difficult_116.xml"
     phase41.patch_torc_scene()
+    POSE_XML.parent.mkdir(parents=True, exist_ok=True)
     POSE_XML.write_text(phase41.PATCHED_XML.read_text(encoding="utf-8"), encoding="utf-8")
     return POSE_XML
 
@@ -178,6 +180,7 @@ def render_pick(debug_json: Path, debug_npz: Path, out_png: Path) -> dict:
         fill=(255, 255, 255, 255),
     )
     draw.text((18, 92), f"scene state: {state_source}; cyan target, yellow achieved TCP", fill=(255, 245, 180, 255))
+    out_png.parent.mkdir(parents=True, exist_ok=True)
     img.save(out_png)
     return {
         "output_png": str(out_png),
@@ -197,6 +200,7 @@ def render_pick(debug_json: Path, debug_npz: Path, out_png: Path) -> dict:
 def combine_images(paths: list[Path], output: Path) -> None:
     images = [Image.open(path).convert("RGB") for path in paths]
     if len(images) == 1:
+        output.parent.mkdir(parents=True, exist_ok=True)
         images[0].save(output)
         return
     width = max(img.width for img in images)
@@ -206,6 +210,7 @@ def combine_images(paths: list[Path], output: Path) -> None:
     for img in images:
         canvas.paste(img, (0, y))
         y += img.height
+    output.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(output)
 
 
@@ -221,7 +226,7 @@ def main() -> None:
         if not debug_npz.exists():
             continue
         pick_tag = debug_json.name.replace("_selected_grasp_debug.json", "")
-        out_png = PROJECT_ROOT / f"franka_selected_grasp_pose_{pick_tag}.png"
+        out_png = result_path(f"franka_selected_grasp_pose_{pick_tag}.png")
         rendered.append(render_pick(debug_json, debug_npz, out_png))
         output_paths.append(out_png)
 
@@ -229,6 +234,7 @@ def main() -> None:
         raise RuntimeError(f"no selected grasp debug NPZ files found in {DEBUG_DIR}")
     combine_images(output_paths, OUT_PNG)
 
+    OUT_MANIFEST.parent.mkdir(parents=True, exist_ok=True)
     OUT_MANIFEST.write_text(
         json.dumps(
             {

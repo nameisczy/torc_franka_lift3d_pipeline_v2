@@ -1,0 +1,3 @@
+[submodule "third_party/contact_graspnet"]
+	path = third_party/contact_graspnet
+	url = https://github.com/tlpss/contact_graspnet.git

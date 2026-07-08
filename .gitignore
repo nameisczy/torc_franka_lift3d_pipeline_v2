@@ -9,10 +9,18 @@ __pycache__/
 phase4_rerun_latest.log
 
 # Large/generated Phase 4 run directories
+ros_workspace/
 phase4_artifacts/torc_franka_pipeline_*/
 phase4_artifacts/video_keyframes_latest/
 phase4_artifacts/all_grasp_pose_overviews/
 phase4_artifacts/raw_cgn_gripper_overviews/
+
+# Generated root-level Phase 4 outputs are written to /mnt/ssd/ziyaochen by default.
+franka_*.png
+franka_*.mp4
+franka_*.json
+tsdf_pointcloud_object_overlay.png
+torc_repro_baseline.mp4
 
 # Generated temporary MuJoCo scenes/manifests that can be recreated
 phase4_artifacts/*_scene.xml

@@ -17,6 +17,8 @@ import shutil
 import subprocess
 import time
 
+from output_paths import RESULT_ROOT, artifact_path, result_path
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TORC_ROOT = PROJECT_ROOT / "original_torc/lab_vbnpm"
@@ -26,8 +28,9 @@ DEFAULT_TARGET = "obj_000070_0"
 DEFAULT_TORC_PYTHON = Path("/home/ziyaochen/miniconda3/envs/ros_env/bin/python")
 DEFAULT_CONDA_PREFIX = Path("/home/ziyaochen/miniconda3/envs/ros_env")
 DEFAULT_CUROBO_SRC = Path("/home/ziyaochen/curobo_v0_7_8_torc/src")
-OUT_MP4 = PROJECT_ROOT / "franka_planning_full.mp4"
-MANIFEST = PROJECT_ROOT / "phase4_artifacts/phase4_3_planning_replacement_manifest.json"
+DEFAULT_ROS_SETUP = PROJECT_ROOT / "ros_workspace/devel/setup.bash"
+OUT_MP4 = result_path("franka_planning_full.mp4")
+MANIFEST = artifact_path("phase4_3_planning_replacement_manifest.json")
 SERVER_SESSION = "control_sim_server"
 
 
@@ -193,7 +196,7 @@ def main() -> int:
     target = os.environ.get("TORC_TARGET_OBJECT", DEFAULT_TARGET)
     method = os.environ.get("TORC_METHOD", "dg_only")
     pick_limit = os.environ.get("TORC_PICK_LIMIT", "15")
-    run_dir = PROJECT_ROOT / "phase4_artifacts" / f"torc_franka_pipeline_{int(time.time())}"
+    run_dir = artifact_path(f"torc_franka_pipeline_{int(time.time())}")
     run_dir.mkdir(parents=True, exist_ok=True)
     restart_result = restart_server_session()
 
@@ -204,7 +207,7 @@ def main() -> int:
             "TORC_ROBOT_TYPE": "franka",
             "TORC_ROS_SETUP": env.get(
                 "TORC_ROS_SETUP",
-                "/home/ziyaochen/gc6d_lift3d_traj/ros_workspace/devel/setup.bash",
+                str(DEFAULT_ROS_SETUP),
             ),
             "CONDA_PREFIX": str(DEFAULT_CONDA_PREFIX),
             "TORC_CONDA_PREFIX": str(DEFAULT_CONDA_PREFIX),
@@ -224,7 +227,7 @@ def main() -> int:
             "TORC_RENDER_HEIGHT": env.get("TORC_RENDER_HEIGHT", "720"),
             "TORC_RENDER_EXECUTION_FRAMES": env.get("TORC_RENDER_EXECUTION_FRAMES", "1"),
             "TORC_RENDER_JPEG_QUALITY": env.get("TORC_RENDER_JPEG_QUALITY", "92"),
-            "TORC_SERVER_REQUEST_TIMEOUT_MS": env.get("TORC_SERVER_REQUEST_TIMEOUT_MS", "600000"),
+            "TORC_SERVER_REQUEST_TIMEOUT_MS": env.get("TORC_SERVER_REQUEST_TIMEOUT_MS", "3600000"),
         }
     )
     env["PATH"] = f"{env['TORC_CONDA_PREFIX']}/bin:" + env.get("PATH", "")

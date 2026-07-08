@@ -13,6 +13,7 @@ import shlex
 ROOT_DIR = os.path.abspath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "../..")
 )
+PROJECT_ROOT = os.path.abspath(os.path.join(ROOT_DIR, "../.."))
 
 USER_PREFIX = ""
 if "USER" in os.environ:
@@ -365,7 +366,7 @@ done
                 if os.path.exists(candidate):
                     ros_setup = candidate
                 else:
-                    ros_setup = f"/home/ziyaochen/gc6d_lift3d_traj/ros_workspace/devel/setup.{shell_type}"
+                    ros_setup = os.path.join(PROJECT_ROOT, "ros_workspace", "devel", f"setup.{shell_type}")
             commands += [
                 f"cd '{ROOT_DIR}' && source '{ros_setup}' && export ROS_PACKAGE_PATH='{os.path.dirname(ROOT_DIR)}':$ROS_PACKAGE_PATH && export PYTHONPATH='{ROOT_DIR}/scripts:{ROOT_DIR}':$PYTHONPATH"
             ] + window.commands

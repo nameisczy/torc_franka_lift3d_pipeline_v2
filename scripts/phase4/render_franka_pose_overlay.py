@@ -29,6 +29,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
 import render_franka_asset_alignment as phase41
+from output_paths import artifact_path, result_path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -42,9 +43,9 @@ TORC_SCENE_XML = Path(
     )
 )
 phase41.TORC_SCENE_XML = TORC_SCENE_XML
-WORK_DIR = PROJECT_ROOT / "phase4_artifacts"
+WORK_DIR = artifact_path()
 POSE_XML = WORK_DIR / "phase4_2_franka_pose_overlay.xml"
-OUT_PNG = PROJECT_ROOT / "franka_pose_overlay.png"
+OUT_PNG = result_path("franka_pose_overlay.png")
 TARGET_OBJECT = os.environ.get("TORC_TARGET_OBJECT", "obj_000044_0")
 TARGET_OBJECT_KEY = "_".join(TARGET_OBJECT.split("_")[:2])
 TARGET_GRASP_INDEX = 0

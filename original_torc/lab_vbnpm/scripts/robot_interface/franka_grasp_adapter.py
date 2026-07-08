@@ -30,9 +30,9 @@ def _env_bool(name, default):
 class FrankaGraspGeometryConfig:
     pre_filter_offset_scan: bool = True
     scan_min_object_points: int = 20
-    scan_points_per_object: int = 2500
-    scan_dx_extent_m: float = 0.012
-    scan_dy_extent_m: float = 0.008
+    scan_points_per_object: int = 1000
+    scan_dx_extent_m: float = 0.024
+    scan_dy_extent_m: float = 0.028
     scan_forward_extent_m: float = 0.020
     scan_backward_extent_m: float = 0.002
     scan_step_m: float = 0.004
@@ -187,9 +187,9 @@ class FrankaGraspAdapterScorer:
             seed_dx = float(np.round(seed_dx / step) * step)
             seed_dy = float(np.round(seed_dy / step) * step)
             seed_dz = float(np.round(seed_dz / step) * step)
-            dx_candidates = seed_dx + step * np.array([-3, -1, 0, 1, 3], dtype=np.float64)
-            dy_candidates = seed_dy + step * np.array([-2, 0, 2], dtype=np.float64)
-            dz_candidates = seed_dz + step * np.array([-2, -1, 0, 1, 2, 4, 6], dtype=np.float64)
+            dx_candidates = seed_dx + step * np.array([-1, 0, 1], dtype=np.float64)
+            dy_candidates = seed_dy + step * np.array([-1, 0, 1], dtype=np.float64)
+            dz_candidates = seed_dz + step * np.array([-1, 0, 1, 3, 5], dtype=np.float64)
             dx_candidates = np.unique(np.clip(dx_candidates, -dx_extent, dx_extent))
             dy_candidates = np.unique(np.clip(dy_candidates, -dy_extent, dy_extent))
             dz_candidates = np.unique(np.clip(dz_candidates, -dz_backward_extent, dz_forward_extent))
